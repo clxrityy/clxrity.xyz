@@ -7,8 +7,8 @@
 <link rel="manifest" href="/site.webmanifest">
 </head>
 <body>
-<p style="text-align:left;">
-clxrity
+<p style="text-align:right;">
+things
 </p>
 
 </body>
