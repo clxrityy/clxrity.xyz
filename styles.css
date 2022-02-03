@@ -1,0 +1,28 @@
+body {
+      background-image: url('https://wallpaperaccess.com/full/1567665.png');
+    }
+
+    h1 {
+      color: #0d9c9b;
+      font-size: 200%;
+      font-family: verdana;
+    }
+
+    p1 {
+      color: #77c7af;
+      font-size: 90%;
+      font-family: Trebuchet MS;
+    }
+
+    a {
+      color: #0d9c9b;
+    }
+
+    #bottom {
+      color: #77c7af;
+      position: absolute;
+      font-family: Tahoma;
+      font-size: 70%;
+      bottom: 0;
+      left: 0;
+    }
