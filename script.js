@@ -1,6 +1,8 @@
-      function myFunction(elmnt, clr) {
+<head>
+    function myFunction(elmnt, clr) {
         elmnt.style.color = clr;
       }
+</head>
 <h1 onmousedown="myFunction(this,'#77c7af')" onmouseup="myFunction(this,'#0d9c9b')"><b>things &amp; stuff </b>
     </h1>
     <p1 onmousedown="myFunction(this,'#0d9c9b')" onmouseup="myFunction(this,'#77c7af')">
