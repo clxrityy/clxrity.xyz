@@ -3,6 +3,7 @@
         elmnt.style.color = clr;
       }
 </head>
+<body>
 <h1 onmousedown="myFunction(this,'#77c7af')" onmouseup="myFunction(this,'#0d9c9b')"><b>things &amp; stuff </b>
     </h1>
     <p1 onmousedown="myFunction(this,'#0d9c9b')" onmouseup="myFunction(this,'#77c7af')">
@@ -22,3 +23,4 @@
       <br>
       <img src="https://imgur.com/Lf8uBi8.png" width="15" height="13" aria-hidden="true"> Discord: <b>clarity#0001</b>
     </p1>
+</body>
