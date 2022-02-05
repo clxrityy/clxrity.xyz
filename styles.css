@@ -1,39 +1,46 @@
+/* main body */
 body {
-      background-image: url('https://wallpaperaccess.com/full/1567665.png');
-    }
+  background-image: url('https://wallpaperaccess.com/full/1567665.png');
+}
 
-    h1 {
-      color: #0d9c9b;
-      font-size: 200%;
-      font-family: verdana;
-      text-align: center;
-      text-shadow: 1px 1px 2px black, 0 0 25px teal, 0 0 5px darkgreen;
-    }
+h1 {
+  /* heading */
+  color: #0d9c9b;
+  font-size: 200%;
+  font-family: verdana;
+  text-align: center;
+  text-shadow: 1px 1px 2px black, 0 0 25px teal, 0 0 5px darkgreen;
+}
 
-    p1 {
-      color: #77c7af;
-      font-size: 100%;
-      font-family: Trebuchet MS;
-      text-shadow: 1px 1px 2px black, 0 0 12px darkgreen, 0 0 5px darkgreen;
-    }
+p1 {
+  /* paragraph 1 */
+  color: #77c7af;
+  font-size: 100%;
+  font-family: Trebuchet MS;
+  text-align: right;
+  text-shadow: 1px 1px 2px black, 0 0 12px darkgreen, 0 0 5px darkgreen;
+}
 
-    a {
-      color: #0d9c9b;
-    }
+a {
+  /* link CURRENTLY UNNUSED */
+  color: #0d9c9b;
+}
 
-    #bottom {
-      color: #77c7af;
-      position: absolute;
-      font-family: Tahoma;
-      font-size: 80%;
-      bottom: 0;
-      left: 0;
-    }
+#bottom {
+  /* bottom or email */
+  color: #77c7af;
+  position: absolute;
+  font-family: Tahoma;
+  font-size: 90%;
+  bottom: 0;
+  left: 0;
+}
 
 
-
+/* nav bar */
 
 ul {
+  /* navigation bar */
   list-style-type: none;
   margin: 1;
   padding: 2;
@@ -43,10 +50,12 @@ ul {
 }
 
 li {
+  /* lining */
   float: left;
 }
 
 li a {
+  /* individual link style */
   display: inline-flex;
   font-size: 120%;
   color: #191919;
@@ -62,6 +71,41 @@ li a:hover:not(.active) {
 
 .active {
   background-color: #2e8d80;
+}
+
+
+
+/* time button */
+
+.container .btn {
+  /* time button */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  background-color: #2f7069;
+  color: #9cdbc8;
+  font-size: 16px;
+  font-family: Trebuchet MS;
+  padding: 16px 30px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.container .btn:hover {
+  /* hover time button */
+  background-color: #7fd1c8;
+  color: white;
+}
+
+p2 {
+  /* date displayed */
+  font-size: 100%;
+  font-family: Trebuchet MS;
+  color: #7fd1c8
 }
 
 
