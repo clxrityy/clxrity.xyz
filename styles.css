@@ -12,6 +12,14 @@ h1 {
   text-shadow: 1px 1px 2px black, 0 0 25px teal, 0 0 5px darkgreen;
 }
 
+
+#borderimg1 {
+  /* nav bar border */
+  border: 10px solid transparent;
+  padding: 10px;
+  border-image: url(https://i.gyazo.com/d6f84632f92d2eeec7aa0a51a9c1def2.png) 8 round;
+}
+
 p1 {
   /* paragraph 1 */
   color: #77c7af;
@@ -47,6 +55,7 @@ ul {
   overflow: hidden;
   font-family: Trebuchet MS;
   background-image: linear-gradient(180deg, #05d1d0, #078072);
+  background-color: ;
 }
 
 li {
@@ -58,10 +67,10 @@ li a {
   /* individual link style */
   display: inline-flex;
   font-size: 120%;
-  color: #191919;
-  text-shadow: 1px 1px 2px #1bc9ce, 0 0 12px #a5ddd0, 0 0 5px #1bc9ce;
+  color: white;
+  text-shadow: 1px 1px 2px #009009, 0 0 12px #a5ddd0, 0 0 5px #1bc9ce;
   text-align: center;
-  padding: 10px 14px;
+  padding: 10px 15px;
   text-decoration: none;
 }
 
@@ -91,8 +100,8 @@ li a:hover:not(.active) {
   padding: 16px 30px;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
-  text-align: center;
+  border-radius: 10px;
+  text-align: left;
 }
 
 .container .btn:hover {
@@ -107,5 +116,4 @@ p2 {
   font-family: Trebuchet MS;
   color: #7fd1c8
 }
-
 
