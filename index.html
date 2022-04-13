@@ -15,32 +15,56 @@
       /* heading */
       color: #0d9c9b;
       font-size: 300%;
-      font-family: verdana;
+      font-family: Tahoma;
       text-align: right;
-      text-shadow: 1px 1px 2px white, 0 0 25px teal, 0 0 5px purple;
+      text-shadow: 1px 1px 2px white, 0 0 25px black, 0 0 5px purple;
     }
 
+    .container>* {
+      /* first container */
+      display: inline-block;
+    }
 
     p1 {
-      float: right;
-      width: 150px;
-      padding: 15px;
-      background-color: #000000;
-      font-size: 50%;
-      font-family: monospace;
-      text-align: left;
-      color: #00FF41
+      /* just for fun */
+      color: #0d9c9b;
+      font-size: 110%;
+      font-family: tahoma;
+      text-align: right;
+      text-shadow: 1px 1px 2px black, 0 0 25px white;
+    }
+
+    p2 {
+      /* flower pot */
+      font-size: 100%;
+      text-align: right;
+      color: #86c7be;
+      text-shadow: 1px 1px 2px black, 0 0 25px white;
+    }
+
+    .tab {
+      /* tab for p1 */
+      margin-left: 20px;
     }
 
   </style>
 
   <body>
-    <h1>
-      🪴 clxrity
-    </h1>
-    <p1>01101101 01101010 00100000 01100001 01101110 01100111 01101100 01101001 01101110
-    </p1>
+    <div class="container">
+
+
+      <h1>
+        clxrity
+      </h1>
+      <img src="https://imgur.com/ECJFUYX.png" width="225" height="225" align="left">
+    </div>
+    <div class="container">
+
+      <p1 class="tab"><i>just for fun</i></p1>
+      <p2>🪴</p2>
+    </div>
   </body>
 
 </html>
+
 
