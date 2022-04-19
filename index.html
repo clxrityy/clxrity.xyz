@@ -11,21 +11,47 @@
       background-image: url('https://i.gyazo.com/2b7edf9f2c841b71263852bcbe949639.gif');
     }
 
+    /* link colors */
+    a:link {
+      color: #8ccffb;
+      background-color: transparent;
+      text-decoration: none;
+    }
+
+    a:visited {
+      color: purple;
+      background-color: transparent;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: magenta;
+      background-color: transparent;
+      text-decoration: underline;
+    }
+
+    a:active {
+      color: lightblue;
+      background-color: transparent;
+      text-decoration: underline;
+    }
+
+
     h1 {
-      /* heading */
-      color: #0d9c9b;
-      font-size: 300%;
+      /* links */
+      color: #32b6a5;
+      font-size: 200%;
       font-family: Tahoma;
-      text-align: right;
-      text-shadow: 1px 1px 2px white, 0 0 25px black, 0 0 5px purple;
+      text-align: center;
+      text-shadow: 1px 1px 2px grey, 0 0 25px magenta, 0 0 5px black;
     }
 
     h2 {
-      /* links header */
+      /* just for fun */
       color: #0d9c9b;
-      font-size: 300%;
+      font-size: 275%;
       font-family: Tahoma;
-      text-align: center;
+      text-align: right;
       text-shadow: 1px 1px 2px white, 0 0 25px black, 0 0 5px purple;
     }
 
@@ -34,13 +60,46 @@
       display: inline-block;
     }
 
+    .divLinks {
+      /* for link images */
+      text-align: center;
+      font-family: Tahoma;
+    }
+
     p1 {
       /* clxrity tab */
-      color: #0d9c9b;
+      color: #8ccffb;
       font-size: 200%;
       font-family: tahoma;
       text-align: right;
       text-shadow: 1px 1px 2px blue, 0 0 25px white;
+    }
+
+    p2 {
+      /* clxrity@clxrity.xyz tab */
+      color: #babbba;
+      font-size: 175%;
+      font-family: tahoma;
+      text-align: left;
+      text-shadow: 1px 1px 2px blue, 0 0 25px white;
+    }
+
+    p3 {
+      /* discord */
+      color: #bcc6cd;
+      font-size: 150%;
+      font-family: tahoma;
+      text-align: left;
+      text-shadow: 1px 1px 2px black, 0 0 25px #436efd, 0 0 5px #7289da;
+    }
+
+    p4 {
+      /* discord tag */
+      color: #bcc6cd;
+      font-size: 150%;
+      font-family: monospace;
+      text-align: left;
+      background-color: #21262d;
     }
 
     .tab {
@@ -62,7 +121,7 @@
 
     #borderimg1 {
       /* nav bar border */
-      border: 10px solid transparent;
+      border: 5px solid transparent;
       padding: 12.5px;
       border-image: url(https://wallpaperboat.com/wp-content/uploads/2019/10/cool-green-06.jpg) 50 round;
     }
@@ -80,6 +139,12 @@
       background-color: #2e8d80;
     }
 
+    hr.rounded {
+      /* rounded hr */
+      border-top: 8px solid #b7daf4;
+      border-radius: 5px solid #8830a9;
+    }
+
   </style>
 
   <body>
@@ -87,15 +152,36 @@
       <li style="float:right">
         <p1><b>clxrity</b></p1>
       </li>
+      <li style="float:left">
+        <p2><a href="mailto:clxrity@clxrity.xyz">📩</a></p2>
+      </li>
     </ul>
 
 
     <div class="container">
       <h2>
-        links
+        ~just for fun
       </h2>
+
       <img src="https://imgur.com/ECJFUYX.png" width="150" height="150" align="left">
+      <br>
+      <b>
+        <p3>Discord:</p3>
+        <p4>clarity#0001</p4>
+      </b>
     </div>
+    <br>
+    <br>
+    <hr class="rounded">
+    <div class="divLinks">
+      <h1>
+        <u>Links</u>
+      </h1>
+      <a href="https://instagram.com/mjxnglin" title="@mjxnglin"><img src="https://imgur.com/XLnUh3i.png" width="40" height="36" aria-hidden="true"></a> <a href="https://github.com/clxrityy" title="@clxrityy"><img src="https://imgur.com/1xqE0Hb.png" width="40" height="36" aria-hidden="true"></a> <a href="https://open.spotify.com/user/mjanglin" title="@mjanglin"><img src="https://imgur.com/dGRMUW1.png" width="40" height="36" aria-hidden="true"></a> <a href="https://steamcommunity.com/id/clxrity/" title="@clxrity"><img src="https://imgur.com/rM25ANu.png" width="40" height="36" aria-hidden="true"></a> <a href="https://www.pinterest.com/clxrityx/" title="@clxrityx"><img src="https://imgur.com/zTlvq1l.png" width="40" height="36" aria-hidden="true"></a> <a href="https://twitter.com/yourclxrity" title="@yourclxrity"><img src="https://imgur.com/ByWIoDe.png" width="40" height="36" aria-hidden="true"></a> <a href="https://soundcloud.com/clxrityy" title="@clxrityy"><img src="https://imgur.com/ZdvfWsi.png" width="40" height="36" aria-hidden="true"></a>
+    </div>
+    <br>
+    <hr class="rounded">
+
   </body>
 
 </html>
