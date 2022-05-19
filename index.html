@@ -8,183 +8,354 @@
   <style>
     body {
       /* background image */
-      background-image: url('https://i.gyazo.com/2b7edf9f2c841b71263852bcbe949639.gif');
+      background-image: url('https://imgur.com/Y5LCpJE.png');
     }
-
-    /* link colors */
-    a:link {
-      color: #8ccffb;
-      background-color: transparent;
-      text-decoration: none;
-    }
-
-    a:visited {
-      color: purple;
-      background-color: transparent;
-      text-decoration: none;
-    }
-
-    a:hover {
-      color: magenta;
-      background-color: transparent;
-      text-decoration: underline;
-    }
-
-    a:active {
-      color: lightblue;
-      background-color: transparent;
-      text-decoration: underline;
-    }
-
 
     h1 {
-      /* links */
-      color: #32b6a5;
-      font-size: 200%;
-      font-family: Tahoma;
+      /* clxrity */
+      color: #979696;
+      font-size: 300%;
+      font-family: Trebuchet MS;
       text-align: center;
-      text-shadow: 1px 1px 2px grey, 0 0 25px magenta, 0 0 5px black;
+      text-shadow: 1px 1px 2px white, 0 0 25px grey, 0 0 5px black;
     }
 
-    h2 {
-      /* just for fun */
-      color: #0d9c9b;
-      font-size: 275%;
-      font-family: Tahoma;
-      text-align: right;
-      text-shadow: 1px 1px 2px white, 0 0 25px black, 0 0 5px purple;
-    }
-
-    .container>* {
-      /* first container */
+    /* Instagram */
+    .button1 {
       display: inline-block;
-    }
-
-    .divLinks {
-      /* for link images */
+      border-radius: 6px;
+      background-color: #d4d3d3;
+      border: none;
+      color: #073c41;
+      font-family: Trebuchet MS;
       text-align: center;
-      font-family: Tahoma;
+      font-size: 28px;
+      padding: 20px;
+      width: 250px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 20px;
     }
 
-    p1 {
-      /* clxrity tab */
-      color: #8ccffb;
-      font-size: 200%;
-      font-family: tahoma;
-      text-align: right;
-      text-shadow: 1px 1px 2px blue, 0 0 25px white;
+    .button1 span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
     }
 
-    p2 {
-      /* clxrity@clxrity.xyz tab */
-      color: #babbba;
-      font-size: 175%;
-      font-family: tahoma;
-      text-align: left;
-      text-shadow: 1px 1px 2px blue, 0 0 25px white;
+    .button1 span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
     }
 
-    p3 {
-      /* discord */
-      color: #bcc6cd;
-      font-size: 150%;
-      font-family: tahoma;
-      text-align: left;
-      text-shadow: 1px 1px 2px black, 0 0 25px #436efd, 0 0 5px #7289da;
+    .button1:hover span {
+      padding-right: 25px;
     }
 
-    p4 {
-      /* discord tag */
-      color: #bcc6cd;
-      font-size: 150%;
-      font-family: monospace;
-      text-align: left;
-      background-color: #21262d;
+    .button1:hover span:after {
+      opacity: 1;
+      right: 0;
     }
 
-    .tab {
-      /* tab for p1 */
-      margin-left: 20px;
+    .button1:active {
+      background-color: #51787e;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
     }
 
-    /* nav bar */
-
-    ul {
-      /* navigation bar */
-      list-style-type: none;
-      margin: 1;
-      padding: 2;
-      overflow: hidden;
-      font-family: tahoma;
-      background-image: linear-gradient(180deg, #7f7fd1, #353579);
+    /* Twitter */
+    .button2 {
+      display: inline-block;
+      border-radius: 6px;
+      background-color: #b6b6b6;
+      border: none;
+      color: #073c41;
+      font-family: Trebuchet MS;
+      text-align: center;
+      font-size: 28px;
+      padding: 20px;
+      width: 250px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 20px;
     }
 
-    #borderimg1 {
-      /* nav bar border */
-      border: 5px solid transparent;
-      padding: 12.5px;
-      border-image: url(https://wallpaperboat.com/wp-content/uploads/2019/10/cool-green-06.jpg) 50 round;
+    .button2 span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
     }
 
-    li {
-      /* lining */
-      float: right;
+    .button2 span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
     }
 
-    li a:hover:not(.active) {
-      background-color: #3f4e4b;
+    .button2:hover span {
+      padding-right: 25px;
     }
 
-    .active {
-      background-color: #2e8d80;
+    .button2:hover span:after {
+      opacity: 1;
+      right: 0;
     }
 
-    hr.rounded {
-      /* rounded hr */
-      border-top: 8px solid #b7daf4;
-      border-radius: 5px solid #8830a9;
+    .button2:active {
+      background-color: #51787e;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+    /* GitHub */
+    .button3 {
+      display: inline-block;
+      border-radius: 6px;
+      background-color: #9c9c9c;
+      border: none;
+      color: #073c41;
+      font-family: Trebuchet MS;
+      text-align: center;
+      font-size: 28px;
+      padding: 20px;
+      width: 250px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 20px;
+    }
+
+    .button3 span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    .button3 span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
+    }
+
+    .button3:hover span {
+      padding-right: 25px;
+    }
+
+    .button3:hover span:after {
+      opacity: 1;
+      right: 0;
+    }
+
+    .button3:active {
+      background-color: #51787e;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+    /* Spotify */
+    .button4 {
+      display: inline-block;
+      border-radius: 6px;
+      background-color: #818181;
+      border: none;
+      color: #073c41;
+      font-family: Trebuchet MS;
+      text-align: center;
+      font-size: 28px;
+      padding: 20px;
+      width: 250px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 20px;
+    }
+
+    .button4 span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    .button4 span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
+    }
+
+    .button4:hover span {
+      padding-right: 25px;
+    }
+
+    .button4:hover span:after {
+      opacity: 1;
+      right: 0;
+    }
+
+    .button4:active {
+      background-color: #51787e;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+    /* Soundcloud */
+    .button5 {
+      display: inline-block;
+      border-radius: 6px;
+      background-color: #6d6d6d;
+      border: none;
+      color: #073c41;
+      font-family: Trebuchet MS;
+      text-align: center;
+      font-size: 28px;
+      padding: 20px;
+      width: 250px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 20px;
+    }
+
+    .button5 span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    .button5 span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
+    }
+
+    .button5:hover span {
+      padding-right: 25px;
+    }
+
+    .button5:hover span:after {
+      opacity: 1;
+      right: 0;
+    }
+
+    .button5:active {
+      background-color: #51787e;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+    /* Pinterest */
+    .button6 {
+      display: inline-block;
+      border-radius: 6px;
+      background-color: #555555;
+      border: none;
+      color: #073c41;
+      font-family: Trebuchet MS;
+      text-align: center;
+      font-size: 28px;
+      padding: 20px;
+      width: 250px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 20px;
+    }
+
+    .button6 span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    .button6 span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
+    }
+
+    .button6:hover span {
+      padding-right: 25px;
+    }
+
+    .button6:hover span:after {
+      opacity: 1;
+      right: 0;
+    }
+
+    .button6:active {
+      background-color: #51787e;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
     }
 
   </style>
 
   <body>
-    <ul id="borderimg1">
-      <li style="float:right">
-        <p1><b>clxrity</b></p1>
-      </li>
-      <li style="float:left">
-        <p2><a href="mailto:clxrity@clxrity.xyz">📩</a></p2>
-      </li>
-    </ul>
-
-
-    <div class="container">
-      <h2>
-        ~just for fun
-      </h2>
-
-      <img src="https://imgur.com/ECJFUYX.png" width="150" height="150" align="left">
-      <br>
-      <b>
-        <p3>Discord:</p3>
-        <p4>clarity#0001</p4>
-      </b>
+    <h1><b>clxrity</b>
+    </h1>
+    <div>
     </div>
-    <br>
-    <br>
-    <hr class="rounded">
-    <div class="divLinks">
-      <h1>
-        <u>Links</u>
-      </h1>
-      <a href="https://instagram.com/mjxnglin" title="@mjxnglin"><img src="https://imgur.com/XLnUh3i.png" width="40" height="36" aria-hidden="true"></a> <a href="https://github.com/clxrityy" title="@clxrityy"><img src="https://imgur.com/1xqE0Hb.png" width="40" height="36" aria-hidden="true"></a> <a href="https://open.spotify.com/user/mjanglin" title="@mjanglin"><img src="https://imgur.com/dGRMUW1.png" width="40" height="36" aria-hidden="true"></a> <a href="https://steamcommunity.com/id/clxrity/" title="@clxrity"><img src="https://imgur.com/rM25ANu.png" width="40" height="36" aria-hidden="true"></a> <a href="https://www.pinterest.com/clxrityx/" title="@clxrityx"><img src="https://imgur.com/zTlvq1l.png" width="40" height="36" aria-hidden="true"></a> <a href="https://twitter.com/yourclxrity" title="@yourclxrity"><img src="https://imgur.com/ByWIoDe.png" width="40" height="36" aria-hidden="true"></a> <a href="https://soundcloud.com/clxrityy" title="@clxrityy"><img src="https://imgur.com/ZdvfWsi.png" width="40" height="36" aria-hidden="true"></a>
-    </div>
-    <br>
-    <hr class="rounded">
+    <p3>
+      <a href="https://instagram.com/mjxnglin"><button class="button1" style="vertical-align:middle">
+          <div>
+            <span style="text-shadow: 1px 1px 2px white, 0 0 25px grey, 0 0 5px #51787e;"><img src="https://imgur.com/XLnUh3i.png" width="22" height="22" aria-hidden="true"> Instagram </span></div>
+        </button></a>
+      <div>
+      </div>
+      <a href="https://twitter.com/yourclxrity"><button class="button2" style="vertical-align:middle">
+          <div>
+            <span style="text-shadow: 1px 1px 2px white, 0 0 25px grey, 0 0 5px #51787e;"><img src="https://imgur.com/ByWIoDe.png" width="22" height="22" aria-hidden="true"> Twitter </span></div>
+        </button></a>
+      <div>
+      </div>
+      <a href="https://github.com/clxrityy"><button class="button3" style="vertical-align:middle">
+          <div>
+            <img src="https://imgur.com/1xqE0Hb.png" width="22" height="22" aria-hidden="true">
+            <span style="text-shadow: 1px 1px 2px white, 0 0 25px grey, 0 0 5px #51787e;">GitHub </span></div>
+        </button></a>
+      <div>
+      </div>
+      <a href="https://open.spotify.com/user/mjanglin"><button class="button4" style="vertical-align:middle">
+          <div>
+            <img src="https://imgur.com/dGRMUW1.png" width="22" height="22" aria-hidden="true">
+            <span style="text-shadow: 1px 1px 2px white, 0 0 25px grey, 0 0 5px #51787e;">Spotify </span></div>
+        </button></a>
+      <div>
+      </div>
+      <a href="https://soundcloud.com/clxrityy"><button class="button5" style="vertical-align:middle">
+          <div>
+            <img src="https://imgur.com/ZdvfWsi.png" width="22" height="22" aria-hidden="true">
+            <span style="text-shadow: 1px 1px 2px white, 0 0 25px grey, 0 0 5px #51787e;">SoundCloud </span></div>
+        </button></a>
+      <div>
+      </div>
+      <a href="https://www.pinterest.com/clxrityx/"><button class="button6" style="vertical-align:middle">
+          <div>
+            <img src="https://imgur.com/zTlvq1l.png" width="22" height="22" aria-hidden="true">
+            <span style="text-shadow: 1px 1px 2px white, 0 0 25px grey, 0 0 5px #51787e;">Pinterest </span></div>
+        </button></a>
+    </p3>
 
   </body>
 
 </html>
-
-
-
