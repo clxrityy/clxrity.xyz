@@ -1,5 +1,26 @@
 {
-  "name": "clxrity-xyz",
-  "version": "1.0.0"
+  "name": "clxrity.xyz",
+  "version": "1.0.0",
+  "description": "just for fun",
+  "main": "default.html",
+  "directories": {
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clxrityy/clxrity.xyz.git"
+  },
+  "author": "",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/github/government.github.com/issues"
+  },
+  "homepage": "http://clxrity.xyz",
+  "dependencies": {
+    "octicons": "^5.0.1",
+    "primer-core": "^6.2.0",
+    "primer-marketing": "^5.2.0"
+  }
 }
-
