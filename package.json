@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/clxrityy/clxrity.xyz/issues"
   },
-  "homepage": "http://clxrity.xyz",
+  "homepage": "https://clxrity.xyz",
   "dependencies": {
     "octicons": "^5.0.1",
     "primer-core": "^6.2.0",
