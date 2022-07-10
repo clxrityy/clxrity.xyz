@@ -1,0 +1,112 @@
+/* ///// Music Body ///// */
+.music {
+    background-color: rgb(26, 85, 83);
+    font-family: Trebuchet MS;
+    font-size: 200%;
+    color: rgb(130, 173, 196);
+}
+
+.music__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-self: auto;
+    margin: 0 auto;
+    height: 40vh;
+    background-color: rgb(26, 85, 83);
+    z-index: 1;
+    width: 100%;
+    max-width: 1300px;
+    padding: 0 100px;
+}
+
+.music__menu {
+    display: inherit;
+    list-style: none;
+}
+
+.music__item {
+    height: 80px;
+    color:rgb(148, 208, 208);
+    background-image: linear-gradient(to top, #087bff 0%, #99ffcc 100%);
+    text-decoration: 3px 3px 8px #332055, 3px 3px 8px #583c8a;
+    background-size: 100%;
+    background-clip: inherit;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -moz-text-fill-color: transparent;
+}
+
+.music__item a {
+    position: relative;
+    z-index: 2;
+    color: #add8e6;
+    text-decoration: 3px 3px 8px #332055, 3px 3px 8px #583c8a;
+    text-decoration: none;
+}
+
+.music__item a:hover {
+    color: #fff;
+}
+
+.music__img--container {
+    text-align: center;
+}
+
+#music__img {
+    height: 80%;
+    width: 80%;
+}
+
+/* ### Mobile Responsive ### */
+@media screen and (max-width: 768px) {
+    .music__container {
+        display: grid;
+        grid-template-columns: auto;
+        align-items: center;
+        justify-self: center;
+        width: 100%;
+        margin: 0 auto;
+        height: 90vh;
+    }
+
+    .music__content {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .music__menu {
+        font-size: smaller;
+    }
+
+}
+
+/* ///// Equipment body ///// */
+
+.music__content h1 {
+    font-size: 150%;
+    color: #add8e6;
+    text-decoration: 3px 3px 8px #332055, 3px 3px 8px #583c8a;
+}
+
+.music__menu2 {
+    font-size: 50%;
+    list-style: none;
+}
+
+.music__menu2 .music__item {
+    height: 40px;
+    background-image: linear-gradient(to top, #087bff 0%, #99ffcc 100%);
+    text-shadow: 2px 2px 8px #332055;
+    background-size: 100%;
+    background-clip: inherit;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -moz-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+}
+
+.music__menu2 #music__icon {
+    color: #d5e8ef;
+}
+
