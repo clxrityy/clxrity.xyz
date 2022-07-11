@@ -1,1 +1,15 @@
 ErrorDocument 404 /404.html
+ErrorDocument 500 /404.html
+
+RewriteEngine On
+RewriteBase /
+
+# Map errors to 404.html:
+RewriteCond %{REQUEST_URI} ^/404/$ [OR]
+RewriteCond %{REQUEST_URI} ^/500/$
+RewriteRule ^(.*)$ 404.html [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^ https://clxrity.xyz/404.html/ [L,R]

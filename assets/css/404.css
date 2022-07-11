@@ -10,18 +10,22 @@ body {
 }
 
 .head {
-    justify-content: center;
     align-items: center;
     position: sticky;
 }
 
 .head__container {
     margin: 0 auto;
-    padding: 0 50px;
-    display: flex;
+    padding: 25px 100px;
+    display: list-item;
 }
 
 header {
-    font-size: 200%;
+    font-size: 500%;
     color: rgb(198, 252, 255);
+}
+
+.head__container p {
+    font-size: 250%;
+    color: rgb(151, 179, 181);
 }
