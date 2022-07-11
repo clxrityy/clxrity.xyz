@@ -1,0 +1,27 @@
+* {
+    box-sizing: border-box;
+    margin: 20px;
+    padding: 20px;
+    font-family: Trebuchet MS;
+}
+
+body {
+    background-color: rgb(50, 52, 54);
+}
+
+.head {
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+}
+
+.head__container {
+    margin: 0 auto;
+    padding: 0 50px;
+    display: flex;
+}
+
+header {
+    font-size: 200%;
+    color: rgb(198, 252, 255);
+}
