@@ -7,7 +7,7 @@ RewriteBase /
 # Map errors to 404.html:
 RewriteCond %{REQUEST_URI} ^/404/$ [OR]
 RewriteCond %{REQUEST_URI} ^/500/$
-RewriteRule ^(.*)$ 404.html [L]
+RewriteRule ^(.*)$ https://clxrity.xyz/404.html [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
