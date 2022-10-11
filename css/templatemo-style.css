@@ -16,6 +16,7 @@ a {
     transition: all 0.3s ease;
 }
 
+
 a:hover {
 	color: #3CF;
 }
@@ -48,6 +49,7 @@ h2 {
     font-size: 1.3rem;
     padding: 13px 23px;
     border-radius: 0;
+    margin-top: 20px;
 }
 
 .btn-primary {
@@ -61,13 +63,13 @@ h2 {
 .btn-primary:focus {
     color: rgb(108, 213, 178);
     background-color: rgb(60, 60, 60);
-    height: 25%;
-    width: 25%;
     font-size: 1.5rem;
     transition: 900ms;
     font-weight: 400;
     border: 0.15px solid rgb(108, 213, 178);
+    transition: 100ms ease-out;
 }
+
 
 /* Style the video: 100% width and height to cover the entire window */
 #bg-video {
@@ -97,6 +99,12 @@ h2 {
 .navbar-brand {
     font-size: 2.4rem;
     font-weight: 500;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
 }
 
 .navbar-brand:hover {

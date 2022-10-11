@@ -36,3 +36,9 @@
     color: rgb(108, 213, 178);
     font-size: 1rem;
 }
+
+hr {
+    opacity: 25%;
+    color: #fff;
+    font-weight: 900;
+}
