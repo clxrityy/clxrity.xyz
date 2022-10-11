@@ -29,7 +29,7 @@ h2 {
 }
 
 .highlight {
-    color: #99FF66;
+    color: rgb(108, 213, 178);
 }
 
 .page-container {
@@ -89,6 +89,7 @@ h2 {
 
 .navbar-brand {
     font-size: 2.4rem;
+    font-weight: 500;
 }
 
 .navbar {
@@ -136,13 +137,13 @@ h2 {
 
 .navbar .navbar-nav .nav-item.selected .nav-link,
 .navbar .navbar-nav .nav-item .nav-link:hover {
-    color: #99FF66;
-    border-bottom: 1px solid #99FF66;
+    color: rgb(108, 213, 178);
+    border-bottom: 1px solid rgb(108, 213, 178);
 }
 
 .cd-slider-nav li.selected a+.circle,
 .navbar .navbar-nav .nav-item .nav-link:hover+.circle {
-    background-color: #99FF66;
+    background-color: rgb(108, 213, 178);
 }
 
 .navbar-toggler-icon {
@@ -163,7 +164,7 @@ h2 {
 
 .tm-link-white:hover,
 .tm-link-white:focus {
-    color: #99FF66;
+    color: rgb(108, 213, 178);
 }
 
 .cd-hero-slider {
@@ -261,7 +262,7 @@ h2 {
     margin-left: 10px;
     margin-right: 10px;
 	height: auto;
-	background: #3085a3;
+	background: rgb(108, 213, 178);
 	text-align: center;
 	cursor: pointer;
 }
@@ -456,7 +457,7 @@ figure.effect-julia:hover p {
 }
 
 .form-control:focus {
-    border-bottom: 1px solid #99FF66;
+    border-bottom: 1px solid rgb(108, 213, 178);
     outline: 0;
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -611,7 +612,7 @@ figure.effect-julia:hover p {
    Author's custom styles
    ========================================================================== */
    #loader-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; }
-   #loader { display: block; position: relative; left: 50%; top: 50%; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; border: 3px solid transparent; border-top-color: #3498db; /* Chrome, Opera 15+, Safari 5+ */
+   #loader { display: block; position: relative; left: 50%; top: 50%; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; border: 3px solid transparent; border-top-color: rgb(108, 213, 178); /* Chrome, Opera 15+, Safari 5+ */
    	animation: spin 2s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */ z-index: 2001; }
    #loader:before { content: ""; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border-radius: 50%; border: 3px solid transparent;
    	border-top-color: #e74c3c; /* Chrome, Opera 15+, Safari 5+ */
