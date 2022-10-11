@@ -11,7 +11,7 @@ body {
 }
 
 a {
-	color: #9F6;
+	color: rgb(108, 213, 178);
     text-decoration: none;
     transition: all 0.3s ease;
 }
@@ -25,7 +25,7 @@ p {
 }
 
 h2 {
-    font-size: 1.8rem;
+    font-size: 2rem;
 }
 
 .highlight {
@@ -52,14 +52,21 @@ h2 {
 
 .btn-primary {
     background-color: white;
-    border: none;
+    border: 1px #333;
     color: #333;
+    border-radius: 12px;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-    color: #5cac38;
-    background-color: white;
+    color: rgb(108, 213, 178);
+    background-color: rgb(60, 60, 60);
+    height: 25%;
+    width: 25%;
+    font-size: 1.5rem;
+    transition: 900ms;
+    font-weight: 400;
+    border: 0.15px solid rgb(108, 213, 178);
 }
 
 /* Style the video: 100% width and height to cover the entire window */
@@ -90,6 +97,12 @@ h2 {
 .navbar-brand {
     font-size: 2.4rem;
     font-weight: 500;
+}
+
+.navbar-brand:hover {
+    color: rgb(108, 213, 178);
+    text-shadow: 0.5px 0.5px 0.25px #fff;
+    font-size: 2.6rem;
 }
 
 .navbar {

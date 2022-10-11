@@ -20,7 +20,7 @@
 .contact {
     font-size: .85rem;
     padding: 1px;
-    color:rgb(108, 213, 178);
+    color:#fff;
     text-align: end;
 }
 
@@ -33,6 +33,6 @@
 }
 
 .contact a:hover {
-    color: white;
+    color: rgb(108, 213, 178);
     font-size: 1rem;
 }
