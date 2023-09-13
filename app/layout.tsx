@@ -3,6 +3,7 @@ import Toast from '@/components/Toast';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Session } from 'next-auth';
+import type { AppProps } from 'next/app';
 
 import { Inter } from 'next/font/google';
 import Head from 'next/head';
@@ -13,16 +14,12 @@ export const metadata: Metadata = {
   title: 'clxrity',
   description: 'Gain access to vocals and instrumentals recorded by clxrity',
 }
-
-interface Props {
-  children: React.ReactNode;
-  session: Session;
-}
-
 export default function RootLayout({
-  children,
-  session
-}: Props) {
+  Component,
+  pageProps,
+}: AppProps<{
+  session: Session;
+}>) {
   return (
     <html lang="en">
       <Head>
@@ -35,10 +32,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta property='og:image' content='/apple-touch-icon.png' />
       </Head>
-      <Provider session={session}>
+      <Provider session={pageProps.session}>
         <body className={inter.className}>
+          <Component {...pageProps} />
           <Toast />
-          {children}
         </body>
       </Provider>
     </html>
