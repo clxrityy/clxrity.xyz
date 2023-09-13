@@ -1,28 +1,3 @@
-<<<<<<< HEAD
-# [clxrity.xyz](https://www.clxrity.xyz)
-#### [✉️ clxrity@clxrity.xyz](mailto:clxrity@clxrity.xyz)
-
-### <img src='./img/branch.png' width='20' /> Branches:
-- [main](https://github.com/clxrityy/clxrity.xyz)
-	- **README, LICENSE, etc.**
-	- <sup>this branch is lame</sup>
-- [master](https://github.com/clxrityy/clxrity.xyz/tree/master)
-	- **Source Code**
-	- <sup>best branch tbh</sup>
-- [gh-pages](https://github.com/clxrityy/clxrity.xyz/tree/gh-pages)
-	- **Build / static files**
-	- <sup>she's ok</sup>
-
----
-
-### A simple website to link my socials.
-
-> Built with tools such as [ReactJS](https://reactjs.org/), [tailwindcss](https://tailwindcss.com/), & [gh-pages](https://www.npmjs.com/package/gh-pages). 
-
----
-
-#### *Mobile & screen responsive.*
-=======
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -57,4 +32,3 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
->>>>>>> 44244bd (Initial commit from Create Next App)

@@ -1,0 +1,52 @@
+/* ========================= */
+/* CLASSES */
+
+
+.primaryTextGradient {
+    text-shadow: 1px 2px 0px #8c44d0;
+    @apply drop-shadow-xl
+}
+
+.primaryTextGradient:hover {
+    text-shadow: 2px 2px 0px #a26baa;
+    @apply transition-all scale-110 
+}
+
+.secondaryIcon {
+
+    @apply  text-5xl lg:text-6xl rounded-full shadow-none lg:shadow-2xl transition-opacity cursor-pointer
+}
+
+.socialIcon {
+
+    @apply text-3xl md:text-4xl lg:text-5xl hover:blur-0 transition-all cursor-pointer hover:scale-125
+}
+
+/* ========================= */
+/* ANIMATIONS */
+
+/* @keyframes color-pulse {
+    from {
+        background: linear-gradient(#6b3b97, #b26abd);
+        background-clip: text;
+        color: transparent;
+    }
+
+    to {
+        background: linear-gradient(#a26baa, #8c44d0);
+        background-clip: text;
+        color: transparent;
+    }
+} */
+
+
+/* ========================= */
+/* MEDIA */
+
+/* LARGE SCREEN */
+@media screen and (min-width: 1024px) {
+
+    .secondaryIcon:hover {
+        @apply scale-125 transition-all
+    }
+}
