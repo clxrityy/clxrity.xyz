@@ -14,13 +14,15 @@ export const metadata: Metadata = {
   description: 'Gain access to vocals and instrumentals recorded by clxrity',
 }
 
+interface Props {
+  children: React.ReactNode;
+  session: Session;
+}
+
 export default function RootLayout({
   children,
   session
-}: {
-  children: React.ReactNode,
-  session: Session
-}) {
+}: Props) {
   return (
     <html lang="en">
       <Head>
