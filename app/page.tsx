@@ -1,6 +1,8 @@
+'use client';
 import Button from "@/components/Button";
 import Hero from "@/components/Hero";
 import Login from "@/components/Login";
+import { SessionProvider } from 'next-auth/react';
 
 
 export default function Home() {
