@@ -1,12 +1,13 @@
-import Provider from '@/components/Provider';
+import { SessionProvider } from 'next-auth/react';
 import Toast from '@/components/Toast';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Session } from 'next-auth';
-import type { AppProps } from 'next/app';
+import { getServerSession } from 'next-auth'
 
 import { Inter } from 'next/font/google';
 import Head from 'next/head';
+import { authOptions } from '@/lib/authOptions';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -14,12 +15,16 @@ export const metadata: Metadata = {
   title: 'clxrity',
   description: 'Gain access to vocals and instrumentals recorded by clxrity',
 }
-export default function RootLayout({
-  Component,
-  pageProps,
-}: AppProps<{
-  session: Session;
-}>) {
+
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+  }) {
+  
+  const session: Session | null = await getServerSession(authOptions);
+
   return (
     <html lang="en">
       <Head>
@@ -32,12 +37,12 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta property='og:image' content='/apple-touch-icon.png' />
       </Head>
-      <Provider session={pageProps.session}>
+      <SessionProvider session={session}>
         <body className={inter.className}>
-          <Component {...pageProps} />
+          {children}
           <Toast />
         </body>
-      </Provider>
+      </SessionProvider>
     </html>
   )
 }
