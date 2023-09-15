@@ -1,5 +1,6 @@
 import { SessionProvider } from '@/components/SessionProvider';
 import Toast from '@/components/Toast';
+import config from '@/config';
 import { authOptions } from '@/lib/auth';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
@@ -13,6 +14,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'clxrity',
   description: 'Gain access to vocals and instrumentals recorded by clxrity',
+  themeColor: config.colors.primary,
 }
 
 
@@ -28,7 +30,7 @@ export default async function RootLayout({
     <html lang="en">
       <Head>
         <title>clxrity</title>
-        <link rel='icon' href='favicon.ico' />
+        <link rel='icon' href='/favicon.ico' />
         <link rel='manifest' href='/site.webmanifest' />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

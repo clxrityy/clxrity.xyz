@@ -1,6 +1,7 @@
 import styles from '@/styles/Hero.module.css';
 import { PiPottedPlantFill } from 'react-icons/pi';
 import { ImSpotify, ImSoundcloud } from 'react-icons/im';
+import Link from 'next/link';
 
 const Hero = () => {
     return (
@@ -15,8 +16,12 @@ const Hero = () => {
                 </h1>
             </div>
             <div className='flex flex-row items-center justify-evenly space-x-8'>
-                <ImSpotify className={`${styles.socialIcon}`} />
-                <ImSoundcloud className={`${styles.socialIcon}`} />
+                <Link href='https://open.spotify.com/artist/0HaFO6TLXEZ2De3d67dThV'>
+                    <ImSpotify className={`${styles.socialIcon}`} />
+                </Link>
+                <Link href='https://soundcloud.com/clxrityy'>
+                    <ImSoundcloud className={`${styles.socialIcon}`} />
+                </Link>
             </div>
         </div>
     )
