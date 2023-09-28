@@ -60,7 +60,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                         {product.name}
                     </h1>
                     <div className="flex flex-col sm:flex-row justify-center items-center space-x-4">
-                        <Image src={product.images[0]} alt={product.name} className="rounded-xl drop-shadow-xl cursor-pointer hover:rounded-2xl hover:shadow-2xl hover:scale-90 transition-all border-white hover:border-2" width={150} height={150} />
+                        <Image src={product.images[0]} alt={product.name} className="rounded-xl drop-shadow-xl cursor-pointer hover:rounded-2xl hover:shadow-2xl hover:scale-90 transition-all border-white hover:border-2" width={150} height={150} priority />
                         <AudioBtn product={product} />
                     </div>
 

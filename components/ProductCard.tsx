@@ -25,7 +25,7 @@ const ProductCard = ({ product }: Props) => {
             <div>
 
                 <div className="items-center flex flex-row space-x-2">
-                    <Image src={product.images[0]} width={50} height={50} className="rounded-xl" alt={product.name} />
+                    <Image src={product.images[0]} width={50} height={50} className="rounded-xl" alt={product.name} priority />
                     <h1 className="font-bold">
                         {product.name}
                     </h1>
