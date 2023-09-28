@@ -10,13 +10,13 @@ const Login = () => {
 
     if (status === 'authenticated') {
         return (
-            <div className="flex flex-row items-center justify-center space-x-3 fixed top-0 right-0 px-6 py-8">
+            <div className="flex flex-row items-center justify-center space-x-2 fixed top-0 right-0 px-6 py-8 cursor-pointer">
                 <div className="flex flex-row justify-center space-x-2">
                     <div className="flex items-center justify-center">
-                        <Image src={session.user!.image as string} alt={session.user!.name as string} width={40} height={40} />
+                        <Image src={session.user!.image as string} alt={session.user!.name as string} width={40} height={40} className="hover:scale-110 transition-all rounded-full" />
                     </div>
                     <div className="flex flex-col justify-center">
-                        <h4 className="lowercase font-semibold">
+                        <h4 className="lowercase font-semibold hidden md:block">
                             {session.user!.name}
                         </h4>
                         <p className="text-xs hidden lg:block">
@@ -26,7 +26,7 @@ const Login = () => {
                 </div>
                 <div>
                     <button className="hover:scale-105 transition-all" onClick={() => signOut()}>
-                        <IoIosLogOut size={45} className="mt-1" />
+                        <IoIosLogOut size={45} className="mt-1 hover:scale-110 transition-all" />
                     </button>
                 </div>
             </div>

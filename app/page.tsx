@@ -9,10 +9,10 @@ export default function Home() {
       <Hero />
       <div className="flex flex-col lg:flex-row items-center justify-center gap-14">
         <div className="flex flex-col space-y-10 items-center">
-          <Button shadow="purple" link="/">
+          <Button shadow="purple" link="/shop">
             Vocals
           </Button>
-          <Button shadow="blue" link="/">
+          <Button shadow="blue" link="/shop">
             Loops
           </Button>
         </div>

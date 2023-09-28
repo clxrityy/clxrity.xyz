@@ -1,12 +1,13 @@
+import { Products } from "@/models/Product";
 import { convertSession } from "@/utils/convertSession";
-import { Current, Purchase, User } from "@/utils/types";
+import { User } from "@/utils/types";
 import { create } from "zustand";
 
 export interface UserState {
     user: User;
     getUser: () => void;
     setUserState: (user: User) => void;
-    purchase: (purchase: Purchase) => void;
+    purchase: (product: Products) => void;
 }
 
 
@@ -24,7 +25,7 @@ export const useUserStore = create<UserState>((set, get) => ({
         set({ user });
     },
     setUserState: (user) => set({ user }),
-    purchase: (purchase) => {
+    purchase: (product) => {
         
     },
 }))
