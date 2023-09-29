@@ -14,9 +14,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
     const { data: session, status } = useSession();
 
-
     const [product, setProduct] = useState<Products>();
-    
+
 
     useEffect(() => {
 
@@ -56,7 +55,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <div className="flex flex-row items-center justify-evenly h-full">
 
                 <div className="flex flex-col items-center justify-center h-[90vh] space-y-10">
-                    <h1 className={`text-2xl md:text-3xl hover:text-[${config.colors.complimentary}] hover:underline transition-all cursor-pointer`}>
+                    <h1 className={`text-2xl md:text-3xl hover:text-[${config.colors.complimentary}] hover:underline transition-all cursor-pointer font-bold`}>
                         {product.name}
                     </h1>
                     <div className="flex flex-col sm:flex-row justify-center items-center space-x-4">
