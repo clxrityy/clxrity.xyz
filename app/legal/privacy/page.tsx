@@ -72,6 +72,20 @@ export default function PrivacyPolicy() {
                             how we process your information
                         </Link>.
                     </p>
+                    <p className={styles.text}>
+                        <span className={styles.prompt}>
+                            In what situations and with which parties do we share personal information? {' '}
+                        </span>
+                        We may share information in specific situations and with specific third parties. Learn more about <Link className={styles.link} href='#whoshare'>
+                            when and with whom we share you personal information
+                        </Link>.
+                    </p>
+                    <p className={styles.text}>
+                        <span className={styles.prompt}>
+                            How do we keep your information safe? {' '}
+                        </span>
+                        We have organizational and technical processes and procedures in place to protect your personal information. However, no electronic transmission over the internet or information storage technology can be guaranteed to be 100% secure, so we cannot promise or guarantee that hackers, cyber criminals, or other unauthorized third parties will not be able to defeat our security and improperly collect, access, steal, or modify your information. Learn more about <Link className={styles.link} href='#infosafe'>how we keep your information safe</Link>.
+                    </p>
                 </div>
             </div>
         </div>
