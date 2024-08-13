@@ -1,4 +1,0 @@
-.card {
-
-    @apply rounded-lg border-[#c7c6c6] shadow-xl border-4 text-center px-4 py-5 cursor-pointer hover:border-[#1951b2] hover:scale-110 transition-all hover:shadow-2xl text-sm md:text-base lg:text-lg
-}
