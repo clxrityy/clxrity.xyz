@@ -12,7 +12,7 @@ export default function Home() {
           {/* <Preview items={audioItems} /> */}
           <Content />
 
-          <h1>
+          <h1 className="animate-pulse">
             COMING SOON...
           </h1>
         </div>
