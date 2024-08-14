@@ -2,6 +2,9 @@ import { getUploads } from "@/app/(actions)/uploads";
 import { RiAdminFill } from "react-icons/ri";
 import { type Track } from "@clxrityy/react-audio";
 import AudioList from "@/components/elements/AudioList";
+import { Suspense } from "react";
+import { ICONS } from "@/config";
+import Logs from "@/components/blocks/Logs";
 
 
 export default async function Page() {
@@ -30,8 +33,16 @@ export default async function Page() {
                     </div>
                 </div>
                 <div className="flex flex-col lg:flex-row items-center justify-center w-full">
-                    <AudioList tracks={tracks} />
-                </div> 
+                    <Suspense
+                        fallback={
+                            <div className="backdrop:blur w-full flex items-center justify-center">
+                                <ICONS.loading size={50} />
+                            </div>
+                        }>
+                        <AudioList tracks={tracks} />
+                    </Suspense>
+                    <Logs />
+                </div>
             </div>
         </div>
     );

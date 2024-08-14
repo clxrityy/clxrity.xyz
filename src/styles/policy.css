@@ -1,0 +1,46 @@
+.tos {
+
+    font-family: var(--font-kanit);
+
+    scroll-behavior: smooth;
+    scrollbar-color: #ddd #333;
+    scrollbar-width: thin;
+
+    @apply flex flex-col items-center gap-8 w-full bg-zinc-950/75 py-5 overflow-scroll snap-y max-h-fit mb-40 relative;
+}
+
+.tos blockquote {
+    @apply border-l-4 border-gray-500 pl-4 bg-zinc-800 py-2 px-3 rounded-md text-sm lg:text-base;
+}
+
+.tos h2 {
+    @apply border-b-2 border-gray-500 pb-2 text-xl md:text-2xl lg:text-3xl;
+}
+
+.tos div {
+    @apply gap-4 flex flex-col items-start;
+}
+
+.tos p {
+    @apply text-sm lg:text-base font-light max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-5xl text-zinc-300 text-left;
+}
+
+.tos a {
+    @apply text-blue-500 hover:underline;
+}
+
+.tos ul {
+    @apply flex flex-col gap-3 items-start;
+}
+
+.tos #description-of-service ul li {
+    @apply text-sm lg:text-base flex flex-col gap-2;
+}
+
+.tos h3 {
+    @apply text-lg lg:text-xl xl:text-2xl font-semibold;
+}
+
+.tos #privacy-policy ul {
+    @apply list-disc pl-2;
+}

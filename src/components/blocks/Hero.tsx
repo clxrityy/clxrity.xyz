@@ -33,7 +33,11 @@ export default function Hero() {
                                 Join
                             </Link>
                         </Button>
-                        <Button variant={"secondary"} className='btn btn-secondary'>Learn More</Button>
+                        <Button variant={"secondary"} className='btn btn-secondary'>
+                            <Link href={'/sounds'}>
+                                Browse
+                            </Link>
+                        </Button>
                     </div>
                 </CardFooter>
             </div>

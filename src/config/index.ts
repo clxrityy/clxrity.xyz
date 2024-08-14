@@ -1,12 +1,8 @@
-// import { AudioItem } from "@/archive/Preview";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-// export const audioItems: AudioItem[] = [
-//     {
-//         title: "Dreamy guitar loop",
-//         key: "E♭ Major",
-//         bpm: 118,
-//         src: "./assets/audio/previews/dreamy-guitar-loop.mp3"
-//     }
-// ]
+
+export const ICONS = {
+    loading: AiOutlineLoading3Quarters
+} as const;
 
 export const maxBytes = 25000000;

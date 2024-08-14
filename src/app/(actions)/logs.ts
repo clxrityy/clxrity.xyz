@@ -11,12 +11,12 @@ export async function log(data: Log) {
             ...data,
         })
 
-        console.log("Document written with ID: ", docRef.id); // Debugging
+        // console.log("Document written with ID: ", docRef.id); // Debugging
 
         return docRef;
 
     } catch (e: any) {
-        console.error("Error adding document: ", e); // Debugging
+        console.error("Error adding document: ", e);
         return null;
     }
 }

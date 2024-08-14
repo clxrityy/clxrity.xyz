@@ -13,6 +13,7 @@ export interface AudioUpload {
     instrument: keyof typeof Instruments | string;
     timestamp: number | Date;
     thumbnail?: string;
+    audioType?: keyof typeof AudioTypes | string;
 } 
 
 export interface Log {
@@ -20,4 +21,11 @@ export interface Log {
     userId: string;
     timestamp: number | Date | string;
     ref: DocumentReference;
+}
+
+export enum AudioTypes {
+    YEARRBOOK = "yearbook",
+    LOOP = "loop",
+    MISC = "misc",
+    ONE_SHOT = "one-shot",
 }

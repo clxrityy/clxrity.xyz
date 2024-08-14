@@ -18,13 +18,14 @@ import { Select, SelectContent, SelectGroup, SelectTrigger, SelectValue, SelectL
 import UploadForm from "./Upload";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
+import { upload } from "@/app/(actions)/uploads";
+import { useEffect } from "react";
+import { AudioTypes } from "@/types/data";
 
 // ICONS
 import { BiUpload } from "react-icons/bi";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoMdDoneAll } from "react-icons/io";
-import { upload } from "@/app/(actions)/uploads";
-import { useEffect } from "react";
+
 
 
 export const formSchema = z.object({
@@ -52,6 +53,7 @@ export const formSchema = z.object({
     file: z.string().url(),
     userId: z.string(),
     timestamp: z.number().default(new Date().getTime()),
+    audioType: z.string().optional(),
 });
 
 
@@ -138,6 +140,42 @@ export default function AddAudioForm() {
                                     <Textarea className="w-80 max-h-40 min-h-20" placeholder="Description" {...field} />
                                 </FormControl>
                                 <FormMessage className="text-red-500" />
+                            </FormItem>
+                        )}
+                    />
+                    {/**
+                     * AUDIO TYPE
+                     */}
+                    <FormField
+                        control={form.control}
+                        name="audioType"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel className="flex flex-row gap-1 items-center">
+                                    Audio Type
+                                    <Optional />
+                                </FormLabel>
+                                <FormControl className="text-gray-300/90">
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <SelectTrigger className="text-gray-300/90">
+                                            <SelectValue placeholder="Select an audio type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>
+                                                    Audio Types
+                                                </SelectLabel>
+                                                {
+                                                    Object.values(AudioTypes).map((audioType, idx) => (
+                                                        <SelectItem key={idx} value={audioType}>
+                                                            {audioType}
+                                                        </SelectItem>
+                                                    ))
+                                                }
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
                             </FormItem>
                         )}
                     />
