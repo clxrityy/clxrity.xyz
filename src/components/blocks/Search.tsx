@@ -13,7 +13,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import AudioSample from "../elements/AudioSample";
+
 
 export default function Search({ audioUploads }: { audioUploads: AudioUpload[] }) {
 
@@ -33,13 +33,13 @@ export default function Search({ audioUploads }: { audioUploads: AudioUpload[] }
             (!searchByKey || audioUpload.key === searchByKey);
     });
 
-    function list({ filteredUploads }: { filteredUploads: AudioUpload[]}) {
-        const filtered = filteredUploads.map(upload => <AudioSample audio={upload} />);
+    // function list({ filteredUploads }: { filteredUploads: AudioUpload[]}) {
+    //     const filtered = filteredUploads.map(upload => <AudioSample audio={upload} />);
 
-        return <div>
-            {filtered}
-        </div>
-    }
+    //     return <div>
+    //         {filtered}
+    //     </div>
+    // }
 
     function SearchByKeyWord() {
         return <Input
