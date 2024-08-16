@@ -9,8 +9,8 @@ import { LuUndoDot } from "react-icons/lu";
 
 export default function SoundsPanel() {
     return (
-        <div className="fixed bottom-0 w-screen bg-zinc-950/75 h-20 flex flex-row justify-between items-center">
-            <div className="w-fit h-full flex items-center px-8 justify-between gap-4 md:gap-5 lg:gap-6 xl:gap-8">
+        <div className="fixed bottom-0 w-screen bg-zinc-950/75 flex flex-row justify-between items-center">
+            <div className="w-fit h-full flex items-center px-8 justify-between gap-4 md:gap-5 lg:gap-6 xl:gap-8 py-2">
                 {PANEL_OPTIONS.map((option, index) => (
                     <PanelOption
                         key={index}
@@ -39,7 +39,7 @@ function PanelOption({ title, description, href, icon: Icon }: PanelOptionProps)
 
     return <button
         onClick={() => router.push(href)}
-        className="border border-white/25 rounded-xl py-3 px-4 hover:border-white/50 transition-opacity duration-300 ease-in-out focus:ring focus:outline-none ring-blue-500 focus:ring-offset-2 z-10">
+        className="border border-white/25 rounded-xl py-3 px-4 hover:border-white/50 transition-opacity duration-300 ease-in-out focus:ring focus:outline-none ring-blue-500 focus:ring-offset-2 mb-2">
 
         <div className="flex flex-col items-center gap-1">
             <div className="flex flex-row items-center gap-2">

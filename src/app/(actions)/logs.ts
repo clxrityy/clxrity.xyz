@@ -24,15 +24,13 @@ export async function log(data: Log) {
 export async function getAllLogs() {
     const logs = await getDocs(collection(db, "logs"));
 
-    console.log("Logs: ", logs); // Debugging
-
     return logs;
 }
 
 export async function getLog(ref: DocumentReference) {
     const log = await getDoc(ref);
 
-    console.log("Log: ", log); // Debugging
+    // console.log("Log: ", log); // Debugging
 
     return log;
 }

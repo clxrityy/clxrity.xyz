@@ -1,21 +1,16 @@
 import { getUploads } from "@/app/(actions)/uploads";
 import { RiAdminFill } from "react-icons/ri";
-import { type Track } from "@clxrityy/react-audio";
 import AudioList from "@/components/elements/AudioList";
 import { Suspense } from "react";
 import { ICONS } from "@/config";
 import Logs from "@/components/blocks/Logs";
+import { AudioUpload } from "@/types/data";
 
 
 export default async function Page() {
 
-    const uploads = await getUploads();
+    const uploads = await getUploads() as AudioUpload[] & { docId: string }[];
 
-    const tracks: Track[] = uploads.map((upload) => ({
-        title: upload.title,
-        src: upload.file,
-        thumbnail: upload.thumbnail,
-    }));
 
     return (
         <div className="w-full min-h-screen relative">
@@ -32,16 +27,19 @@ export default async function Page() {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col lg:flex-row items-center justify-center w-full">
+                <div className="flex flex-col lg:flex-row items-center justify-center w-full lg:ml-14">
                     <Suspense
                         fallback={
                             <div className="backdrop:blur w-full flex items-center justify-center">
                                 <ICONS.loading size={50} />
                             </div>
                         }>
-                        <AudioList tracks={tracks} />
+                        <AudioList uploads={uploads} />
                     </Suspense>
                     <Logs />
+                    <div className="w-full">
+
+                    </div>
                 </div>
             </div>
         </div>

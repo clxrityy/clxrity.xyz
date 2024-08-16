@@ -14,13 +14,16 @@ export interface AudioUpload {
     timestamp: number | Date;
     thumbnail?: string;
     audioType?: keyof typeof AudioTypes | string;
+    username?: string;
 } 
 
 export interface Log {
     docId: string;
     userId: string;
+    username?: string;
     timestamp: number | Date | string;
-    ref: DocumentReference;
+    uploadTitle: string;
+    logType: "upload" | "delete" | "edit";
 }
 
 export enum AudioTypes {

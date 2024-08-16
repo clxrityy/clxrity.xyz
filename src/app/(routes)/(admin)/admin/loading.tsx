@@ -1,9 +1,9 @@
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { ICONS } from "@/config";
 
-export default function Loading() {
+export default async function Loading() {
     return (
         <div className="w-full h-2/3 flex justify-center items-center">
-            <AiOutlineLoading3Quarters className="animate-spin text-4xl" size={100} />
+            <ICONS.loading className="animate-spin text-4xl" size={100} />
         </div>
     );
 }

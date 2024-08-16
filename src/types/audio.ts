@@ -6,6 +6,7 @@ export enum Genres {
     ALTERNATIVE = "alternative",
     FOLK = "folk",
     ELECTRONIC = "electronic",
+    AMBIENT = "ambient",
     OTHER = "other",
 }
 

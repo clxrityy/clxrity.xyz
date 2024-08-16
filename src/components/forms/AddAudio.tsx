@@ -54,6 +54,7 @@ export const formSchema = z.object({
     userId: z.string(),
     timestamp: z.number().default(new Date().getTime()),
     audioType: z.string().optional(),
+    username: z.string()
 });
 
 
@@ -69,6 +70,7 @@ export default function AddAudioForm() {
             description: "",
             userId: user?.id,
             timestamp: Date.now(),
+            username: user?.username || user?.fullName || "unknown",
         },
     });
 

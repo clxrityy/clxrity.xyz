@@ -4,17 +4,33 @@ import { getAllLogs } from "@/app/(actions)/logs";
 export default async function Logs() {
     const logs = await getAllLogs();
 
-    console.log(logs.docs); // Debugging
-
     return (
         <div className="w-full flex items-center">
             {logs.docs.map((log, idx) => (
-                <div key={idx} className="flex flex-row items-center gap-2">
-                    <span>
-                        {log.data().title}
+                <div key={idx} className="flex flex-col items-center gap-2">
+                    <span className="flex flex-row gap-1 items-center font-mono">
+                        <span className="font-bold uppercase">
+                            Timestamp: 
+                        </span>
+                        <span className="text-xs">
+                            {new Date(log.data().timestamp).toDateString()}
+                        </span>
                     </span>
                     <span>
-                        {log.data().timestamp}
+                        <span className="font-bold uppercase">
+                            Log Type: 
+                        </span>
+                        <span className="text-xs">
+                            {log.data().logType}
+                        </span>
+                    </span>
+                    <span>
+                        <span className="font-bold uppercase">
+                            Username: 
+                        </span>
+                        <span className="text-xs">
+                            {log.data().username}
+                        </span>
                     </span>
                 </div>
             ))}

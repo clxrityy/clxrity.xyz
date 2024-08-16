@@ -1,12 +1,11 @@
 "use server";
 import { db } from "@/lib/firebase";
 import { AudioUpload } from "@/types/data";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, deleteDoc, getDoc, doc } from "firebase/firestore";
 import { log } from "./logs";
+import getUser from "./users";
 
 export async function upload(audioData: AudioUpload): Promise<string | null> {
-
-    console.log("Uploading audio data", audioData) // Debugging
 
     try {
         const docRef = await addDoc(collection(db, "audio"), {
@@ -17,10 +16,11 @@ export async function upload(audioData: AudioUpload): Promise<string | null> {
             await log({
                 docId: docRef.id,
                 userId: audioData.userId,
+                username: audioData.username,
                 timestamp: audioData.timestamp,
-                ref: docRef,
+                uploadTitle: audioData.title,
+                logType: "upload",
             })
-            console.log("Document logged with ID: ", docRef.id); // Debugging
         } catch (e: any) {
             console.error("Error logging document: ", e.message); // Debugging
         }
@@ -37,8 +37,30 @@ export async function getUploads(): Promise<AudioUpload[]> {
 
     const querySnapshot = await getDocs(collection(db, "audio"));
     querySnapshot.forEach((doc) => {
-        uploads.push(doc.data() as AudioUpload);
+        uploads.push(doc.data() as AudioUpload & { docId: string });
     });
 
-    return uploads;
+    return uploads as AudioUpload[] & { docId: string }[];
+}
+
+export async function deleteUpload(docId: string, userId: string, title: string): Promise<boolean> {
+
+    const docRef = doc(db, "audio", docId);
+
+    try {
+        await deleteDoc(docRef);
+
+        await log({
+            docId: docId,
+            userId: userId,
+            timestamp: Date.now(),
+            uploadTitle: title,
+            logType: "delete",
+        });
+
+        return true;
+    } catch (e) {
+        console.error("Error deleting document: ", e); // Debugging
+        return false;
+    }
 }

@@ -16,7 +16,7 @@ type Props = {
 
 export default function UploadForm({ formData, userId }: Props) {
     const [file, setFile] = useState<File>();
-    const [progress, setProgress] = useState<number>(0);
+    // const [progress, setProgress] = useState<number>(0);
 
     const storage = getStorage(app);
 
