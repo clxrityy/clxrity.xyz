@@ -20,7 +20,7 @@ body {
       rgb(var(--background-end-rgb)));
   color: rgb(var(--forground-rgb));
   font-family: var(--font-varela);
-  @apply h-screen w-screen fixed z-0;
+  @apply h-screen w-screen fixed z-0 overflow-y-scroll;
 }
 
 
@@ -53,6 +53,7 @@ main {
 .content div p {
   @apply text-gray-300;
 }
+
 
 @media screen and (max-width: 1270px) {
   .wrapper {

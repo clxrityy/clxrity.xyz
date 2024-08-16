@@ -5,7 +5,7 @@ import Hero from "@/components/blocks/Hero";
 
 export default function Home() {
   return (
-    <main className="relative z-0 mx-auto">
+    <main className="relative mx-auto">
       <div className="container">
         <Hero />
         <div className="wrapper">
