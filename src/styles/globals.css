@@ -61,7 +61,7 @@ main {
   }
 
   main {
-    @apply h-auto lg:h-2/3 flex items-center;
+    @apply h-auto lg:h-2/3 flex items-center overflow-y-scroll;
   }
 }
 
