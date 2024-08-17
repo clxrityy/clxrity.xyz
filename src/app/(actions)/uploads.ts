@@ -1,9 +1,9 @@
 "use server";
 import { db } from "@/lib/firebase";
 import { AudioUpload } from "@/types/data";
-import { collection, addDoc, getDocs, deleteDoc, getDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { log } from "./logs";
-import getUser from "./users";
+
 
 export async function upload(audioData: AudioUpload): Promise<string | null> {
 
@@ -35,12 +35,17 @@ export async function upload(audioData: AudioUpload): Promise<string | null> {
 export async function getUploads(): Promise<AudioUpload[]> {
     const uploads: AudioUpload[] = [];
 
-    const querySnapshot = await getDocs(collection(db, "audio"));
-    querySnapshot.forEach((doc) => {
-        uploads.push(doc.data() as AudioUpload & { docId: string });
-    });
+    try {
+        const querySnapshot = await getDocs(collection(db, "audio"));
+        querySnapshot.forEach((doc) => {
+            uploads.push(doc.data() as AudioUpload & { docId: string });
+        });
 
-    return uploads as AudioUpload[] & { docId: string }[];
+        return uploads as AudioUpload[] & { docId: string }[];
+    } catch (e) {
+        console.error("Error getting documents: ", e); // Debugging
+        return [];
+    }
 }
 
 export async function deleteUpload(docId: string, userId: string, title: string): Promise<boolean> {

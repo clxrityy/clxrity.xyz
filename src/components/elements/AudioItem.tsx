@@ -14,7 +14,7 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
         return saveAs(audio.file, downloadTitle);
     }
 
-    return <div className="flex flex-col items-center gap-4 justify-start w-full relative bg-black/80 rounded-lg px-3 py-2">
+    return <div className="flex flex-col items-center gap-4 justify-start w-full relative rounded-lg px-3 py-2">
         <div className="flex flex-col lg:flex-row items-center justify-center w-full">
             <AudioPlayer
                 track={{

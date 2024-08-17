@@ -9,7 +9,7 @@ import { LuUndoDot } from "react-icons/lu";
 
 export default function SoundsPanel() {
     return (
-        <div className="fixed bottom-0 w-screen bg-zinc-950/75 flex flex-row justify-between items-center">
+        <div className="fixed bottom-0 w-screen bg-zinc-950/90 flex flex-row justify-between items-center z-50">
             <div className="w-fit h-full flex items-center px-8 justify-between gap-4 md:gap-5 lg:gap-6 xl:gap-8 py-2">
                 {PANEL_OPTIONS.map((option, index) => (
                     <PanelOption
