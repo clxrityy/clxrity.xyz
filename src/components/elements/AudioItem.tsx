@@ -1,7 +1,7 @@
 "use client";
 import { AudioUpload } from "@/types/data";
 import { AudioCategoryIcon, GenreAudioIcons, InstrumentAudioIcons, MoodAudioIcons, KeyAudioIcons } from "@/types/icons";
-import { AudioPlayer } from "@clxrityy/react-audio";
+import { AudioPlayer } from "@clxrity/react-audio";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { saveAs } from 'file-saver';
 import { ICONS } from "@/config";
@@ -16,15 +16,15 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
 
     return <div className="flex flex-col items-center gap-4 justify-start w-full relative rounded-lg px-3 py-2">
         <div className="flex flex-col lg:flex-row items-center justify-center w-full">
-            <AudioPlayer
-                track={{
-                    title: audio.title,
-                    src: audio.file,
-                    author: { name: audio.username! }
-                }}
-                className="rounded-xl"
-                style={{ width: "100%", height: "auto" }}
-            />
+            {
+                audio.file && <AudioPlayer
+                    track={{
+                        title: audio.title,
+                        src: audio.file,
+                        author: { name: audio.username === "clxrityadmin" ? "clxrity" : audio.username! }
+                    }}
+                />
+            }
             <div className="flex flex-col items-center justify-center my-5 px-4 max-w-xs">
                 <p className="text-white/75">{audio.description}</p>
             </div>
@@ -48,7 +48,7 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
         </div>
         <div className="absolute top-0 right-0 px-2 py-2">
             <button className="text-gray-400 hover:text-emerald-500 transition-colors" onClick={() => downloadAudio()}>
-                <ICONS.download size={35} onClick={downloadAudio} />
+                {audio && <ICONS.download size={35} onClick={downloadAudio} />}
             </button>
         </div>
     </div>
@@ -79,7 +79,7 @@ function AudioIcon({ categoryIcon, size }: AudioIconProps) {
 function determinIcon(category: "genre" | "mood" | "instrument" | "key", value: string): AudioCategoryIcon {
     switch (category) {
         case "genre":
-            switch (value) { 
+            switch (value) {
                 case "ALTERNATIVE":
                     return GenreAudioIcons.ALTERNATIVE;
                 case "AMBIENT":

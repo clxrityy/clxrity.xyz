@@ -1,6 +1,6 @@
 "use client";
 import { AudioUpload } from "@/types/data";
-import { type Track, LibraryTrackItem, LibraryPlayer } from "@clxrityy/react-audio";
+import { type Track, LibraryTrackItem, LibraryPlayer } from "@clxrity/react-audio";
 import { ComponentProps, useState } from "react";
 import { ICONS } from "@/config";
 import { Button } from "../ui/button";

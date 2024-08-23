@@ -1,10 +1,15 @@
+"use client";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import Waveform from '../svg/Waveform';
 import { Button } from '../ui/button';
 import WaveformAnimation from '../animations/WaveformAnimation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Hero() {
+
+    const router = useRouter();
+
     return (
         <Card className='hero'>
             <div>
@@ -28,15 +33,11 @@ export default function Hero() {
                         Share the sounds you create
                     </p>
                     <div className='flex flex-row items-center justify-center gap-3'>
-                        <Button variant={"default"} className='btn btn-primary'>
-                            <Link href="/sign-up">
-                                Join
-                            </Link>
+                        <Button variant={"default"} className='btn btn-primary' onClick={() => router.push("/sign-up")}>
+                            Join
                         </Button>
-                        <Button variant={"secondary"} className='btn btn-secondary'>
-                            <Link href={'/sounds'}>
-                                Browse
-                            </Link>
+                        <Button variant={"secondary"} className='btn btn-secondary' onClick={() => router.push("/sounds")}>
+                            Browse
                         </Button>
                     </div>
                 </CardFooter>

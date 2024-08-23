@@ -18,6 +18,12 @@ export default clerkMiddleware((auth, req) => {
       )
     })
   }
+}, {
+  domain: "https://clxrity.xyz",
+  authorizedParties: ['http://localhost:3000', 'https://clxrity.xyz'],
+  publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  secretKey: process.env.CLERK_SECRET_KEY,
+  skipJwksCache: true,
 });
 
 export const config = {

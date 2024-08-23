@@ -16,7 +16,7 @@ export default async function Page() {
                         Search for sounds by keyword, instrument, genre, or mood.
                     </p>
                 </div>
-                <div className="w-full h-full items-center flex flex-col gap-8">
+                <div className="w-full items-center flex flex-col gap-8">
                     <Search audioUploads={uploads} />
                 </div>
             </div>

@@ -26,7 +26,7 @@ export default function Search({ audioUploads }: { audioUploads: AudioUpload[] }
                     className="rounded-xl border-white/25 hover:border-white/50 transition-opacity duration-300 ease-in-out placeholder:text-gray-400 hover:placeholder:text-inherit"
                 />
             </div>
-            <div className="flex flex-col gap-2 items-center border-white/50 border-r-2 border-l-2 shadow-2xl drop-shadow-2xl px-20">
+            <div className="flex flex-col gap-2 items-center border-white/25 border-r-2 border-l-2 shadow-2xl drop-shadow-2xl px-20">
                 {filteredAudioUploads.map((audioUpload, idx) => (
                     <div key={idx} className="border-b border-b-white/50">
                         <AudioItem audio={audioUpload} />
