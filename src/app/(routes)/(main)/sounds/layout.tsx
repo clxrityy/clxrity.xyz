@@ -1,11 +1,8 @@
 import { Metadata, ResolvingMetadata } from "next";
 import { Suspense } from "react";
 
-type Props = {
-    searchParams: { [key: string]: string | string[] | undefined };
-}
 
-export async function generateMetadata({searchParams}: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(parent: ResolvingMetadata): Promise<Metadata> {
     return {
         title: "clxrity | Sounds",
         description: "Listen and download sounds for free.",

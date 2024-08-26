@@ -5,10 +5,9 @@ import { auth } from "@clerk/nextjs/server";
 
 type Props = {
     params: { id: string };
-    searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export async function generateMetadata({ params, searchParams }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
     const id = params.id;
 
     const username = (await getUser(id)).username;
