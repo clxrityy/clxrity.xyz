@@ -1,8 +1,8 @@
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import { Suspense } from "react";
 
 
-export async function generateMetadata(parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
     return {
         title: "clxrity | Sounds",
         description: "Listen and download sounds for free.",
