@@ -1,4 +1,3 @@
-import { DocumentReference } from "firebase/firestore";
 import { Genres, Instruments, Keys, Moods } from "./audio";
 
 export interface AudioUpload {
@@ -31,4 +30,13 @@ export enum AudioTypes {
     LOOP = "loop",
     MISC = "misc",
     ONE_SHOT = "one-shot",
+}
+
+export interface AuthenticatedUser {
+    userId: string;
+    username: string;
+    avatar: string;
+    bio?: string;
+    soundcloud?: string;
+    spotify?: string;
 }

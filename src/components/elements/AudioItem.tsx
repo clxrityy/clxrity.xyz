@@ -1,7 +1,7 @@
 "use client";
 import { AudioUpload } from "@/types/data";
 import { AudioCategoryIcon, GenreAudioIcons, InstrumentAudioIcons, MoodAudioIcons, KeyAudioIcons } from "@/types/icons";
-import { AudioPlayer } from "@clxrity/react-audio";
+import { AudioPlayer, Waveform } from "@clxrity/react-audio";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { saveAs } from 'file-saver';
 import { ICONS } from "@/config";
@@ -15,18 +15,41 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
     }
 
     return <div className="flex flex-col items-center gap-4 justify-start w-full relative rounded-lg px-3 py-2">
-        <div className="flex flex-col lg:flex-row items-center justify-center w-full">
+        <div className="flex flex-col lg:flex-row items-center justify-around w-full">
             {
-                audio.file && <AudioPlayer
-                    track={{
-                        title: audio.title,
-                        src: audio.file,
-                        author: { name: audio.username === "clxrityadmin" ? "clxrity" : audio.username! }
-                    }}
-                />
+                audio.file && <div className="w-full h-fit">
+                    <Waveform
+                        track={{
+                            title: audio.title,
+                            src: audio.file,
+                            author: {
+                                name: audio.username === "clxrityadmin" ? "clxrity" : audio.username!,
+                                url: `/profile/${audio.userId}`
+                            },
+                        }}
+                        size={{
+                            width: 300,
+                            height: 100
+                        }}
+                        color="#ffffff"
+                        style={{
+                            width: "100%",
+                            height: 100
+                        }}
+                    />
+                </div>
             }
-            <div className="flex flex-col items-center justify-center my-5 px-4 max-w-xs">
+            <div className="flex flex-col items-center justify-center my-5 px-4 max-w-xs gap-4">
+                <div className="flex flex-row gap-5 items-center">
+                    <h4 className="font-bold">
+                        {audio.title}
+                    </h4>
+                    <button className="text-gray-400 hover:text-emerald-500 transition-colors" onClick={() => downloadAudio()}>
+                        {audio && <ICONS.download size={35} onClick={downloadAudio} />}
+                    </button>
+                </div>
                 <p className="text-white/75">{audio.description}</p>
+
             </div>
         </div>
         <div className="flex flex-row gap-2 items-center justify-end py-2 px-5 rounded-lg w-full">
@@ -45,11 +68,6 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
             {
                 audio.bpm && <p className="text-white bg-zinc-700/75 px-1 py-1 rounded-lg font-mono text-sm">{audio.bpm} BPM</p>
             }
-        </div>
-        <div className="absolute top-0 right-0 px-2 py-2">
-            <button className="text-gray-400 hover:text-emerald-500 transition-colors" onClick={() => downloadAudio()}>
-                {audio && <ICONS.download size={35} onClick={downloadAudio} />}
-            </button>
         </div>
     </div>
 }

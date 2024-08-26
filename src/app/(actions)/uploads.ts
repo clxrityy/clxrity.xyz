@@ -69,3 +69,22 @@ export async function deleteUpload(docId: string, userId: string, title: string)
         return false;
     }
 }
+
+export async function getUploadsByUser(userId: string): Promise<AudioUpload[]> {
+    const uploads: AudioUpload[] = [];
+
+    try {
+        const querySnapshot = await getDocs(collection(db, "audio"));
+        querySnapshot.forEach((doc) => {
+            const data = doc.data() as AudioUpload & { docId: string };
+            if (data.userId === userId) {
+                uploads.push(data);
+            }
+        });
+
+        return uploads as AudioUpload[] & { docId: string }[];
+    } catch (e) {
+        console.error("Error getting documents: ", e); // Debugging
+        return [];
+    }
+}

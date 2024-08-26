@@ -1,16 +1,11 @@
 import Waveform from "@/components/svg/Waveform";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import Link from "next/link";
-import { BsSoundwave } from "react-icons/bs";
-import { FaAngleDown, FaMicrophoneAlt } from "react-icons/fa";
-import { GiGuitarHead } from "react-icons/gi";
-import { IconType } from "react-icons/lib";
-import { LuUndoDot } from "react-icons/lu";
-import { MdLoop } from "react-icons/md";
-import { TiThMenu } from "react-icons/ti";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { auth } from "@clerk/nextjs/server";
-import { RiAdminFill } from "react-icons/ri";
+import getUser from "@/app/(actions)/users";
+import { ICONS } from "@/config";
+import { IconType } from "react-icons/lib";
 
 
 const extendedNavItems: NavItemExtend[] = [
@@ -22,13 +17,13 @@ const extendedNavItems: NavItemExtend[] = [
                 name: "Guitars 2024",
                 href: "/yearbook/guitar",
                 description: "A collection of unique and original electric and acoustic guitar compositions and sounds from 2024.",
-                icon: GiGuitarHead
+                icon: ICONS.guitar
             },
             {
                 name: "Vocals 2024",
                 href: "/yearbook/vocals",
                 description: "Various vocal samples and recordings from 2024.",
-                icon: FaMicrophoneAlt
+                icon: ICONS.microphone
             }
         ]
     },
@@ -40,19 +35,19 @@ const extendedNavItems: NavItemExtend[] = [
                 name: "Miscellaneous",
                 href: "/sounds/misc",
                 description: "Add an extra layer of sound to your project with these miscellaneous sounds.",
-                icon: BsSoundwave
+                icon: ICONS.soundwave
             },
             {
                 name: "Loops",
                 href: "/sounds/loops",
                 description: "Loopable sounds and samples.",
-                icon: MdLoop
+                icon: ICONS.loop
             },
             {
                 name: "One Shots",
                 href: "/sounds/one-shots",
                 description: "Single shot sounds from real instruments and digital sources.",
-                icon: LuUndoDot
+                icon: ICONS.oneShot
             }
         ]
     },
@@ -148,7 +143,7 @@ function MobileMenu() {
         <DropdownMenu>
             <DropdownMenuTrigger>
                 <span className="flex flex-row items-center justify-center">
-                    <TiThMenu className="h-10 w-10" />
+                    <ICONS.menu className="h-10 w-10" />
                 </span>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-min">
@@ -168,7 +163,7 @@ function MobileMenu() {
                     extendedNavItems.map((item, index) => (
                         <DropdownMenuGroup key={index}>
                             <DropdownMenuLabel className="font-mono uppercase tracking-wider flex flex-row gap-2">
-                                {item.name} <FaAngleDown className="h-4 w-4" />
+                                {item.name} <ICONS.angleDown className="h-4 w-4" />
                             </DropdownMenuLabel>
                             {
                                 item.items && item.items.map((subItem, subIndex) => (
@@ -186,7 +181,7 @@ function MobileMenu() {
                         </DropdownMenuGroup>
                     ))
                 }
-                 <AuthBar />
+                <AuthBar />
             </DropdownMenuContent>
         </DropdownMenu>
     )
@@ -197,27 +192,28 @@ async function AuthBar() {
 
     if (!sessionClaims || !sessionId || !userId) {
         return (
-            <div>
-                <Link href="/sign-in">
+            <button className="bg-black rounded-lg px-3 py-2 focus:ring ring-blue-500 hover:bg-zinc-800/60 transition focus:ring-offset-1">
+                <Link href={`/sign-in`}>
                     Sign In
                 </Link>
-            </div>
+            </button>
         )
     }
-
     if (sessionId || userId) {
         if (sessionClaims.metadata.role === "admin") {
             return (
                 <div className="flex flex-col items-center gap-2">
                     <button className="bg-black rounded-lg px-3 py-2 focus:ring ring-blue-500 hover:bg-zinc-800/60 transition focus:ring-offset-1">
-                        <Link href="/dashboard">
-                            Dashboard
+                        <Link href={`/profile/${userId}`}>
+                            <span className="flex flex-row gap-1 items-center">
+                                Profile <ICONS.user className="inline-block" />
+                            </span>
                         </Link>
                     </button>
                     <button className="bg-slate-700 rounded-lg px-3 py-2 focus:ring hover:bg-slate-800/60 transition focus:ring-offset-1 ring-blue-500">
                         <Link href="/admin">
                             <span className="flex flex-row gap-1 items-center">
-                                Admin <RiAdminFill className="inline-block" />
+                                Admin <ICONS.admin className="inline-block" />
                             </span>
                         </Link>
                     </button>
@@ -226,11 +222,13 @@ async function AuthBar() {
         }
 
         return (
-            <div>
-                <Link href="/dashboard">
-                    Dashboard
+            <button className="bg-black rounded-lg px-3 py-2 focus:ring ring-blue-500 hover:bg-zinc-800/60 transition focus:ring-offset-1">
+                <Link href={`/profile/${userId}`}>
+                    <span className="flex flex-row gap-1 items-center">
+                        Profile <ICONS.user className="inline-block" />
+                    </span>
                 </Link>
-            </div>
+            </button>
         )
     }
 }

@@ -19,7 +19,6 @@ import UploadForm from "./Upload";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import { upload } from "@/app/(actions)/uploads";
-import { useEffect } from "react";
 import { AudioTypes } from "@/types/data";
 
 // ICONS
@@ -96,10 +95,6 @@ export default function AddAudioForm() {
             toast.error("An error occurred, please try again later");
         }
     }
-
-    useEffect(() => {
-        console.log("form", form.formState.isValid); // debugging
-    }, [form]);
 
     return (
         <Form {...form}>
