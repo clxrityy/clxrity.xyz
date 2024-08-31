@@ -4,7 +4,7 @@ import { AudioCategoryIcon, GenreAudioIcons, InstrumentAudioIcons, MoodAudioIcon
 import { Waveform, JustPlayer } from "@clxrity/react-audio";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { saveAs } from 'file-saver';
-import { ICONS } from "@/config";
+import { COLORS, ICONS } from "@/config";
 import Link from "next/link";
 import useScreenSize from "@/hooks/useScreenSize";
 
@@ -24,9 +24,43 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
 
 
 
-    return <div className="flex flex-col items-center gap-4 justify-start w-full relative rounded-lg py-2">
+    return <div className="flex flex-col items-center gap-3 justify-start w-full relative rounded-lg py-2">
         <div className="flex flex-col items-center justify-around w-full">
-            {
+            <div className="flex flex-col items-center justify-center my-5 px-4 max-w-lg gap-3">
+                <div className="flex flex-row gap-5 items-center">
+                    <Link href={`/sounds/${audio.uuid}`} className="hover:underline transition hover:text-[#007bff]">
+                        <h4 className="font-extrabold tracking-wide text-xl md:text-2xl lg:text-3xl">
+                            {audio.title}
+                        </h4>
+                    </Link>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger aria-label="Download">
+                                <button className={`text-[#58acec] hover:text-[#007bff] hover:scale-105 transition-all`} onClick={() => downloadAudio({ title: audio.title, file: audio.file, username: audio.username! })}>
+                                    {audio && <ICONS.download size={35} />}
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent className="font-bold border-none">
+                                Download
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+                {
+                    audio.description && <div className="flex items-center justify-start w-full">
+                        <p className="text-gray-200/75 text-sm md:text-base">
+                        {audio.description}
+                    </p>
+                    </div>
+                }
+                <div className="flex items-center justify-start w-5/6 border-l-2 border-l-white/40">
+                    <p className="text-gray-400 text-xs md:text-sm ml-2">
+                        by <Link href={`/profile/${audio.userId}`} className="text-[#58acec] hover:text-[#007bff] hover:underline transition">
+                            {audio.username === "clxrityadmin" ? "clxrity" : audio.username}
+                        </Link>
+                    </p>
+                </div>
+                {
                 audio.file && <div className="w-full h-fit flex items-center justify-center">
                     {
                         width > 768 ? <Waveform
@@ -53,7 +87,7 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
                         }}
                             style={{
                                 fontSize: "2rem",
-                                backgroundColor: "#007bff",
+                                backgroundColor: COLORS.blue,
                                 paddingTop: "0.65rem",
                                 borderRadius: "0.75rem",
                                 display: "flex",
@@ -67,21 +101,6 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
                     }
                 </div>
             }
-            <div className="flex flex-col items-center justify-center my-5 px-4 max-w-lg gap-4">
-                <div className="flex flex-row gap-5 items-center">
-                    <h4 className="font-bold">
-                        {audio.title}
-                    </h4>
-                    <button className="text-gray-400 hover:text-emerald-500 transition-colors" onClick={() => downloadAudio({ title: audio.title, file: audio.file, username: audio.username! })}>
-                        {audio && <ICONS.download size={35} />}
-                    </button>
-                </div>
-                <p className="text-gray-400">
-                    by <Link href={`/profile/${audio.userId}`} className="text-emerald-500 hover:underline">
-                        {audio.username === "clxrityadmin" ? "clxrity" : audio.username}
-                    </Link>
-                </p>
-                <p className="text-white/75">{audio.description}</p>
             </div>
         </div>
         <div className="flex flex-row gap-2 items-center justify-end py-2 px-5 rounded-lg w-full">
@@ -98,7 +117,7 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
                 audio.key && <AudioIcon categoryIcon={determinIcon("key", audio.key)} />
             }
             {
-                audio.bpm && <p className="text-white bg-zinc-700/75 px-[2.5px] py-1 rounded-lg font-mono text-sm text-center">{audio.bpm} BPM</p>
+                audio.bpm && <p className="text-white bg-zinc-700/50 px-[2.5px] py-1 rounded-lg font-mono text-sm text-center font-extrabold">{audio.bpm} BPM</p>
             }
         </div>
     </div>

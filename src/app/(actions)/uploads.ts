@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/lib/firebase";
 import { AudioUpload } from "@/types/data";
-import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, deleteDoc, doc, getDoc } from "firebase/firestore";
 import { log } from "./logs";
 
 
@@ -84,7 +84,28 @@ export async function getUploadsByUser(userId: string): Promise<AudioUpload[]> {
 
         return uploads as AudioUpload[] & { docId: string }[];
     } catch (e) {
-        console.error("Error getting documents: ", e); // Debugging
+        console.error("Error getting documents by userId: ", e); // Debugging
         return [];
+    }
+}
+
+export async function getUpload(uuid: string): Promise<AudioUpload | null> {
+
+    let upload: AudioUpload | null = null;
+
+    try {
+        const querySnapshot = await getDocs(collection(db, "audio"));
+        querySnapshot.forEach((doc) => {
+            const data = doc.data() as AudioUpload;
+            if (data.uuid === uuid) {
+                upload = data;
+            }
+        });
+
+        return upload;
+
+    } catch (e) {
+        console.error("Error getting document by UUID: ", e); // Debugging
+        return null;
     }
 }

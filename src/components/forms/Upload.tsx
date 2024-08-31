@@ -6,7 +6,7 @@ import UploadBox from "../svg/UploadBox";
 import { z } from "zod";
 import { UseFormReturn } from "react-hook-form";
 import { formSchema } from "./AddAudio";
-import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { app } from "@/lib/firebase";
 
 type Props = {

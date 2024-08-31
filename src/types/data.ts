@@ -14,6 +14,7 @@ export interface AudioUpload {
     thumbnail?: string;
     audioType?: keyof typeof AudioTypes | string;
     username?: string;
+    uuid?: string;
 } 
 
 export interface Log {

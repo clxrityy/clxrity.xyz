@@ -1,5 +1,6 @@
 "use client";
 
+import { COLORS } from "@/config";
 import useScreenSize from "@/hooks/useScreenSize";
 import { Keys } from "@/types/audio";
 import { type Track, Waveform, JustPlayer } from "@clxrity/react-audio";
@@ -19,7 +20,7 @@ export default function GuitarItem({ track }: Props) {
             <JustPlayer
                 track={track}
                 style={{
-                    backgroundColor: "#007bff",
+                    backgroundColor: COLORS.blue,
                     paddingTop: "0.5rem",
                     borderRadius: "0.75rem",
                     display: "flex",

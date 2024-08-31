@@ -32,3 +32,7 @@ export const ICONS = {
 } as const;
 
 export const maxBytes = 25000000;
+
+export const COLORS = {
+    blue: "#007bff",
+}

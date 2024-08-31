@@ -53,6 +53,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/file-saver": "^2.0.7"
+    "@types/file-saver": "^2.0.7",
+    "@types/uuid": "^10.0.0",
+    "uuid": "^10.0.0"
   }
 }

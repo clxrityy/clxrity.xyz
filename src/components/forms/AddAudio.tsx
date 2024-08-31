@@ -20,6 +20,7 @@ import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import { upload } from "@/app/(actions)/uploads";
 import { AudioTypes } from "@/types/data";
+import { v4 as uuid } from "uuid";
 
 // ICONS
 import { BiUpload } from "react-icons/bi";
@@ -53,7 +54,8 @@ export const formSchema = z.object({
     userId: z.string(),
     timestamp: z.number().default(new Date().getTime()),
     audioType: z.string().optional(),
-    username: z.string()
+    username: z.string(),
+    uuid: z.string(),
 });
 
 
@@ -70,6 +72,7 @@ export default function AddAudioForm() {
             userId: user?.id,
             timestamp: Date.now(),
             username: user?.username || user?.fullName || "unknown",
+            uuid: uuid(),
         },
     });
 
