@@ -2,7 +2,7 @@
 import { AudioUpload } from "@/types/data";
 import { useState } from "react";
 import { Input } from "../ui/input";
-import AudioItem from "../elements/AudioItem";
+import AudioItem from "../audio/AudioItem";
 
 
 export default function Search({ audioUploads }: { audioUploads: AudioUpload[] }) {

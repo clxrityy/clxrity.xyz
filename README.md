@@ -24,7 +24,7 @@
 
 ### Audio
 - ✅ [`/sounds`](https://clxrity.xyz/sounds) - Display all sounds
-    - 🟰 `/sounds/:id` - Display a single sound
+    - ✅ `/sounds/:id` - Display a single sound
 - 🟰 [`/sounds/yearbook/guitar/2024`](https://clxrity.xyz/sounds/yearbook/guitar/2024) - Guitar sounds from 2024
 - ❌ `/sounds/yearbook/vocals/2024` - Vocal sounds from 2024
 - ❌ `/sounds/misc` - Miscellaneous sounds

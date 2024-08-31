@@ -1,6 +1,6 @@
 import { getUploads } from "@/app/(actions)/uploads";
 import { RiAdminFill } from "react-icons/ri";
-import AudioList from "@/components/elements/AudioList";
+import AudioList from "@/components/audio/AudioList";
 import { Suspense } from "react";
 import { ICONS } from "@/config";
 import Logs from "@/components/blocks/Logs";

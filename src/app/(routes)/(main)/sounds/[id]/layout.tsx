@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     return {
         title: `Sound | ${upload.title}`,
-        description: `Listen to ${upload.title} by ${upload.username} on clxrity.`,
+        description: `Listen to ${upload.title} by ${upload.username} on clxrity.\n${upload.description}\n${upload.instrument} in the key of ${upload.key}`,
         keywords: [upload.title, upload.instrument, upload.key],
     }
 }

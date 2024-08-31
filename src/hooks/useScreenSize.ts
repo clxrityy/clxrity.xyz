@@ -12,10 +12,12 @@ const useScreenSize = () => {
 
     useEffect(() => {
         const handleResize = () => {
-            setScreenSize({
-                width: window.innerWidth,
-                height: window.innerHeight
-            });
+            if (typeof window !== "undefined") {
+                setScreenSize({
+                    width: window.innerWidth,
+                    height: window.innerHeight
+                });
+            }
         };
 
         window.addEventListener("resize", handleResize);

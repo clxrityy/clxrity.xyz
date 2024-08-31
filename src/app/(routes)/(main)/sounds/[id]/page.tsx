@@ -1,4 +1,5 @@
 import { getUpload } from "@/app/(actions)/uploads";
+import AudioPage from "@/components/audio/AudioPage";
 
 type Props = {
     params: { id: string };
@@ -12,8 +13,8 @@ export default async function Page({ params }: Props) {
     }
 
     return (
-        <div>
-            {upload.title}
+        <div className="h-full w-full">
+            <AudioPage upload={upload} />
         </div>
     )
 }

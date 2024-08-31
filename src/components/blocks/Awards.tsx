@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/carousel";
 import { Track } from "@clxrity/react-audio";
 import { Keys } from "@/types/audio";
-import GuitarItem from "../elements/GuitarItem";
+import GuitarItem from "../audio/GuitarItem";
 import { Suspense } from "react";
 
 interface ExtendedTrack {
