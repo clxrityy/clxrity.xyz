@@ -41,3 +41,4 @@
 - ✅ [`/sign-in`](https://clxrity.xyz/sign-in) - Sign in page
 - ✅ [`/sign-up`](https://clxrity.xyz/sign-up) - Sign up page
 - 🟰 `/profile/:id` - User profile
+
