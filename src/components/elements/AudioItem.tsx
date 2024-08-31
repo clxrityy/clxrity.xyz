@@ -1,55 +1,87 @@
 "use client";
 import { AudioUpload } from "@/types/data";
 import { AudioCategoryIcon, GenreAudioIcons, InstrumentAudioIcons, MoodAudioIcons, KeyAudioIcons } from "@/types/icons";
-import { AudioPlayer, Waveform } from "@clxrity/react-audio";
+import { Waveform, JustPlayer } from "@clxrity/react-audio";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { saveAs } from 'file-saver';
 import { ICONS } from "@/config";
+import Link from "next/link";
+import useScreenSize from "@/hooks/useScreenSize";
+
+export const downloadAudio = ({ title, username, file }: {
+    title: string;
+    username: string;
+    file: string;
+}) => {
+    const downloadTitle = `${title} @${username}.wav`;
+
+    return saveAs(file, downloadTitle);
+}
 
 export default function AudioItem({ audio }: { audio: AudioUpload }) {
 
-    const downloadAudio = () => {
-        const downloadTitle = `${audio.title} @${audio.username}.wav`;
+    const { width } = useScreenSize();
 
-        return saveAs(audio.file, downloadTitle);
-    }
 
-    return <div className="flex flex-col items-center gap-4 justify-start w-full relative rounded-lg px-3 py-2">
-        <div className="flex flex-col lg:flex-row items-center justify-around w-full">
+
+    return <div className="flex flex-col items-center gap-4 justify-start w-full relative rounded-lg py-2">
+        <div className="flex flex-col items-center justify-around w-full">
             {
-                audio.file && <div className="w-full h-fit">
-                    <Waveform
-                        track={{
+                audio.file && <div className="w-full h-fit flex items-center justify-center">
+                    {
+                        width > 768 ? <Waveform
+                            track={{
+                                title: audio.title,
+                                src: audio.file,
+                                author: {
+                                    name: audio.username === "clxrityadmin" ? "clxrity" : audio.username!,
+                                    url: `/profile/${audio.userId}`
+                                },
+                            }}
+                            size={{
+                                width: 300,
+                                height: 100
+                            }}
+                            color="#ffffff"
+                            style={{
+                                width: "100%",
+                                height: 100
+                            }}
+                        /> : <JustPlayer track={{
                             title: audio.title,
                             src: audio.file,
-                            author: {
-                                name: audio.username === "clxrityadmin" ? "clxrity" : audio.username!,
-                                url: `/profile/${audio.userId}`
-                            },
                         }}
-                        size={{
-                            width: 300,
-                            height: 100
-                        }}
-                        color="#ffffff"
-                        style={{
-                            width: "100%",
-                            height: 100
-                        }}
-                    />
+                            style={{
+                                fontSize: "2rem",
+                                backgroundColor: "#007bff",
+                                paddingTop: "0.65rem",
+                                borderRadius: "0.75rem",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                textAlign: "center",
+                                paddingLeft: "1rem",
+                                paddingRight: "1rem",
+                            }}
+                        />
+                    }
                 </div>
             }
-            <div className="flex flex-col items-center justify-center my-5 px-4 max-w-xs gap-4">
+            <div className="flex flex-col items-center justify-center my-5 px-4 max-w-lg gap-4">
                 <div className="flex flex-row gap-5 items-center">
                     <h4 className="font-bold">
                         {audio.title}
                     </h4>
-                    <button className="text-gray-400 hover:text-emerald-500 transition-colors" onClick={() => downloadAudio()}>
-                        {audio && <ICONS.download size={35} onClick={downloadAudio} />}
+                    <button className="text-gray-400 hover:text-emerald-500 transition-colors" onClick={() => downloadAudio({ title: audio.title, file: audio.file, username: audio.username! })}>
+                        {audio && <ICONS.download size={35} />}
                     </button>
                 </div>
+                <p className="text-gray-400">
+                    by <Link href={`/profile/${audio.userId}`} className="text-emerald-500 hover:underline">
+                        {audio.username === "clxrityadmin" ? "clxrity" : audio.username}
+                    </Link>
+                </p>
                 <p className="text-white/75">{audio.description}</p>
-
             </div>
         </div>
         <div className="flex flex-row gap-2 items-center justify-end py-2 px-5 rounded-lg w-full">
@@ -66,7 +98,7 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
                 audio.key && <AudioIcon categoryIcon={determinIcon("key", audio.key)} />
             }
             {
-                audio.bpm && <p className="text-white bg-zinc-700/75 px-1 py-1 rounded-lg font-mono text-sm">{audio.bpm} BPM</p>
+                audio.bpm && <p className="text-white bg-zinc-700/75 px-[2.5px] py-1 rounded-lg font-mono text-sm text-center">{audio.bpm} BPM</p>
             }
         </div>
     </div>
@@ -94,7 +126,7 @@ function AudioIcon({ categoryIcon, size }: AudioIconProps) {
     )
 }
 
-function determinIcon(category: "genre" | "mood" | "instrument" | "key", value: string): AudioCategoryIcon {
+export function determinIcon(category: "genre" | "mood" | "instrument" | "key", value: string): AudioCategoryIcon {
     switch (category) {
         case "genre":
             switch (value) {

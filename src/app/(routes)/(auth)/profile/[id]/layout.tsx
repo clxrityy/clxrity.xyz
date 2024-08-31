@@ -1,5 +1,5 @@
 import getUser from "@/app/(actions)/users";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 
@@ -32,7 +32,6 @@ export default async function Layout({ children, params }: { children: React.Rea
         return redirect("/");
     }
 
-    const isCurrentUser = auth().userId?.toString() === params.id;
 
     return (
         <div className="w-full h-full">
