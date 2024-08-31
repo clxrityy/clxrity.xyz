@@ -4,7 +4,7 @@ import { IoIosMore } from "react-icons/io";
 import { IoDownload } from "react-icons/io5";
 import { RiAdminFill } from "react-icons/ri";
 import { BsSoundwave } from "react-icons/bs";
-import { FaAngleDown, FaMicrophoneAlt, FaAward } from "react-icons/fa";
+import { FaAngleDown, FaMicrophoneAlt } from "react-icons/fa";
 import { GiGuitarHead } from "react-icons/gi";
 import { LuUndoDot } from "react-icons/lu";
 import { MdLoop } from "react-icons/md";
@@ -26,8 +26,7 @@ export const ICONS = {
     loop: MdLoop,
     oneShot: LuUndoDot,
     menu: TiThMenu,
-    save: RiSave2Fill,
-    award: FaAward
+    save: RiSave2Fill
 
 } as const;
 

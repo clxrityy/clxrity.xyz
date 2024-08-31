@@ -3,6 +3,7 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { auth } from "@clerk/nextjs/server";
+import getUser from "@/app/(actions)/users";
 import { ICONS } from "@/config";
 import { IconType } from "react-icons/lib";
 
@@ -14,13 +15,13 @@ const extendedNavItems: NavItemExtend[] = [
         items: [
             {
                 name: "Guitars 2024",
-                href: "/sounds/yearbook/guitar/2024",
+                href: "/yearbook/guitar",
                 description: "A collection of unique and original electric and acoustic guitar compositions and sounds from 2024.",
                 icon: ICONS.guitar
             },
             {
                 name: "Vocals 2024",
-                href: "/sounds/yearbook/vocals/2024",
+                href: "/yearbook/vocals",
                 description: "Various vocal samples and recordings from 2024.",
                 icon: ICONS.microphone
             }
