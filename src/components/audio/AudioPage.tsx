@@ -5,7 +5,6 @@ import { AudioUpload } from "@/types/data";
 import { Waveform } from "@clxrity/react-audio";
 import Image from "next/image";
 import Link from "next/link";
-import { COLORS } from "@/config";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -16,17 +15,17 @@ export default function AudioPage({ upload }: Props) {
 
     const { width, height } = useScreenSize();
 
-    const [canvasWidth, setCanvasWidth] = useState<number>(width / 1.25);
+    const [canvasWidth, setCanvasWidth] = useState<number>(width! / 1.25);
 
     useEffect(() => {
-        if (width > 1024) {
-            setCanvasWidth(width / 2);
-        } else if (width > 768) {
-            setCanvasWidth(width / 1.25);
-        } else if (width > 640) {
-            setCanvasWidth(width / 1.5);
+        if (width! > 1024) {
+            setCanvasWidth(width! / 2);
+        } else if (width! > 768) {
+            setCanvasWidth(width! / 1.25);
+        } else if (width! > 640) {
+            setCanvasWidth(width! / 1.5);
         } else { 
-            setCanvasWidth(width / 1.75);
+            setCanvasWidth(width! / 1.75);
         }
     }, [width]);
 
@@ -67,14 +66,14 @@ export default function AudioPage({ upload }: Props) {
                         }}
                         size={{
                             width: canvasWidth,
-                            height: height / 4
+                            height: height! / 4
                         }}
                         canvasStyles={{
                             background: 'rgba(0, 0, 0, 0.4)',
                             borderRadius: '0.5rem',
                             boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
                             width: canvasWidth,
-                            height: height / 4,
+                            height: height! / 4,
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',

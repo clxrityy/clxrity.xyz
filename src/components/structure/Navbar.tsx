@@ -104,9 +104,9 @@ export default function Navbar() {
                             extendedNavItems.map((item, index) => (
                                 <NavigationMenuItem key={index} className="w-full">
                                     <NavigationMenuTrigger className="text-base lg:text-lg xl:text-xl 2xl:text-2xl">
-                                        <span className="px-3">
+                                        <Link href={item.href} className="px-3">
                                             {item.name}
-                                        </span>
+                                        </Link>
                                     </NavigationMenuTrigger>
                                     <NavigationMenuContent className="z-10">
                                         {
@@ -161,8 +161,10 @@ function MobileMenu() {
                 {
                     extendedNavItems.map((item, index) => (
                         <DropdownMenuGroup key={index}>
-                            <DropdownMenuLabel className="font-mono uppercase tracking-wider flex flex-row gap-2">
+                            <DropdownMenuLabel>
+                                <Link href={item.href} className="font-mono uppercase tracking-wider flex flex-row gap-2 hover:underline underline-offset-4 transition">
                                 {item.name} <ICONS.angleDown className="h-4 w-4" />
+                                </Link>
                             </DropdownMenuLabel>
                             {
                                 item.items && item.items.map((subItem, subIndex) => (

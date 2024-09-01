@@ -2,12 +2,12 @@
 import { useState, useEffect } from "react";
 
 const useScreenSize = () => { 
-    const [screenSize, setScreenSize] = useState<{
-        width: number;
-        height: number;
+    const [screenSize, setScreenSize] = useState < {
+        width: number | undefined;
+        height: number | undefined;
     }>({
-        width: window.innerWidth,
-        height: window.innerHeight
+        width: window ? window.innerWidth : undefined,
+        height: window ? window.innerHeight : undefined
     });
 
     useEffect(() => {

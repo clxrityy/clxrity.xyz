@@ -7,7 +7,7 @@ import { BsSoundwave } from "react-icons/bs";
 import { FaAngleDown, FaMicrophoneAlt, FaAward } from "react-icons/fa";
 import { GiGuitarHead } from "react-icons/gi";
 import { LuUndoDot } from "react-icons/lu";
-import { MdLoop } from "react-icons/md";
+import { MdLoop, MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { TiThMenu } from "react-icons/ti";
 import { RiSave2Fill } from "react-icons/ri";
 
@@ -27,7 +27,9 @@ export const ICONS = {
     oneShot: LuUndoDot,
     menu: TiThMenu,
     save: RiSave2Fill,
-    award: FaAward
+    award: FaAward,
+    next: MdNavigateNext,
+    previous: MdNavigateBefore,
 
 } as const;
 
@@ -36,3 +38,5 @@ export const maxBytes = 25000000;
 export const COLORS = {
     blue: "#007bff",
 }
+
+export const MAX_UPLOADS_PER_PAGE = 10;

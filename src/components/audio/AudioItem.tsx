@@ -36,7 +36,7 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger aria-label="Download">
-                                <button className={`text-[#58acec] hover:text-[#007bff] hover:scale-105 transition-all`} onClick={() => downloadAudio({ title: audio.title, file: audio.file, username: audio.username! })}>
+                                <button className={`text-gray-500 hover:text-[#007bff] hover:scale-105 transition-all`} onClick={() => downloadAudio({ title: audio.title, file: audio.file, username: audio.username! })}>
                                     {audio && <ICONS.download size={35} />}
                                 </button>
                             </TooltipTrigger>
@@ -63,7 +63,7 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
                 {
                 audio.file && <div className="w-full h-fit flex items-center justify-center">
                     {
-                        width > 768 ? <Waveform
+                        width && width > 768 ? <Waveform
                             track={{
                                 title: audio.title,
                                 src: audio.file,
@@ -103,7 +103,7 @@ export default function AudioItem({ audio }: { audio: AudioUpload }) {
             }
             </div>
         </div>
-        <div className="flex flex-row gap-2 items-center justify-end py-2 px-5 rounded-lg w-full">
+        <div className="flex flex-row gap-2 items-center justify-start py-2 px-5 rounded-lg w-full">
             {
                 audio.genre && <AudioIcon categoryIcon={determinIcon("genre", audio.genre.toUpperCase())} />
             }

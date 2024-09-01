@@ -1,6 +1,7 @@
 import { getUpload } from "@/app/(actions)/uploads";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 type Props = {
     params: { id: string };
