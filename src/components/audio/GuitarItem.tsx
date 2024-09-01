@@ -15,7 +15,7 @@ export default function GuitarItem({ track }: Props) {
 
     const { width } = useScreenSize();
 
-    if (width < 768) {
+    if (width && width < 768) {
         return <div className="w-full h-full flex items-center justify-center mx-auto">
             <JustPlayer
                 track={track}
