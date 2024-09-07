@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Carousel,
     CarouselContent,
@@ -23,12 +23,12 @@ type Props = {
 
 export default function Awards({ tracks }: Props) {
     return (
-        <Carousel className="max-w-[500px] min-w-[120px] h-fit flex items-center">
+        <Carousel className="max-w-[350px] min-w-[120px] h-fit flex items-center bg-transparent">
             <CarouselContent className="w-full h-full">
                 {tracks.map((track, index) => (
-                    <CarouselItem key={index} className="w-full">
+                    <CarouselItem key={index} className="w-full bg-transparent">
                         <div className="p-3 w-full mx-auto">
-                            <Card className="w-full mx-auto">
+                            <Card className="w-full mx-auto bg-transparent py-3 px-2 rounded-xl">
                                 <CardHeader className="px-2 py-1">
                                     <CardTitle>
                                         {track.track.title}
@@ -56,7 +56,7 @@ export default function Awards({ tracks }: Props) {
                                 </CardHeader>
 
                                 <div className="max-w-[400px] h-[115px] flex items-center justify-center my-auto">
-                                    <Suspense fallback={<div className="bg-gray-700 rounded-lg animate-pulse w-full h-full" />}>
+                                    <Suspense fallback={<div className="bg-slate-600/40 rounded-lg animate-pulse w-full h-full" />}>
                                         <GuitarItem track={{
                                             title: track.track.title,
                                             src: track.track.src,

@@ -23,6 +23,9 @@ body {
   @apply h-screen w-screen fixed z-0 overflow-y-scroll;
 }
 
+.font-kanit {
+  font-family: var(--font-kanit);
+}
 
 h1 {
   text-shadow: 1px 1px 1rem #666;

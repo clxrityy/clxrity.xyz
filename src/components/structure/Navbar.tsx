@@ -10,17 +10,17 @@ import { IconType } from "react-icons/lib";
 const extendedNavItems: NavItemExtend[] = [
     {
         name: "Yearbook",
-        href: "/yearbook",
+        href: "/sounds/yearbook",
         items: [
             {
                 name: "Guitars 2024",
-                href: "/sounds/yearbook/guitar/2024",
+                href: "/sounds/yearbook/2024/guitars",
                 description: "A collection of unique and original electric and acoustic guitar compositions and sounds from 2024.",
                 icon: ICONS.guitar
             },
             {
                 name: "Vocals 2024",
-                href: "/sounds/yearbook/vocals/2024",
+                href: "/sounds/yearbook/2024/vocals",
                 description: "Various vocal samples and recordings from 2024.",
                 icon: ICONS.microphone
             }

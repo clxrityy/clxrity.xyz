@@ -10,6 +10,8 @@ import { LuUndoDot } from "react-icons/lu";
 import { MdLoop, MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { TiThMenu } from "react-icons/ti";
 import { RiSave2Fill } from "react-icons/ri";
+import { FaBook } from "react-icons/fa6";
+import { LuGalleryHorizontalEnd } from "react-icons/lu";
 
 
 export const ICONS = {
@@ -30,7 +32,8 @@ export const ICONS = {
     award: FaAward,
     next: MdNavigateNext,
     previous: MdNavigateBefore,
-
+    book: FaBook,
+    gallery: LuGalleryHorizontalEnd,
 } as const;
 
 export const maxBytes = 25000000;
