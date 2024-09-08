@@ -31,8 +31,8 @@ export default function AudioList({ uploads, ...props }: Props) {
     const currentTrack = tracks[currentTrackIndex];
 
     return (
-        <div {...props} className="w-2/3 flex items-center justify-center">
-            <div className="w-full flex flex-col items-center justify-center">
+        <div {...props} className="w-full flex items-center justify-center">
+            <div className="w-3/4 flex flex-col items-center justify-center">
                 <ul className="w-full">
                     {tracks.map((track, index) => (
                         <ScrollArea key={index} className="w-full h-fit max-h-[100px]">

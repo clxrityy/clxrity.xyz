@@ -27,7 +27,7 @@ export default async function Page() {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col lg:flex-row items-center justify-center w-full lg:ml-14">
+                <div className="grid grid-cols-1 xl:grid-cols-2 items-center justify-center w-full gap-10">
                     <Suspense
                         fallback={
                             <div className="backdrop:blur w-full flex items-center justify-center">
@@ -36,9 +36,8 @@ export default async function Page() {
                         }>
                         <AudioList uploads={uploads} />
                     </Suspense>
-                    <Logs />
-                    <div className="w-full">
-
+                    <div className="w-2/3 mx-auto">
+                        <Logs />
                     </div>
                 </div>
             </div>

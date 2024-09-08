@@ -78,6 +78,7 @@ export default function AudioPage({ upload }: Props) {
                             justifyContent: 'center',
                             alignItems: 'center',
                         }}
+                        color="rgba(255, 255, 255, 0.5)"
                     />
                 </div>
             </div>

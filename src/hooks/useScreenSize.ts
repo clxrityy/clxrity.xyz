@@ -17,6 +17,11 @@ const useScreenSize = () => {
                     width: window.innerWidth,
                     height: window.innerHeight
                 });
+            } else {
+                setScreenSize({
+                    width: undefined,
+                    height: undefined
+                });
             }
         };
 

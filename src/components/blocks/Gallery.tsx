@@ -19,7 +19,7 @@ export default function Gallery({ tracks }: Props) {
     const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(0);
     const currentTrack = trackList[currentTrackIndex];
 
-    return <div className="max-w-[400px] invert-[30%]">
+    return <div className="max-w-[400px] invert-[10%]">
         <div className="w-full flex flex-col items-center justify-center">
             <ul className="w-full">
                 {trackList.map((track, index) => (

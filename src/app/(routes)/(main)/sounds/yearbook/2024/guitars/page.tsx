@@ -1,11 +1,9 @@
 import { ICONS } from "@/config";
 import { Suspense } from "react";
-import dynamic from "next/dynamic";
 import { Track } from "@clxrity/react-audio";
 import { Keys } from "@/types/audio";
 import Gallery from "@/components/blocks/Gallery";
-
-const Awards = dynamic(() => import("@/components/blocks/Awards"));
+import Awards from "@/components/blocks/Awards";
 
 export default async function Page() {
 
@@ -53,14 +51,14 @@ export default async function Page() {
         key?: keyof typeof Keys;
     }[] = [
             {
-            track: {
+                track: {
                     title: "inner seven",
                     src: "/assets/audio/yearbook/gallery/inner-seven-[88].wav",
                     author: {
                         name: "clxrity"
                     }
-            },
-            bpm: 88,
+                },
+                bpm: 88,
             },
             {
                 track: {
@@ -71,8 +69,8 @@ export default async function Page() {
                     }
                 },
                 bpm: 93,
-        }
-    ];
+            }
+        ];
 
     return (
         <div className="w-full h-full flex flex-col gap-10 items-center justify-center">
@@ -89,7 +87,7 @@ export default async function Page() {
                  * awards (carousel)
                  */}
                 <div className="w-full flex flex-col gap-5 items-center justify-center mx-auto border-r border-b border-gray-200/40 rounded-lg shadow-xl">
-                    <h3 className="flex flex-row items-start gap-2 font-bold justify-start w-full 2xl:justify-center uppercase font-kanit before:text-gray-300 after:text-gray-200 underline underline-offset-8 animate-pulse text-start">
+                    <h3 className="flex flex-row items-center gap-2 font-bold justify-start w-full 2xl:justify-center uppercase font-kanit before:text-gray-300 after:text-gray-200 underline underline-offset-8 animate-pulse text-start">
                         Awards <ICONS.award />
                     </h3>
                     <div className="w-fit">
@@ -99,7 +97,7 @@ export default async function Page() {
                     </div>
                 </div>
                 <div className="w-full flex-col flex gap-5 items-center justify-center mx-auto border-l border-b border-gray-200/40 shadow-xl rounded-lg">
-                    <h3 className="flex flex-row items-start gap-2 font-bold justify-end w-full 2xl:justify-center uppercase font-kanit before:text-gray-300 after:text-gray-200 underline underline-offset-8 animate-pulse text-start">
+                    <h3 className="flex flex-row items-center gap-2 font-bold justify-end w-full 2xl:justify-center uppercase font-kanit before:text-gray-300 after:text-gray-200 underline underline-offset-8 animate-pulse text-start">
                         Gallery <ICONS.gallery />
                     </h3>
                     <div className="w-full bg-slate-700/30 rounded-xl mb-6 ml-6 flex items-center justify-center">

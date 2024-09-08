@@ -34,3 +34,23 @@ export async function getLog(ref: DocumentReference) {
 
     return log;
 }
+
+export async function getLogById(id: string): Promise<Log | null> {
+    let log: Log | null = null;
+
+    try {
+        const querySnapshot = await getDocs(collection(db, "logs"));
+
+        querySnapshot.forEach((doc) => {
+            if (doc.id === id) {
+                log = doc.data() as Log;
+            }
+        });
+    } catch (e) {
+        console.error("Error getting document: ", e); // Debugging
+    }
+
+    // console.log("Log: ", log); // Debugging
+
+    return log;
+}
