@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html,
+body {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #eee;
+    background-color: #1f2021;
+    background-image: linear-gradient(90deg, rgb(23, 24, 24) 0%, rgb(28, 28, 28) 35%, rgb(21, 21, 21) 100%);
+    margin: 0;
+    padding: 0;
+
+    @apply w-screen h-screen;
+}
+
+.header {
+    font-family: var(--font-kanit);
+
+    @apply flex flex-col items-center justify-center 2xl:flex-row gap-4;
+}
+
+.header h1 {
+    text-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.05);
+    background: linear-gradient(#4585bd, #5e5f9c);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    @apply text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold xl:hover:underline underline-offset-4 transition-all duration-150 px-10 py-4 rounded-xl;
+}
+
+.header h1:hover {
+    text-shadow: 0 0 0.75rem rgba(255, 255, 255, 0.095);
+
+    @apply scale-105 transition-transform duration-150;
+}
+
+.header h1 span {
+    @apply text-blue-400/75;
+}
+
+.header img {
+    filter: drop-shadow(0 0 2rem rgba(0, 0, 0, 0.5));
+    border-radius: 32.5%;
+}
+
+.header button {
+    margin: 2px;
+
+    @apply w-min;
+}
+
+.animate-slow-pulse {
+    animation: slow-pulse 2.5s infinite;
+}
+
+.animate-slow-spin {
+    animation: slow-spin 7.5s linear infinite;
+}
+
+@keyframes slow-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.75;
+    }
+}
+
+@keyframes slow-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    12.5% {
+        transform: rotate(45deg);
+    }
+
+    25% {
+        transform: rotate(90deg);
+    }
+
+    37.5% {
+        transform: rotate(135deg);
+    }
+
+    50% {
+        transform: rotate(180deg);
+    }
+
+    62.5% {
+        transform: rotate(225deg);
+    }
+
+    75% {
+        transform: rotate(270deg);
+    }
+
+    87.5% {
+        transform: rotate(315deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.server-status {
+    font-family: var(--font-varela);
+}
+
+.beta-form {
+    font-family: var(--font-varela);
+
+    @apply text-zinc-300 flex flex-col gap-10 justify-around items-center;
+}
+
+.beta-form h2 {
+    text-shadow: 0 0 0.25rem rgba(255, 255, 255, 0.272);
+
+    @apply text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl;
+}
+
+.online {
+    box-shadow: 0 0 0.5rem rgba(0, 255, 0, 0.5);
+}
+
+.offline {
+    box-shadow: 0 0 0.5rem rgb(75, 75, 75);
+}
+
+.beta-form form {
+    box-shadow: 0 0 0.5rem rgba(37, 37, 37, 0.5);
+}
+
+
+input, textarea {
+
+    @apply w-full xl:w-2/3 2xl:h-12 px-4 py-2 text-sm md:text-base bg-zinc-700 rounded-xl focus:ring focus:ring-blue-400/50 focus:outline-none placeholder:text-white/75 required:ring-red-500/75 border-zinc-900 focus:ring-blue-500 focus:border-blue-500 focus:ring-offset-2 focus:ring-offset-blue-800 font-extralight font-sans tracking-wide placeholder:text-zinc-400 placeholder:italic;
+}
