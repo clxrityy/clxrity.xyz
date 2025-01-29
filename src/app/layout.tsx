@@ -1,10 +1,7 @@
-import Background from "@/components/structure/Background";
-import Navbar from "@/components/structure/Navbar";
 import "@/styles/globals.css";
 import type { Metadata } from 'next';
 import { Kanit, Varela_Round } from 'next/font/google';
-import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
+
 
 
 const kanit = Kanit({ subsets: ['latin'], weight: ["300", "400", "500", "700"], variable: "--font-kanit", preload: true });
@@ -22,9 +19,6 @@ export default async function RootLayout({
 }) {
 
   return (
-    <ClerkProvider appearance={{
-      baseTheme: dark
-    }}>
       <html lang="en">
         <head>
           <title>clxrity</title>
@@ -42,13 +36,10 @@ export default async function RootLayout({
           <meta property="twitter:description" content="Vocals and instrumentals" />
         </head>
         <body className={`${kanit.variable} ${varela.variable} dark`}>
-          <Navbar />
           <div className="w-full h-full my-10 z-10">
             {children}
           </div>
-          <Background />
         </body>
       </html>
-    </ClerkProvider>
   )
 }
