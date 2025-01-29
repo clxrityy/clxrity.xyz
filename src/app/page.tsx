@@ -16,7 +16,7 @@ export default function Home() {
           <ul className="flex flex-col items-center justify-around w-3/4 gap-4 font-kanit tracking-wide text-zinc-200">
             <li className="flex flex-row gap-2 items-center justify-start w-2/3">
               <Image src={"/mc.png"} width={32} height={32} alt={"mc.clxrity.xyz"} className="h-5 w-5 md:h-6 md:w-6 lg:w-8 lg:h-8" />
-              <Link href={"https://mc.clxrity.xyz"} className="text-base lg:text-lg">
+              <Link href={"https://web.clxrity.xyz"} className="text-base lg:text-lg">
                 mc <span className="sr-only">mc.clxrity.xyz</span>
               </Link>
             </li>
