@@ -36,7 +36,7 @@ export default async function RootLayout({
           <meta property="twitter:description" content="Vocals and instrumentals" />
         </head>
         <body className={`${kanit.variable} ${varela.variable} dark`}>
-          <div className="w-full h-full my-10 z-10">
+          <div className="w-full h-full z-10">
             {children}
           </div>
         </body>
