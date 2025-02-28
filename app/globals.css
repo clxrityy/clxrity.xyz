@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/* Base theme variables */
+:root {
+  --background: #ededed;
+  --foreground: #171717;
+  --background-start: #ededed;
+  --background-end: #ffffff;
+}
+
+/* Dark mode overrides using media query */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --background-start: #0a0a0a;
+    --background-end: #171717;
+  }
+}
+
+* {
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  outline: 0;
+}
+
+@theme {
+  --font-ubuntu: var(--font-ubuntu);
+  --font-ubuntu-mono: var(--font-ubuntu-mono);
+}
+
+html,
+body {
+  color: var(--foreground);
+  background: var(--background);
+  background-image: linear-gradient(
+    to bottom,
+    var(--background-start),
+    var(--background-end)
+  );
+
+  @apply w-screen h-screen font-ubuntu;
+}
+
+/* Smooth transitions */
+html {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    background-image 0.3s ease;
+}
