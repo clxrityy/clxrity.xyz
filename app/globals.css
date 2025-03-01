@@ -53,3 +53,9 @@ html {
     color 0.3s ease,
     background-image 0.3s ease;
 }
+
+@layer base {
+  .vanta-canvas {
+    opacity: 0.45;
+  }
+}

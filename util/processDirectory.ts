@@ -3,14 +3,14 @@ import { ComponentType } from "react";
 
 export type Process = {
   Component: ComponentType;
-  hasWindow: boolean;
+  hasWindow?: boolean;
 };
 
 export type Processes = {
   [id: string]: Process;
 };
 
-const START_UP_PROCESSES: string[] = ["Main"];
+const START_UP_PROCESSES: string[] = ["Navigation"];
 
 export const processDirectory: Processes = {
   Main: {
@@ -18,6 +18,11 @@ export const processDirectory: Processes = {
       import("../components/pages/Main").then((mod) => mod.Main),
     ),
     hasWindow: true,
+  },
+  Navigation: {
+    Component: dynamic(() =>
+      import("../components/system/Navigation").then((mod) => mod.Navigation),
+    ),
   },
 } as const;
 
