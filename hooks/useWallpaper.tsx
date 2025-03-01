@@ -30,24 +30,38 @@ export const initialWallpaperSettings: WallpaperSettings = {
   spacing: 20.0,
 };
 
+const defineThree = (three: typeof THREE) => {
+  const { Material } = three;
 
-export const useWallpaper = ({
-  refElement,
-  settings = initialWallpaperSettings,
+  const material = new Material();
+
+
+  material.vertexColors = true;
+
+  return {
+    ...three,
+    Material: material,
+  };
+};
+
+
+export const useWallpaperHook = ({
+  desktopRef,
+  settings,
 }: {
-  refElement: RefObject<HTMLElement | null>;
+  desktopRef: RefObject<HTMLElement>;
   settings?: WallpaperSettings;
 }): void => {
 
   const isWebGLAvailable: boolean = typeof WebGLRenderingContext !== "undefined";
 
   useEffect(() => {
-    const vantaEffect = isWebGLAvailable ? NET({
-      el: refElement && refElement.current,
-      THREE,
+    const vantaEffect = isWebGLAvailable && desktopRef ? NET({
+      el: desktopRef.current,
+      THREE: defineThree(THREE),
       ...settings
     }) : undefined;
 
     return () => vantaEffect?.destroy();
-  }, [refElement, settings, isWebGLAvailable]);
+  }, [desktopRef, settings, isWebGLAvailable]);
 };

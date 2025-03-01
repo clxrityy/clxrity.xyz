@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction } from "react";
 import { initialSessionContextState } from "./initialStates";
 import { contextFactory } from "./contextFactory";
 import { useSessionContextState } from "@/hooks/useSessionContextState";
+import { WallpaperSettings } from "@/hooks/useWallpaper";
 
 export type Theme = "dark" | "system" | "light";
 
@@ -13,8 +14,10 @@ export type SessionContextState = {
   };
   settings: {
     theme: Theme;
+    wallpaper: WallpaperSettings;
   };
   setTheme: ((theme: Theme) => void) | Dispatch<SetStateAction<Theme>>;
+  useWallpaper: ((desktopRef: React.RefObject<HTMLElement>, settings?: WallpaperSettings) => void);
 };
 
 const { Consumer, Provider } = contextFactory<SessionContextState>(

@@ -5,8 +5,12 @@ export const initialSessionContextState: SessionContextState = {
   data: {},
   settings: {
     theme: "dark",
+    wallpaper: {}
   },
   setTheme() {
+    return null;
+  },
+  useWallpaper() {
     return null;
   },
 };
