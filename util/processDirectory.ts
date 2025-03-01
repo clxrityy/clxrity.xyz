@@ -10,7 +10,7 @@ export type Processes = {
   [id: string]: Process;
 };
 
-const START_UP_PROCESSES: string[] = ["Navigation"];
+const START_UP_PROCESSES: string[] = ["Toolbar"];
 
 export const processDirectory: Processes = {
   Main: {
@@ -19,9 +19,9 @@ export const processDirectory: Processes = {
     ),
     hasWindow: true,
   },
-  Navigation: {
+  Toolbar: {
     Component: dynamic(() =>
-      import("../components/system/Navigation").then((mod) => mod.Navigation),
+      import("../components/system/toolbar/Toolbar").then((mod) => mod.Toolbar),
     ),
   },
 } as const;

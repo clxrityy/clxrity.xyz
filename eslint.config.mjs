@@ -17,6 +17,7 @@ const eslintConfig = [
       "prettier",
       "plugin:@typescript-eslint/recommended",
       "plugin:jest/recommended",
+      "plugin:prettier/recommended",
     ],
     env: {
       node: true,
@@ -24,7 +25,7 @@ const eslintConfig = [
       browser: true,
       jest: true,
     },
-    plugins: ["jest", "react"],
+    plugins: ["jest", "react", "prettier"],
     parser: "@typescript-eslint/parser",
     parserOptions: {
       ecmaFeatures: {
@@ -39,9 +40,13 @@ const eslintConfig = [
         files: ["__tests__/**/*.spec.ts"],
         rules: {
           "playwrite/no-standalone-expect": "off",
+          "comma-dangle": ["error"],
         },
       },
     ],
+    rules: {
+      "prettier/prettier": "error",
+    },
   }),
 ];
 

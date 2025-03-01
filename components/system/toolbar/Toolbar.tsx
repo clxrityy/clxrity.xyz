@@ -1,17 +1,15 @@
 import { RootButton } from "./RootButton";
 
-export const Navigation = () => {
+export const Toolbar = () => {
   return (
     <nav className="top-0 fixed bg-gradient-to-r from-[var(--background-start)] to-[var(--background-end)] w-screen h-16 drop-shadow-md shadow-inner">
-      {
-        /**
-         * - Root button (logo)
-         *
-         * - ... tasks
-         * - ... spacing
-         * - ... clock / weather
-         */
-      }
+      {/**
+       * - Root button (logo)
+       *
+       * - ... tasks
+       * - ... spacing
+       * - ... clock / weather
+       */}
 
       {/* Wrapper */}
       <div className="w-full h-full mx-auto">
@@ -23,11 +21,13 @@ export const Navigation = () => {
 
           <div className="w-[90%] flex flex-1 items-center justify-end xl:justify-center gap-5">
             <li className="w-[25%] lg:w-[30%] 2xl:w-[40%] bg-blue-500 h-10">
-              {/* Tasks */}
+              {/* Tools */}
             </li>
-            <li className="w-[15%] lg:w-[20%] 2xl:w-[30%] bg-red-500 h-10">
-                {/*
-                  Time / Weather
+            <li className="w-[15%] lg:w-[20%] 2xl:w-[30%] border border-red-500 h-10">
+              {/*
+                  Clock
+                    /
+                  Weather
                 */}
             </li>
           </div>

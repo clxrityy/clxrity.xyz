@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Ubuntu, Ubuntu_Mono } from "next/font/google";
-import "./globals.css";
+import "@/styles/globals.css";
 import { SessionProvider } from "@/context/session";
 
 const ubuntu = Ubuntu({

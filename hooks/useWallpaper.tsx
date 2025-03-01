@@ -35,7 +35,6 @@ const defineThree = (three: typeof THREE) => {
 
   const material = new Material();
 
-
   material.vertexColors = true;
 
   return {
@@ -44,7 +43,6 @@ const defineThree = (three: typeof THREE) => {
   };
 };
 
-
 export const useWallpaperHook = ({
   desktopRef,
   settings,
@@ -52,15 +50,18 @@ export const useWallpaperHook = ({
   desktopRef: RefObject<HTMLElement>;
   settings?: WallpaperSettings;
 }): void => {
-
-  const isWebGLAvailable: boolean = typeof WebGLRenderingContext !== "undefined";
+  const isWebGLAvailable: boolean =
+    typeof WebGLRenderingContext !== "undefined";
 
   useEffect(() => {
-    const vantaEffect = isWebGLAvailable && desktopRef ? NET({
-      el: desktopRef.current,
-      THREE: defineThree(THREE),
-      ...settings
-    }) : undefined;
+    const vantaEffect =
+      isWebGLAvailable && desktopRef
+        ? NET({
+            el: desktopRef.current,
+            THREE: defineThree(THREE),
+            ...settings,
+          })
+        : undefined;
 
     return () => vantaEffect?.destroy();
   }, [desktopRef, settings, isWebGLAvailable]);

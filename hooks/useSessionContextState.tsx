@@ -1,16 +1,23 @@
 import { type SessionContextState } from "@/context/session";
-import { initialWallpaperSettings, useWallpaperHook, WallpaperSettings } from "./useWallpaper";
+import {
+  initialWallpaperSettings,
+  useWallpaperHook,
+  WallpaperSettings,
+} from "./useWallpaper";
 
 export const useSessionContextState = (): SessionContextState => ({
   data: {},
   settings: {
     theme: "dark",
-    wallpaper: initialWallpaperSettings
+    wallpaper: initialWallpaperSettings,
   },
   setTheme() {
-    this.setTheme(this.settings.theme)
+    this.setTheme(this.settings.theme);
   },
-  useWallpaper(desktopRef: React.RefObject<HTMLElement>, settings?: WallpaperSettings) {
+  useWallpaper(
+    desktopRef: React.RefObject<HTMLElement>,
+    settings?: WallpaperSettings,
+  ) {
     useWallpaperHook({ desktopRef, settings });
-  }
+  },
 });

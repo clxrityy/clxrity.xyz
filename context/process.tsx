@@ -1,6 +1,6 @@
 import { useProcessContextState } from "@/hooks/useProcessContextState";
 import { initialProcessesState } from "./initialStates";
-import { contextFactory } from "./contextFactory";
+import { contextFactory } from "../util/contextFactory";
 import { Processes } from "@/util/processDirectory";
 
 export type ProcessContextState = {
