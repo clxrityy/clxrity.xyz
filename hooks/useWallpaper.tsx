@@ -30,18 +30,24 @@ export const initialWallpaperSettings: WallpaperSettings = {
   spacing: 20.0,
 };
 
+
 export const useWallpaper = ({
   refElement,
+  settings = initialWallpaperSettings,
 }: {
   refElement: RefObject<HTMLElement | null>;
+  settings?: WallpaperSettings;
 }): void => {
+
+  const isWebGLAvailable: boolean = typeof WebGLRenderingContext !== "undefined";
+
   useEffect(() => {
-    const vantaEffect = NET({
+    const vantaEffect = isWebGLAvailable ? NET({
       el: refElement && refElement.current,
       THREE,
-      ...initialWallpaperSettings,
-    });
+      ...settings
+    }) : undefined;
 
-    return () => vantaEffect.destroy();
-  }, [refElement]);
+    return () => vantaEffect?.destroy();
+  }, [refElement, settings, isWebGLAvailable]);
 };

@@ -5,7 +5,7 @@ import { ProcessProvider } from "@/context/process";
 
 export default function Home() {
   return (
-    <main role="main">
+    <main role="main-page">
       <ProcessProvider>
         <Desktop>
           <ProcessLoader />
