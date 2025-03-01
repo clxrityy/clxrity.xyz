@@ -8,13 +8,30 @@ export const Navigation = () => {
          * - Root button (logo)
          *
          * - ... tasks
-         * - ... system tray
+         * - ... spacing
          * - ... clock / weather
          */
       }
 
-      <div className="flex items-center justify-between h-full px-4 w-full m-4">
-        <RootButton />
+      {/* Wrapper */}
+      <div className="w-full h-full mx-auto">
+        {/* Main container */}
+        <ul className="flex items-center justify-center h-full w-full gap-5 xl:gap-7 2xl:gap-10">
+          <li className="flex items-center justify-start h-full px-4 m-4 w-[25%] xl:w-[50%]">
+            <RootButton />
+          </li>
+
+          <div className="w-[90%] flex flex-1 items-center justify-end xl:justify-center gap-5">
+            <li className="w-[25%] lg:w-[30%] 2xl:w-[40%] bg-blue-500 h-10">
+              {/* Tasks */}
+            </li>
+            <li className="w-[15%] lg:w-[20%] 2xl:w-[30%] bg-red-500 h-10">
+                {/*
+                  Time / Weather
+                */}
+            </li>
+          </div>
+        </ul>
       </div>
     </nav>
   );

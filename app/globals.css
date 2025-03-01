@@ -28,6 +28,11 @@
   outline: 0;
 }
 
+ol,
+ul {
+  list-style: none;
+}
+
 @theme {
   --font-ubuntu: var(--font-ubuntu);
   --font-ubuntu-mono: var(--font-ubuntu-mono);
@@ -56,6 +61,6 @@ html {
 
 @layer base {
   .vanta-canvas {
-    opacity: 0.45;
+    opacity: 0.35;
   }
 }
