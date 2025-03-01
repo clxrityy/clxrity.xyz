@@ -1,6 +1,18 @@
-import { type ProcessContextState } from "@/context/process";
-import { type Processes } from "@/util/processDirectory";
+"use client";
+import { ProcessContextState } from "@/context/process";
+import { getStartupProcesses, type Processes } from "@/util/processDirectory";
+import { useState } from "react";
 
-export const useProcessContextState = (
-  startupProcesses: Processes,
-): ProcessContextState => ({ processes: startupProcesses });
+export const useProcessContextState = (): ProcessContextState => {
+  const [processes] = useState<Processes>(getStartupProcesses());
+
+  if (!processes) {
+    return {
+      processes: {},
+    };
+  }
+
+  return {
+    processes,
+  };
+};

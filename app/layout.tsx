@@ -20,7 +20,7 @@ const ubuntuMono = Ubuntu_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "clxrity OS",
+  title: "clxOS",
   description: "A minimalistic OS for the web",
 };
 
@@ -30,14 +30,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-    >
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/**
+         * put images and stuff in here
+         */}
+      </head>
       <body className={`${ubuntu.variable} ${ubuntuMono.variable}`}>
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );

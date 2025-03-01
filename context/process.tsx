@@ -1,29 +1,15 @@
-"use client";
-import { createContext, useState } from "react";
-import { Processes, processDirectory } from "@/util/processDirectory";
 import { useProcessContextState } from "@/hooks/useProcessContextState";
 import { initialProcessesState } from "./initialStates";
-
-export const {Provider, Consumer} = createContext<ProcessContextState>(
-  initialProcessesState,
-);
+import { contextFactory } from "./contextFactory";
+import { Processes } from "@/util/processDirectory";
 
 export type ProcessContextState = {
   processes: Processes;
 };
 
-export const ProcessProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [processes] = useState<typeof processDirectory>(processDirectory);
+const { Consumer, Provider } = contextFactory(
+  initialProcessesState,
+  useProcessContextState,
+);
 
-  return (
-    <Provider value={useProcessContextState(processes)}>
-      {children}
-    </Provider>
-  );
-};
-
-export const ProcessConsumer = Consumer;
+export { Consumer as ProcessConsumer, Provider as ProcessProvider };

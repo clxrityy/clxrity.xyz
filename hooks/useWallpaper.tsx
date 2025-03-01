@@ -2,27 +2,28 @@ import NET from "vanta/dist/vanta.net.min";
 import * as THREE from "three";
 import { RefObject, useEffect } from "react";
 
-export const useWallpaper = ({ refElement }: { refElement: RefObject<HTMLElement> }): void => {
-
+export const useWallpaper = ({
+  refElement,
+}: {
+  refElement: RefObject<HTMLElement | null>;
+}): void => {
   useEffect(() => {
     const vantaEffect = NET({
-      el: refElement.current,
+      el: refElement && refElement.current,
       THREE,
       mouseControls: false,
       touchControls: false,
       gyroControls: false,
-      minHeight: 200.00,
-      minWidth: 200.00,
-      scale: 1.00,
-      scaleMobile: 1.00,
+      minHeight: 200.0,
+      minWidth: 200.0,
+      scale: 1.0,
+      scaleMobile: 1.0,
       color: 0x969696,
       backgroundColor: 0x111111,
-      maxDistance: 13.00,
-      spacing: 20.00,
+      maxDistance: 13.0,
+      spacing: 20.0,
     });
 
-
     return () => vantaEffect.destroy();
-
   }, [refElement]);
-}
+};

@@ -7,5 +7,5 @@ export const useSessionContextState = (): SessionContextState => ({
   },
   setTheme() {
     return null;
-  }
+  },
 });
