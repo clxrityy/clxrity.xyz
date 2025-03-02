@@ -64,3 +64,9 @@ html {
     opacity: 0.35;
   }
 }
+
+@layer utilities {
+  .font-mono {
+    font-family: var(--font-ubuntu-mono);
+  }
+}

@@ -18,7 +18,7 @@ export type SessionContextState = {
   };
   setTheme: ((theme: Theme) => void) | Dispatch<SetStateAction<Theme>>;
   useWallpaper: (
-    desktopRef: React.RefObject<HTMLElement>,
+    desktopRef: React.RefObject<HTMLElement | null>,
     settings?: WallpaperSettings,
   ) => void;
 };

@@ -15,7 +15,7 @@ export const useSessionContextState = (): SessionContextState => ({
     this.setTheme(this.settings.theme);
   },
   useWallpaper(
-    desktopRef: React.RefObject<HTMLElement>,
+    desktopRef: React.RefObject<HTMLElement | null>,
     settings?: WallpaperSettings,
   ) {
     useWallpaperHook({ desktopRef, settings });

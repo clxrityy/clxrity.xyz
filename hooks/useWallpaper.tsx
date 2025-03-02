@@ -47,7 +47,7 @@ export const useWallpaperHook = ({
   desktopRef,
   settings,
 }: {
-  desktopRef: RefObject<HTMLElement>;
+  desktopRef: RefObject<HTMLElement | null>;
   settings?: WallpaperSettings;
 }): void => {
   const isWebGLAvailable: boolean =

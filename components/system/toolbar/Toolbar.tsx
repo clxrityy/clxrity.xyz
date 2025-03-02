@@ -1,3 +1,4 @@
+import { Clock } from "./Clock";
 import { RootButton } from "./RootButton";
 
 export const Toolbar = () => {
@@ -18,15 +19,16 @@ export const Toolbar = () => {
           {/* LEFT container */}
           <li className="w-4/5 flex items-center justify-start gap-5">
             <ul className="flex items-center justify-start gap-5 w-full lg:w-3/4 xl:w-1/2 2xl:w-1/3">
-              <li className="w-[25%] lg:w-[30%] 2xl:w-[40%] bg-blue-500 h-10">
-                {/* Tools */}
-              </li>
-              <li className="w-[15%] lg:w-[20%] 2xl:w-[30%] bg-red-500 h-10">
+              <li className="w-[15%] lg:w-[20%] 2xl:w-[30%] bg-blue-500 h-10">
                 {/*
                   Clock
                     /
                   Weather
                 */}
+                <Clock />
+              </li>
+              <li className="w-[25%] lg:w-[30%] 2xl:w-[40%] bg-red-500 h-10">
+                {/* Tools */}
               </li>
             </ul>
           </li>
