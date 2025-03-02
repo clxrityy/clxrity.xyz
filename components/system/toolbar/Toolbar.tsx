@@ -16,8 +16,8 @@ export const Toolbar = () => {
         {/* Main container */}
         <ul className="flex items-center justify-center h-full w-full gap-5 xl:gap-7 2xl:gap-10">
           {/* LEFT container */}
-          <div className="w-4/5 flex items-center justify-start gap-5">
-            <div className="flex items-center justify-start gap-5 w-full lg:w-3/4 xl:w-1/2 2xl:w-1/3">
+          <li className="w-4/5 flex items-center justify-start gap-5">
+            <ul className="flex items-center justify-start gap-5 w-full lg:w-3/4 xl:w-1/2 2xl:w-1/3">
               <li className="w-[25%] lg:w-[30%] 2xl:w-[40%] bg-blue-500 h-10">
                 {/* Tools */}
               </li>
@@ -28,8 +28,8 @@ export const Toolbar = () => {
                   Weather
                 */}
               </li>
-            </div>
-          </div>
+            </ul>
+          </li>
           <li className="flex items-center justify-start h-full px-4 m-4">
             <RootButton />
           </li>
