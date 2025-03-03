@@ -4,7 +4,9 @@ import Page from "@/app/page";
 test("page is defined", () => {
   expect(Page).toBeDefined();
 
-  render(<Page />);
+  render(<Page />, {
+    wrapper: ({ children }) => <div data-testid="main-page">{children}</div>,
+  });
 
-  expect(screen.getByRole("main-page")).toBeDefined();
+  expect(screen.getByTestId("main-page")).toBeDefined();
 });

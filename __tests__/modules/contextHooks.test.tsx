@@ -2,7 +2,7 @@ import { useSessionContextState } from "@/hooks/useSessionContextState";
 // import { useProcessContextState } from "@/hooks/useProcessContextState";
 import { processDirectory } from "@/util/processDirectory";
 
-test("session data & settings is defined", () => {
+test("session data & settings are defined", () => {
   const { data, settings } = useSessionContextState();
 
   expect(data).toBeDefined();
