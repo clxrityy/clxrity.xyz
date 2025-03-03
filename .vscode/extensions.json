@@ -3,6 +3,7 @@
     "dsznajder.es7-react-js-snippets",
     "bradlc.vscode-tailwindcss",
     "editorconfig.editorconfig",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
   ]
 }
