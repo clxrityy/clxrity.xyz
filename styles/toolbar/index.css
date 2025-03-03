@@ -9,4 +9,5 @@ nav[role="nav"] {
   width: screen;
   height: 4rem;
   box-shadow: 2px 2px 0px 0px #000;
+  backdrop-filter: blur(50px);
 }
