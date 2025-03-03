@@ -1,7 +1,7 @@
 import "@/styles/404.css";
 import Link from "next/link";
 
-export default function NotFound() {
+export default async function NotFound() {
   return (
     <>
       <div className="noise" />

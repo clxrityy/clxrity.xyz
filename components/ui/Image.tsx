@@ -17,7 +17,7 @@ export const ImageComponent = (props: {
   const ref = useRef<HTMLDivElement>(elementRef!);
 
   return (
-    <div ref={ref} className="relative w-full flex items-center justify-center">
+    <>
       {loading && <Skeleton ref={ref} />}
       <Image
         className={props.className}
@@ -29,6 +29,6 @@ export const ImageComponent = (props: {
         }}
         priority
       />
-    </div>
+    </>
   );
 };

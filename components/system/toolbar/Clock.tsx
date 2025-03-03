@@ -23,6 +23,7 @@ export const Clock = () => {
         clearInterval(timeInterval);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!mounted) {
@@ -35,7 +36,7 @@ export const Clock = () => {
 
   return (
     <div className="flex items-center justify-center h-full w-full gap-2">
-      <span className="text-sm lg:text-base font-mono tracking-tight w-fit">
+      <span className="text-sm lg:text-base font-mono tracking-tight w-fit z-2">
         {formatTime(time)}
       </span>
     </div>
