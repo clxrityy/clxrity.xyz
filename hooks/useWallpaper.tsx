@@ -14,6 +14,7 @@ export type WallpaperSettings = {
   backgroundColor?: number;
   maxDistance?: number;
   spacing?: number;
+  showDots?: boolean;
 };
 
 export const initialWallpaperSettings: WallpaperSettings = {
@@ -28,6 +29,7 @@ export const initialWallpaperSettings: WallpaperSettings = {
   backgroundColor: 0x111111,
   maxDistance: 17.5,
   spacing: 20.0,
+  showDots: false,
 };
 
 const defineThree = (three: typeof THREE) => {
