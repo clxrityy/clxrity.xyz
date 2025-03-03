@@ -3,6 +3,8 @@ import { Ubuntu, Ubuntu_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { SessionProvider } from "@/context/session";
 
+export const dynamic = "force-static";
+
 const ubuntu = Ubuntu({
   subsets: ["latin"],
   variable: "--font-ubuntu",
