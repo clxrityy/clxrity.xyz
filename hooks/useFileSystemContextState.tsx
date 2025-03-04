@@ -3,10 +3,24 @@ import { useEffect, useState } from "react";
 import { configure, BFSRequire, type FileSystemConfiguration } from "browserfs";
 import { FSModule } from "browserfs/dist/node/core/FS";
 import { FileSystemContextState } from "@/context/fileSystem";
+import publicFyleSystemIndex from "@/public.json";
 
 export const fileSystemConfig: FileSystemConfiguration = {
-  fs: "IndexedDB",
-  options: {},
+  fs: "OverlayFS",
+  options: {
+    readable: {
+      fs: "XmlHttpRequest",
+      options: {
+        index: publicFyleSystemIndex,
+      },
+    },
+    writable: {
+      fs: "IndexedDB",
+      options: {
+        storeName: "browser-fs-cache",
+      },
+    },
+  },
 };
 
 export const useFileSystemContextState = (): FileSystemContextState => {
