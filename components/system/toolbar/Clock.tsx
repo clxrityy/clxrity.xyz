@@ -1,35 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { ICONS } from "@/styles/misc/icons";
+import { useSyncedClock } from "@/hooks/useSyncedClock";
+
+function getHours12(date: Date) {
+  const hours = date.getHours();
+  return hours > 12 ? hours - 12 : hours;
+}
 
 export const Clock = () => {
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(date.toLocaleTimeString());
-  const [timeInterval, setTimeInterval] = useState<NodeJS.Timeout>();
-
-  const [mounted, setMounted] = useState<boolean>(false);
-
-  useEffect(() => {
-    setMounted(true);
-    setTimeInterval(
-      setInterval(() => {
-        setDate(new Date());
-        setTime(date.toLocaleTimeString());
-      }, 1000),
-    );
-
-    return () => {
-      if (timeInterval) {
-        clearInterval(timeInterval);
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
+  const [now, setNow] = useState(new Date());
+  const updateClock = useCallback(() => setNow(new Date()), [setNow]);
+  useSyncedClock(updateClock);
 
   const { clocks } = ICONS;
 
@@ -65,15 +48,27 @@ export const Clock = () => {
     }
   };
 
-  const formatTime = (time: string) => {
-    const formatted = time.split(":").slice(0, 2).join(":");
+  const formatTime = (time: Date) => {
+    // const [hour] = formatted.split(":").map((n) => parseInt(n));
 
-    const [hour] = formatted.split(":").map((n) => parseInt(n));
+    // Mon Mar 03 2025 21:46:29 GMT-0500 (Eastern Standard Time)
 
+    const formatted = time
+      .toLocaleTimeString("en-US", {
+        hour12: true,
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+      .split(" ")[0];
+    const hour = getHours12(time);
     const Icon = getClock(hour);
-
     return (
-      <div className="flex items-center justify-center gap-2 h-full w-full">
+      <div
+        aria-label={formatted}
+        role="time"
+        className={`flex items-center justify-center gap-2 h-full w-full px-4 grayscale-75 hover:grayscale-0`}
+      >
         <Icon className="w-5 h-5" />
         <span className="text-sm lg:text-base font-mono tracking-tight w-fit z-2">
           {formatted}
@@ -82,5 +77,5 @@ export const Clock = () => {
     );
   };
 
-  return <>{formatTime(time)}</>;
+  return <>{formatTime(now)}</>;
 };
