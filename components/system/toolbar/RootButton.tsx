@@ -15,6 +15,7 @@ export const RootButton = () => {
           alt: "Icon",
         }}
         className="rounded-full contrast-more:backdrop-blur-md"
+        priority
       />
     </button>
   );

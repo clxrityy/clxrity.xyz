@@ -1,16 +1,19 @@
 "use client";
 
 import Image, { ImageProps } from "next/image";
-import { useRef, useState } from "react";
+import { ComponentPropsWithRef, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
 
-export const ImageComponent = (props: {
+export interface ImageComponentProps extends ComponentPropsWithRef<"image"> {
+  className?: string;
   image: Omit<ImageProps, "width" | "height"> & {
     width: number;
     height: number;
   };
-  className?: string;
-}) => {
+  priority?: boolean;
+}
+
+export const ImageComponent = (props: ImageComponentProps) => {
   const [loading, setLoading] = useState(true);
   const [elementRef, setElementRef] = useState<HTMLDivElement | null>(null);
 
@@ -27,7 +30,7 @@ export const ImageComponent = (props: {
           setLoading(false);
           setElementRef(ref.current);
         }}
-        priority
+        priority={props.priority}
       />
     </>
   );
