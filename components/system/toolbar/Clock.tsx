@@ -11,7 +11,7 @@ function getHours12(date: Date) {
 
 export const Clock = () => {
   const [now, setNow] = useState(new Date());
-  const updateClock = useCallback(() => setNow(new Date()), [setNow]);
+  const updateClock = useCallback(() => setNow(new Date()), []);
   useSyncedClock(updateClock);
 
   const { clocks } = ICONS;

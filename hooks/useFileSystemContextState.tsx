@@ -8,7 +8,6 @@ export const useFileSystemContextState = (): FileSystemContextState => {
   const [fs, setFs] = useState<FSModule | null>(null);
 
   useEffect(() => {
-
     BrowserFS.install(window);
 
     BrowserFS.configure(
@@ -20,8 +19,7 @@ export const useFileSystemContextState = (): FileSystemContextState => {
         setFs(BrowserFS.BFSRequire("fs"));
       },
     );
-
-  }, [setFs]);
+  }, []);
 
   return { fs };
 };
