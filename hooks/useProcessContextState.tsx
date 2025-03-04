@@ -1,10 +1,10 @@
 "use client";
 import { ProcessContextState } from "@/context/process";
-import { getStartupProcesses, type Processes } from "@/util/processDirectory";
+import { type Processes } from "@/util/processDirectory";
 import { useState } from "react";
 
 export const useProcessContextState = (): ProcessContextState => {
-  const [processes] = useState<Processes>(getStartupProcesses());
+  const [processes] = useState<Processes>({});
 
   if (!processes) {
     return {
