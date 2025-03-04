@@ -6,14 +6,12 @@ import { ProcessProvider } from "@/context/process";
 
 export default function Home() {
   return (
-    <main role="main-page">
-      <FileSystemProvider>
-        <ProcessProvider>
-          <Desktop>
-            <ProcessLoader />
-          </Desktop>
-        </ProcessProvider>
-      </FileSystemProvider>
-    </main>
+    <FileSystemProvider>
+      <ProcessProvider>
+        <Desktop>
+          <ProcessLoader />
+        </Desktop>
+      </ProcessProvider>
+    </FileSystemProvider>
   );
 }
