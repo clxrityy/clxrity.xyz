@@ -6,14 +6,14 @@ const Window = dynamic(() =>
   import("@/components/system/Window").then((mod) => mod.Window),
 );
 
-const RenderProcess = ({ Component, hasWindow }: Process) =>
-  hasWindow ? (
-    <Window>
-      <Component />
-    </Window>
-  ) : (
+const withWindow = (Component: React.ComponentType) => (
+  <Window>
     <Component />
-  );
+  </Window>
+);
+
+const RenderProcess = ({ Component, hasWindow }: Process) =>
+  hasWindow ? withWindow(Component) : <Component />;
 
 export const ProcessLoader = () => (
   <ProcessConsumer>
