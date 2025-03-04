@@ -1,3 +1,4 @@
+import { FileSystemContextState } from "./fileSystem";
 import { ProcessContextState } from "./process";
 import { SessionContextState } from "./session";
 
@@ -17,4 +18,8 @@ export const initialSessionContextState: SessionContextState = {
 
 export const initialProcessesState: ProcessContextState = {
   processes: {},
+};
+
+export const initialFileSystemContextState: FileSystemContextState = {
+  fs: null,
 };
