@@ -1,6 +1,7 @@
 import "@/styles/toolbar/index.css";
 import { Clock } from "./Clock";
 import { RootButton } from "./RootButton";
+import { ToolbarProcesses } from "./Processes";
 
 export const Toolbar = () => {
   return (
@@ -28,8 +29,8 @@ export const Toolbar = () => {
                 */}
                 <Clock />
               </li>
-              <li className="w-[25%] lg:w-[30%] 2xl:w-[40%] bg-red-500 h-12 flex items-center justify-center gap-2 lg:gap-4 xl:gap-6">
-                {/* Tools */}
+              <li className="w-[25%] lg:w-[30%] 2xl:w-[40%] h-12 flex items-center justify-center gap-2 lg:gap-4 xl:gap-6">
+                <ToolbarProcesses />
               </li>
             </ul>
           </li>

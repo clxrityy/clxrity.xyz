@@ -4,6 +4,8 @@ import { ComponentType } from "react";
 export type Process = {
   Component: ComponentType;
   hasWindow?: boolean;
+  icon: string;
+  title: string;
 };
 
 export type Processes = {
@@ -16,5 +18,11 @@ export const processDirectory: Processes = {
       import("../components/modules/Main").then((mod) => mod.Main),
     ),
     hasWindow: true,
+    icon: "/favicon.ico",
+    title: "Main",
   },
 } as const;
+
+export function getProcess(id: string): Process {
+  return processDirectory[id];
+}
