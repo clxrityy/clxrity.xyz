@@ -1,4 +1,4 @@
-import { useSessionContextState } from "@/hooks/useSession";
+import { useSession } from "@/hooks/useSession";
 import { processDirectory } from "@/util/processDirectory";
 import { contextFactory } from "@/util/contextFactory";
 
@@ -12,7 +12,7 @@ test("contextFactory returns a Provider & Consumer", () => {
 
 // SESSION CONTEXT HOOKS
 test("session data & settings are defined", () => {
-  const { data, settings } = useSessionContextState();
+  const { data, settings } = useSession();
 
   expect(data).toBeDefined();
   expect(data).toEqual({});
