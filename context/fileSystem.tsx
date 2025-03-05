@@ -1,7 +1,7 @@
 import { contextFactory } from "@/util/contextFactory";
 import { FSModule } from "browserfs/dist/node/core/FS";
 import { initialFileSystemContextState } from "./initialStates";
-import { useFileSystemContextState } from "@/hooks/useFileSystemContextState";
+import { useFileSystem } from "@/hooks/useFileSystem";
 
 export type FileSystemContextState = {
   fs: FSModule | null;
@@ -10,7 +10,7 @@ export type FileSystemContextState = {
 const { Consumer, Provider, useContext } =
   contextFactory<FileSystemContextState>(
     initialFileSystemContextState,
-    useFileSystemContextState,
+    useFileSystem,
   );
 
 export {

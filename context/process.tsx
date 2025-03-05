@@ -1,7 +1,4 @@
-import {
-  ProcessesMap,
-  useProcessContextState,
-} from "@/hooks/useProcessContextState";
+import { ProcessesMap, useProcess } from "@/hooks/useProcess";
 import { initialProcessesState } from "./initialStates";
 import { contextFactory } from "../util/contextFactory";
 
@@ -13,7 +10,7 @@ export type ProcessContextState = {
 
 const { Consumer, Provider, useContext } = contextFactory(
   initialProcessesState,
-  useProcessContextState,
+  useProcess,
 );
 
 export {

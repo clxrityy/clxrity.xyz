@@ -23,7 +23,7 @@ export const fileSystemConfig: FileSystemConfiguration = {
   },
 };
 
-export const useFileSystemContextState = (): FileSystemContextState => {
+export const useFileSystem = (): FileSystemContextState => {
   const [fs, setFs] = useState<FSModule | null>(null);
 
   useEffect(() => {

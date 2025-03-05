@@ -5,7 +5,7 @@ import {
   WallpaperSettings,
 } from "./useWallpaper";
 
-export const useSessionContextState = (): SessionContextState => ({
+export const useSession = (): SessionContextState => ({
   data: {},
   settings: {
     theme: "dark",

@@ -22,7 +22,7 @@ export type ProcessesMap = (
   callback: ([id, process]: [string, Process]) => JSX.Element,
 ) => JSX.Element[];
 
-export const useProcessContextState = (): ProcessContextState => {
+export const useProcess = (): ProcessContextState => {
   const [processes, setProcesses] = useState<Processes>({});
 
   const close = useCallback((id: string) => setProcesses(closeProcess(id)), []);

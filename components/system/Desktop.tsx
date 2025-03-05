@@ -1,5 +1,5 @@
 "use client";
-import { useSessionContextState } from "@/hooks/useSessionContextState";
+import { useSession } from "@/hooks/useSession";
 import { useRef } from "react";
 
 export const Desktop = ({ children }: { children: React.ReactNode }) => {
@@ -8,7 +8,7 @@ export const Desktop = ({ children }: { children: React.ReactNode }) => {
   const {
     settings: { wallpaper },
     useWallpaper,
-  } = useSessionContextState();
+  } = useSession();
 
   useWallpaper(desktopRef, wallpaper);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSessionContextState } from "@/hooks/useSessionContextState";
+import { useSession } from "@/hooks/useSession";
 import { useRef } from "react";
 
 export default function Loading() {
@@ -9,7 +9,7 @@ export default function Loading() {
   const {
     settings: { wallpaper },
     useWallpaper,
-  } = useSessionContextState();
+  } = useSession();
 
   useWallpaper(ref, wallpaper);
 

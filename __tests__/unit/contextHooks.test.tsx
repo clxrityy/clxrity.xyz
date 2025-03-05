@@ -1,4 +1,4 @@
-import { useSessionContextState } from "@/hooks/useSessionContextState";
+import { useSessionContextState } from "@/hooks/useSession";
 import { processDirectory } from "@/util/processDirectory";
 import { contextFactory } from "@/util/contextFactory";
 
