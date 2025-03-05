@@ -1,7 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
-import { initialSessionContextState } from "./initialStates";
+import { initialSessionContextState } from "../config/initialStates";
 import { contextFactory } from "../util/contextFactory";
 import { useSession } from "@/hooks/useSession";
 import { WallpaperSettings } from "@/hooks/useWallpaper";

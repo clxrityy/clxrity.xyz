@@ -1,6 +1,6 @@
 import { contextFactory } from "@/util/contextFactory";
 import { FSModule } from "browserfs/dist/node/core/FS";
-import { initialFileSystemContextState } from "./initialStates";
+import { initialFileSystemContextState } from "../config/initialStates";
 import { useFileSystem } from "@/hooks/useFileSystem";
 
 export type FileSystemContextState = {

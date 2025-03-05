@@ -1,9 +1,6 @@
 import { type SessionContextState } from "@/context/session";
-import {
-  initialWallpaperSettings,
-  useWallpaperHook,
-  WallpaperSettings,
-} from "./useWallpaper";
+import { useWallpaperHook, type WallpaperSettings } from "./useWallpaper";
+import { initialWallpaperSettings } from "@/config";
 
 export const useSession = (): SessionContextState => ({
   data: {},

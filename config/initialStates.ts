@@ -1,6 +1,6 @@
-import { FileSystemContextState } from "./fileSystem";
-import { ProcessContextState } from "./process";
-import { SessionContextState } from "./session";
+import { FileSystemContextState } from "../context/fileSystem";
+import { ProcessContextState } from "../context/process";
+import { SessionContextState } from "../context/session";
 
 export const initialSessionContextState: SessionContextState = {
   data: {},

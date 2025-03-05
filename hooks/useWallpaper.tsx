@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import NET from "vanta/dist/vanta.net.min";
 import * as THREE from "three";
 import { RefObject, useEffect } from "react";
@@ -15,21 +16,6 @@ export type WallpaperSettings = {
   maxDistance?: number;
   spacing?: number;
   showDots?: boolean;
-};
-
-export const initialWallpaperSettings: WallpaperSettings = {
-  mouseControls: false,
-  touchControls: false,
-  gyroControls: false,
-  minHeight: 200.0,
-  minWidth: 200.0,
-  scale: 1.0,
-  scaleMobile: 1,
-  color: 6184542,
-  backgroundColor: 0x111111,
-  maxDistance: 17.5,
-  spacing: 20.0,
-  showDots: false,
 };
 
 const defineThree = (three: typeof THREE) => {
@@ -59,10 +45,10 @@ export const useWallpaperHook = ({
     const vantaEffect =
       isWebGLAvailable && desktopRef
         ? NET({
-            el: desktopRef.current,
-            THREE: defineThree(THREE),
-            ...settings,
-          })
+          el: desktopRef.current,
+          THREE: defineThree(THREE),
+          ...settings,
+        })
         : undefined;
 
     return () => vantaEffect?.destroy();
