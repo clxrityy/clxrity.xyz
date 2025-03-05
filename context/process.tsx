@@ -11,9 +11,13 @@ export type ProcessContextState = {
   processesMap: ProcessesMap;
 };
 
-const { Consumer, Provider } = contextFactory(
+const { Consumer, Provider, useContext } = contextFactory(
   initialProcessesState,
   useProcessContextState,
 );
 
-export { Consumer as ProcessConsumer, Provider as ProcessProvider };
+export {
+  Consumer as ProcessConsumer,
+  Provider as ProcessProvider,
+  useContext as useProcessContext,
+};

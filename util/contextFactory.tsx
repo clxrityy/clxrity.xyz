@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import { createContext, useContext } from "react";
 
 export type ContextFactory = <T>(
   initialContextState: T,
@@ -6,18 +7,23 @@ export type ContextFactory = <T>(
 ) => {
   Consumer: React.Consumer<T>;
   Provider: React.FC<{ children: React.ReactNode }>;
+  useContext: () => T;
 };
 
 export const contextFactory: ContextFactory = (
   initialContextState,
   useContextState,
 ) => {
-  const { Consumer, Provider } = React.createContext(initialContextState);
+  const Context = createContext(initialContextState);
 
   const ProviderWrapper = ({ children }: { children: React.ReactNode }) => {
     const contextState = useContextState();
-    return <Provider value={contextState}>{children}</Provider>;
+    return <Context.Provider value={contextState}>{children}</Context.Provider>;
   };
 
-  return { Consumer, Provider: ProviderWrapper };
+  return {
+    Consumer: Context.Consumer,
+    Provider: ProviderWrapper,
+    useContext: () => useContext(Context),
+  };
 };
