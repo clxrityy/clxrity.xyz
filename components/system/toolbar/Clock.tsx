@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ICONS } from "@/styles/misc/icons";
 import { useSyncedClock } from "@/hooks/useSyncedClock";
 
@@ -10,11 +10,20 @@ function getHours12(date: Date) {
 }
 
 export const Clock = () => {
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   const [now, setNow] = useState(new Date());
   const updateClock = useCallback(() => setNow(new Date()), []);
   useSyncedClock(updateClock);
 
   const { clocks } = ICONS;
+
+  if (!mounted) return null;
 
   const getClock = (hour: number) => {
     const rounded = Math.round(hour);
