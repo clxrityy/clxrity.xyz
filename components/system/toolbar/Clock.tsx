@@ -76,7 +76,7 @@ export const Clock = () => {
       <div
         aria-label={formatted}
         role="time"
-        className={`flex items-center justify-center gap-2 h-full w-full px-4 grayscale-75 hover:grayscale-0`}
+        className={`flex items-center justify-center gap-2 h-full w-full px-4 hover:bg-zinc-600/25 transition-all duration-75 rounded-md`}
       >
         <Icon className="w-5 h-5" />
         <span className="text-sm lg:text-base font-mono tracking-tight w-fit z-2">

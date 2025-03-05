@@ -20,8 +20,8 @@ export const Toolbar = () => {
         <ul className="flex items-center justify-center h-full w-full gap-5 xl:gap-7 2xl:gap-10">
           {/* LEFT container */}
           <li className="w-4/5 flex items-center justify-start gap-5">
-            <ul className="flex items-center justify-start gap-5 w-full lg:w-3/4 xl:w-1/2 2xl:w-1/3">
-              <li className="w-[22.5%] sm:w-[20%] lg:w-[30%] h-12">
+            <ul className="flex items-center justify-start gap-5 w-full lg:w-3/4 xl:w-1/2 2xl:w-1/3 h-14">
+              <li className="w-[22.5%] sm:w-[20%] lg:w-[30%] h-full">
                 {/*
                   Clock
                     /
