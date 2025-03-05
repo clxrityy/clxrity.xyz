@@ -22,7 +22,3 @@ export const processDirectory: Processes = {
     title: "Main",
   },
 } as const;
-
-export function getProcess(id: string): Process {
-  return processDirectory[id];
-}

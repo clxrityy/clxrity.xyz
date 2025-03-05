@@ -17,6 +17,8 @@ export const initialSessionContextState: SessionContextState = {
 };
 
 export const initialProcessesState: ProcessContextState = {
+  close: () => undefined,
+  open: () => undefined,
   processes: {},
 };
 
