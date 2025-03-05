@@ -1,10 +1,14 @@
 import { ProcessConsumer } from "@/context/process";
-import { type Process } from "@/util/processDirectory";
 import dynamic from "next/dynamic";
 
 const Window = dynamic(() =>
   import("@/components/system/Window").then((mod) => mod.Window),
 );
+
+export type RenderProcessProps = {
+  Component: React.ComponentType;
+  hasWindow: boolean;
+};
 
 const withWindow = (Component: React.ComponentType) => (
   <Window>
@@ -12,14 +16,18 @@ const withWindow = (Component: React.ComponentType) => (
   </Window>
 );
 
-const RenderProcess = ({ Component, hasWindow }: Process) =>
+const RenderProcess = ({ Component, hasWindow }: RenderProcessProps) =>
   hasWindow ? withWindow(Component) : <Component />;
 
 export const ProcessLoader = () => (
   <ProcessConsumer>
-    {({ processes }) =>
-      Object.entries(processes).map(([id, process]) => (
-        <RenderProcess key={id} {...process} />
+    {({ processesMap }) =>
+      processesMap(([id, { Component, hasWindow }]) => (
+        <RenderProcess
+          key={id}
+          Component={Component}
+          hasWindow={Boolean(hasWindow)}
+        />
       ))
     }
   </ProcessConsumer>

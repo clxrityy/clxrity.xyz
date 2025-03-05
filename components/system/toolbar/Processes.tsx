@@ -5,13 +5,11 @@ export const ToolbarProcesses = () => {
   return (
     <ul>
       <ProcessConsumer>
-        {({ processes }) => (
-          <>
-            {Object.entries(processes).map(([id, { icon, title }]) => (
-              <ToolbarProcess key={id} icon={icon} title={title} />
-            ))}
-          </>
-        )}
+        {({ processesMap }) =>
+          processesMap(([id, { icon, title }]) => (
+            <ToolbarProcess key={id} icon={icon} title={title} />
+          ))
+        }
       </ProcessConsumer>
     </ul>
   );

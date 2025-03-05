@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 "use client";
 import { ProcessContextState } from "@/context/process";
-import { type Processes } from "@/util/processDirectory";
-import { useCallback, useState } from "react";
+import { Process, type Processes } from "@/util/processDirectory";
+import { JSX, useCallback, useState } from "react";
 import { processDirectory } from "@/util/processDirectory";
 
 const closeProcess =
@@ -18,15 +18,24 @@ const openProcess = (processId: string) => (currentProcesses: Processes) =>
       [processId]: processDirectory[processId],
     };
 
+export type ProcessesMap = (
+  callback: ([id, process]: [string, Process]) => JSX.Element,
+) => JSX.Element[];
+
 export const useProcessContextState = (): ProcessContextState => {
   const [processes, setProcesses] = useState<Processes>({});
 
   const close = useCallback((id: string) => setProcesses(closeProcess(id)), []);
   const open = useCallback((id: string) => setProcesses(openProcess(id)), []);
 
+  const processesMap = useCallback<ProcessesMap>(
+    (callback) => Object.entries(processes).map(callback),
+    [processes]
+  );
+
   return {
     close,
     open,
-    processes,
+    processesMap,
   };
 };

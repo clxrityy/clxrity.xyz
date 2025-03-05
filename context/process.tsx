@@ -1,12 +1,14 @@
-import { useProcessContextState } from "@/hooks/useProcessContextState";
+import {
+  ProcessesMap,
+  useProcessContextState,
+} from "@/hooks/useProcessContextState";
 import { initialProcessesState } from "./initialStates";
 import { contextFactory } from "../util/contextFactory";
-import { Processes } from "@/util/processDirectory";
 
 export type ProcessContextState = {
   close: (id: string) => void;
   open: (id: string) => void;
-  processes: Processes;
+  processesMap: ProcessesMap;
 };
 
 const { Consumer, Provider } = contextFactory(
