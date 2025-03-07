@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useFileSystem } from "./useFileSystem";
 import { extname } from "path";
 import { IMAGE_FILE_EXTENSIONS } from "@/config/constants";
-import { FSModule } from "browserfs/dist/node/core/FS";
-import ini from "ini";
+import { getShortcut } from "@/util/shortcut";
 
 export type FileInfo = {
   icon: string;
@@ -13,21 +12,6 @@ export type FileInfo = {
 };
 
 const getProcessByFileExtension = (_extension: string): string => "";
-
-export type Shortcut = {
-  URL: string;
-  IconFile: string;
-};
-
-export const getShortcut = async (
-  path: string,
-  fs: FSModule,
-): Promise<Shortcut> =>
-  new Promise((resolve) => {
-    fs.readFile(path, (_error, contents = Buffer.from("")) =>
-      resolve(ini.parse(contents.toString()) as Shortcut),
-    );
-  });
 
 export const useFileInfo = (path: string): FileInfo => {
   const [icon, setIcon] = useState<string>("");
@@ -37,6 +21,8 @@ export const useFileInfo = (path: string): FileInfo => {
   useEffect(() => {
     if (fs) {
       const extension = extname(path);
+
+      console.log("EXTENSION", extension); // TODO: Remove
 
       if (extension === ".url") {
         // URL file
@@ -48,8 +34,14 @@ export const useFileInfo = (path: string): FileInfo => {
         setIcon(path);
         setPid("ImagePreview");
       } else {
+        console.log(
+          "getProcessByFileExtension",
+          getProcessByFileExtension(extension),
+        ); // TODO: Remove
         setIcon(getProcessByFileExtension(extension));
       }
+    } else {
+      console.error("No file system available"); // THIS ERROR IS THROWN
     }
   }, [fs, path]);
 

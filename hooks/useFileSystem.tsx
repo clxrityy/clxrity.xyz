@@ -10,7 +10,11 @@ export const useFileSystem = (): FileSystemContextState => {
 
   useEffect(() => {
     if (!fs) {
-      configure(fileSystemConfig, () => setFs(BFSRequire("fs")));
+      configure(fileSystemConfig, () => {
+        console.log("File system configuring...");
+        console.log("Using config:", fileSystemConfig);
+        setFs(BFSRequire("fs"));
+      });
     }
   }, [fs]);
 

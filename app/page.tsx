@@ -4,14 +4,16 @@ import { ProcessLoader } from "@/components/system/ProcessLoader";
 import { Toolbar } from "@/components/system/toolbar/Toolbar";
 import { FileSystemProvider } from "@/context/fileSystem";
 import { ProcessProvider } from "@/context/process";
+import { FileManager } from "@/components/system/FileManager";
 
 export default function Home() {
   return (
     <FileSystemProvider>
       <ProcessProvider>
         <Desktop>
-          <Toolbar />
           <ProcessLoader />
+          <Toolbar />
+          <FileManager directory="/" />
         </Desktop>
       </ProcessProvider>
     </FileSystemProvider>

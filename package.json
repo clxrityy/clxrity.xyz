@@ -8,15 +8,19 @@
     "url": "https://www.mjanglin.com",
     "email": "contact@mjanglin.com"
   },
+  "repository": {
+    "url": "https://github.com/clxrityy/clxrity.xyz/tree/os"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:inspect": "NODE_OPTIONS='--inspect' next dev",
     "build": "npm run build:fs && next build",
     "start": "next start",
     "lint": "next lint",
     "prettier": "npx prettier --write .",
     "test": "jest --config=jest.config.ts",
     "test:watch": "jest --watch --config=jest.config.ts",
-    "build:fs": "cd public/root && node ../../node_modules/browserfs/dist/scripts/make_xhrfs_index.js > ../../public.json"
+    "build:fs": "cd public/desktop && node ../../node_modules/browserfs/dist/scripts/make_xhrfs_index.js > ../public.json"
   },
   "packageManager": "npm@10.9.2",
   "dependencies": {
@@ -31,7 +35,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4.0.9",
+    "@tailwindcss/postcss": "^4.0.11",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@types/ini": "^4.1.1",
@@ -55,7 +59,7 @@
     "postcss": "^8",
     "prettier": "^3.5.3",
     "tailwind-merge": "^3.0.2",
-    "tailwindcss": "^4.0.9",
+    "tailwindcss": "^4.0.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   },
