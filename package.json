@@ -24,6 +24,7 @@
   },
   "packageManager": "npm@10.9.2",
   "dependencies": {
+    "axios": "^1.8.2",
     "browserfs": "~1.4.3",
     "ini": "^5.0.0",
     "lucide-react": "^0.477.0",

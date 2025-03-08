@@ -55,3 +55,14 @@ syscall
 
 > **Summary**: The error is thrown when the file system is not available to the `useFileInfo` hook. Therefore the files are not openable and the `pid` is not available to the `FileEntry` component (within [FileManager](./components/system/FileManager.tsx)).
 > But this folder structure was the only way I could get it to work at all at this point.
+
+---
+
+#### Workaround:
+
+- [x] Removed the `directory` prop from [FileManager](./components/system/FileManager.tsx) _and_ [useFiles](./hooks/useFiles.tsx)
+  - [x] Rather than passing the directory with `resolve(directory, path)` as the `path` to [FileEntry](./components/system/FileManager.tsx), I passed `{resolve("desktop", path)}` to the `path` prop.
+    - [x] This way the `path` is always resolved to the `desktop` directory.
+- [x] Refactoryed the `getShortcut()` hook to use [axios](https://www.npmjs.com/package/axios) to fetch the file from the path.
+- [x] Changed the file `Main.url` to `Main.json` so that the `URL` and `IconFile` could be parsed directly from axios.
+- [ ] The process is still unable to be opened, but hey, no errors.

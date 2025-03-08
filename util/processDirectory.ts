@@ -1,3 +1,4 @@
+"use client";
 import dynamic from "next/dynamic";
 import { ComponentType } from "react";
 
@@ -18,7 +19,7 @@ export const processDirectory: Processes = {
       import("../components/modules/Main").then((mod) => mod.Main),
     ),
     hasWindow: true,
-    icon: "/favicon.ico",
+    icon: "/icons/unknown.svg",
     title: "Main",
   },
 } as const;

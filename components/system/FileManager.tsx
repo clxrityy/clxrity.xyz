@@ -17,16 +17,13 @@ export type FileEntryProps = {
 };
 
 export const FileEntry = ({ path, title }: FileEntryProps) => {
-  console.log("PATH", path); // TODO: Remove
-  console.log("TITLE", title); // TODO: Remove
-  const { icon, pid } = useFileInfo(path);
-
-  console.log("ICON", icon); // TODO: Remove
-  console.log("PID", pid); // TODO: Remove
+  const { icon, pid } = useFileInfo(`${path}`);
 
   const { open } = useProcess();
 
-  const onActivate = useCallback(() => open(pid), [open, pid]);
+  const onActivate = useCallback(() => {
+    open(pid);
+  }, [open, pid]);
 
   return (
     <li>
@@ -51,14 +48,14 @@ export const FileEntry = ({ path, title }: FileEntryProps) => {
   );
 };
 
-export const FileManager = ({ directory }: FileManagerProps) => (
+export const FileManager = () => (
   <ol>
-    {useFiles(directory, (file) => {
+    {useFiles((file) => {
       return (
         <FileEntry
           key={file}
           title={basename(file, extname(file))}
-          path={resolve(directory, file)}
+          path={resolve(`/desktop`, file)}
         />
       );
     })}

@@ -1,3 +1,4 @@
+"use client";
 import { ProcessConsumer } from "@/context/process";
 import { ToolbarProcess } from "./ToolbarProcess";
 

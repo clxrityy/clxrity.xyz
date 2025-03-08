@@ -11,9 +11,9 @@ export default function Home() {
     <FileSystemProvider>
       <ProcessProvider>
         <Desktop>
-          <ProcessLoader />
           <Toolbar />
-          <FileManager directory="/" />
+          <FileManager />
+          <ProcessLoader />
         </Desktop>
       </ProcessProvider>
     </FileSystemProvider>

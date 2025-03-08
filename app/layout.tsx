@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   description: "A minimalistic OS for the web",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

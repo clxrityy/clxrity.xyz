@@ -3,7 +3,6 @@ import { JSX, useEffect, useState } from "react";
 import { useFileSystem } from "./useFileSystem";
 
 export const useFiles = (
-  directory: string,
   callback: (file: string) => JSX.Element,
 ): JSX.Element[] => {
   const [files, setFiles] = useState<string[]>([]);
@@ -11,13 +10,13 @@ export const useFiles = (
 
   useEffect(() => {
     if (fs) {
-      fs.readdir(directory, (_error, files = []) => {
+      fs.readdir("/", (_error, files = []) => {
         setFiles(files);
-        console.log("ERROR", _error); // TODO: Remove
-        console.log("FILES", files); // TODO: Remove
       });
+    } else {
+      setFiles(["/desktop/Main.json"]); // Default file
     }
-  }, [fs, directory]);
+  }, [fs]);
 
   return files.map(callback);
 };

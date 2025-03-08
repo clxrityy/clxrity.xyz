@@ -1,3 +1,4 @@
+"use client";
 import { contextFactory } from "@/util/contextFactory";
 import { FSModule } from "browserfs/dist/node/core/FS";
 import { initialFileSystemContextState } from "../config/initialStates";

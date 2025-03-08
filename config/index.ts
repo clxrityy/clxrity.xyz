@@ -1,5 +1,4 @@
 import { WallpaperSettings } from "@/hooks/useWallpaper";
-import publicFyleSystemIndex from "@/public/public.json";
 import type { FileSystemConfiguration } from "browserfs";
 
 export const fileSystemConfig: FileSystemConfiguration = {
@@ -8,7 +7,7 @@ export const fileSystemConfig: FileSystemConfiguration = {
     readable: {
       fs: "XmlHttpRequest",
       options: {
-        index: publicFyleSystemIndex,
+        index: "../public.json",
       },
     },
     writable: {
