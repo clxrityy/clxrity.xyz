@@ -25,7 +25,8 @@ export const ImageComponent = (props: ImageComponentProps) => {
       <Image
         className={props.className}
         {...props.image}
-        alt={props.image.alt || ""}
+        src={props.image.src}
+        alt={props.image.alt || "img"}
         onLoad={() => {
           setLoading(false);
           setElementRef(ref.current);

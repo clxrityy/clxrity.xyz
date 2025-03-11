@@ -1,6 +1,6 @@
-import { FileSystemContextState } from "../context/fileSystem";
-import { ProcessContextState } from "../context/process";
+import { processDirectory } from "@/hooks/useProcessDirectory";
 import { SessionContextState } from "../context/session";
+import { type ProcessDirectoryContextState } from "@/context/processDirectory";
 
 export const initialSessionContextState: SessionContextState = {
   data: {},
@@ -16,12 +16,9 @@ export const initialSessionContextState: SessionContextState = {
   },
 };
 
-export const initialProcessesState: ProcessContextState = {
+export const initialProcessesState: ProcessDirectoryContextState = {
   close: () => undefined,
   open: () => undefined,
-  processesMap: () => [],
-};
-
-export const initialFileSystemContextState: FileSystemContextState = {
-  fs: null,
+  // processesMap: () => [],
+  processes: processDirectory,
 };

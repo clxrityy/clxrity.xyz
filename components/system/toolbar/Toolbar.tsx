@@ -1,8 +1,8 @@
 "use client";
-import "@/styles/toolbar/index.css";
+import "@/styles/system/toolbar/index.css";
 import { Clock } from "./Clock";
 import { RootButton } from "./RootButton";
-import { ToolbarProcesses } from "./Processes";
+import { ToolbarProcesses } from "./ToolbarProcesses";
 
 export const Toolbar = () => {
   return (

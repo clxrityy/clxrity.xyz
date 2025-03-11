@@ -1,23 +1,23 @@
 import { WallpaperSettings } from "@/hooks/useWallpaper";
-import type { FileSystemConfiguration } from "browserfs";
+// import type { FileSystemConfiguration } from "browserfs";
 
-export const fileSystemConfig: FileSystemConfiguration = {
-  fs: "OverlayFS",
-  options: {
-    readable: {
-      fs: "XmlHttpRequest",
-      options: {
-        index: "../public.json",
-      },
-    },
-    writable: {
-      fs: "IndexedDB",
-      options: {
-        storeName: "browser-fs-cache",
-      },
-    },
-  },
-};
+// export const fileSystemConfig: FileSystemConfiguration = {
+//   fs: "OverlayFS",
+//   options: {
+//     readable: {
+//       fs: "XmlHttpRequest",
+//       options: {
+//         index: "../public.json",
+//       },
+//     },
+//     writable: {
+//       fs: "IndexedDB",
+//       options: {
+//         storeName: "browser-fs-cache",
+//       },
+//     },
+//   },
+// };
 
 export const initialWallpaperSettings: WallpaperSettings = {
   mouseControls: false,

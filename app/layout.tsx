@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Ubuntu, Ubuntu_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { SessionProvider } from "@/context/session";
-
-export const dynamic = "force-static";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -58,7 +58,9 @@ export default async function RootLayout({
         {/* <link rel="manifest" href="/manifest.json" /> */}
       </head>
       <body className={`${ubuntu.variable} ${ubuntuMono.variable}`}>
-        <SessionProvider>{children}</SessionProvider>
+        <Suspense fallback={<Loading />}>
+          <SessionProvider>{children}</SessionProvider>
+        </Suspense>
       </body>
     </html>
   );

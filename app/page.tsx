@@ -2,20 +2,24 @@
 import { Desktop } from "@/components/system/Desktop";
 import { ProcessLoader } from "@/components/system/ProcessLoader";
 import { Toolbar } from "@/components/system/toolbar/Toolbar";
-import { FileSystemProvider } from "@/context/fileSystem";
-import { ProcessProvider } from "@/context/process";
+// import { FileSystemProvider } from "@/context/fileSystem";
 import { FileManager } from "@/components/system/FileManager";
+import dynamic from "next/dynamic";
+
+const ProcessDirectoryProvider = dynamic(() =>
+  import("@/context/processDirectory").then(
+    (mod) => mod.ProcessDirectoryProvider,
+  ),
+);
 
 export default function Home() {
   return (
-    <FileSystemProvider>
-      <ProcessProvider>
-        <Desktop>
-          <Toolbar />
-          <FileManager />
-          <ProcessLoader />
-        </Desktop>
-      </ProcessProvider>
-    </FileSystemProvider>
+    <ProcessDirectoryProvider>
+      <Desktop>
+        <Toolbar />
+        <FileManager />
+        <ProcessLoader />
+      </Desktop>
+    </ProcessDirectoryProvider>
   );
 }

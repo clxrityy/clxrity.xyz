@@ -1,0 +1,6 @@
+.file-entry:focus {
+  outline: 0;
+  border: 2px dashed #aaaaaa50;
+  border-radius: 5px;
+  padding: 8px 4px 5px 5px;
+}

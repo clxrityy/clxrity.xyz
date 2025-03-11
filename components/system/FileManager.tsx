@@ -2,14 +2,10 @@
 import { useFileInfo } from "@/hooks/useFileInfo";
 import { ImageComponent } from "../ui/Image";
 import { basename, extname, resolve } from "path";
-import { useProcess } from "@/hooks/useProcess";
+import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
 import { useCallback } from "react";
 import { useFiles } from "@/hooks/useFiles";
-// import path from "path";
-
-export type FileManagerProps = {
-  directory: string;
-};
+import "@/styles/system/sys.css";
 
 export type FileEntryProps = {
   path: string;
@@ -17,28 +13,30 @@ export type FileEntryProps = {
 };
 
 export const FileEntry = ({ path, title }: FileEntryProps) => {
-  const { icon, pid } = useFileInfo(`${path}`);
+  const { icon, pid } = useFileInfo(path);
 
-  const { open } = useProcess();
+  const { open } = useProcessDirectoryStore();
 
   const onActivate = useCallback(() => {
     open(pid);
-  }, [open, pid]);
+  }, [pid, open]);
 
   return (
-    <li>
+    <li className="flex flex-col items-center justify-center gap-2">
       <button
-        className="cursor-pointer"
-        onClick={onActivate}
-        onKeyDown={onActivate}
+        onKeyDown={() => onActivate()}
+        onClick={() => onActivate()}
+        onDoubleClick={() => onActivate()}
+        className="cursor-pointer grayscale-85 focus:grayscale-25 transition-all duration-75 text-base xl:text-lg file-entry"
       >
-        <figure>
+        <figure className="flex flex-col items-center justify-center gap-2">
           <ImageComponent
             image={{
               src: icon || "/icons/unknown.svg",
               alt: title,
               width: 32,
               height: 32,
+              className: "",
             }}
           />
           <figcaption>{title}</figcaption>
@@ -49,7 +47,7 @@ export const FileEntry = ({ path, title }: FileEntryProps) => {
 };
 
 export const FileManager = () => (
-  <ol>
+  <ol className="w-full h-full mx-10 grid grid-cols-4 gap-4 items-center relative">
     {useFiles((file) => {
       return (
         <FileEntry

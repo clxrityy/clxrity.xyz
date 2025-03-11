@@ -1,3 +1,3 @@
 export const Window = ({ children }: { children: React.ReactNode }) => (
-  <section>{children}</section>
+  <section role="window">{children}</section>
 );
