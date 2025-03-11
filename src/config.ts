@@ -22,4 +22,10 @@ export const networks: NetworkInterface[] = [
         icon: "/wav.png",
         description: "A dynamic audio library"
     },
+    {
+        name: "os",
+        url: "https://clxrityxyz-git-os-clxritys-projects.vercel.app/",
+        icon: "/os.png",
+        description: "An OS/desktop environment for the web"
+    }
 ];
