@@ -1,4 +1,5 @@
 import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
+import { ProcessWrapper } from "./ProcessWrapper";
 
 export const Window = ({
   children,
@@ -15,7 +16,7 @@ export const Window = ({
 
   return (
     <section className={`${isMinimized ? "hidden" : "block"}`} role="window">
-      {children}
+      <ProcessWrapper pid={pid}>{children}</ProcessWrapper>
     </section>
   );
 };

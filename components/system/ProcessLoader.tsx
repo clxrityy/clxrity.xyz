@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import React from "react";
 
 const Window = dynamic(() =>
-  import("@/components/system/Window").then((mod) => mod.Window),
+  import("@/components/system/window/Window").then((mod) => mod.Window),
 );
 
 export type RenderProcessProps = {

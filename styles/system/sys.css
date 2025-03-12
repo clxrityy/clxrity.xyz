@@ -1,6 +1,62 @@
+@import "tailwindcss";
+
 .file-entry:focus {
   outline: 0;
   border: 2px dashed #aaaaaa50;
   border-radius: 5px;
   padding: 8px 4px 5px 5px;
+}
+
+.process-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: auto;
+  border: 2px solid #222;
+  border-radius: 5px;
+  border-top: 0;
+}
+
+.process-wrapper header {
+  margin-bottom: 20px;
+  background-color: #212121;
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: stretch;
+  align-items: center;
+}
+
+.process-wrapper header figure {
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 5px;
+}
+
+.process-wrapper header nav {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  margin-right: 0;
+  width: 100%;
+  gap: 10px;
+}
+
+.process-wrapper .process-content {
+  padding: 20px;
+  width: 100%;
+}
+
+.process-wrapper header nav button {
+  background-color: #212121;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 2.5px 2.5px;
+
+  @apply hover:text-zinc-300/75 transition-colors duration-150 focus:text-zinc-500;
 }

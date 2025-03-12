@@ -27,7 +27,10 @@ export const ToolbarProcess = ({ icon, title, pid }: ToolbarProcessProps) => {
           <Minus width={100} />
         </div>
       </button>
-      <button onClick={onClick}>
+      <button
+        onClick={onClick}
+        className="hover:text-zinc-300 focus:outline-none focus:text-zinc-300/65 transition-all duration-75"
+      >
         <figure className="flex flex-row items-center justify-center gap-2 w-fit">
           <ImageComponent
             image={{
