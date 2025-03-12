@@ -46,7 +46,7 @@ export const ProcessWrapper = ({ pid, children }: ProcessWrapperProps) => {
           />
           <figcaption className="process-title">{title}</figcaption>
         </figure>
-        <nav>
+        <nav role="window-controls">
           <button title="Minimize" onClick={handleMinimize}>
             <Minimize2 size={16} />
           </button>
