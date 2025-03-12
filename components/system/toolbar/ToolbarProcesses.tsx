@@ -2,6 +2,7 @@
 import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
 import { ImageComponent } from "@/components/ui/Image";
 import { Minus } from "lucide-react";
+import { useCallback } from "react";
 
 export type ToolbarProcessProps = {
   icon: string;
@@ -10,9 +11,11 @@ export type ToolbarProcessProps = {
 };
 
 export const ToolbarProcess = ({ icon, title, pid }: ToolbarProcessProps) => {
-  const { close } = useProcessDirectoryStore();
+  const { close, minimize } = useProcessDirectoryStore();
 
   const onClose = () => close(pid);
+
+  const onClick = useCallback(() => minimize(pid), [minimize, pid]);
 
   return (
     <li className="flex items-center justify-center h-full w-full px-4 transition-all duration-75 rounded-md relative text-xs md:text-sm lg:text-base">
@@ -24,18 +27,20 @@ export const ToolbarProcess = ({ icon, title, pid }: ToolbarProcessProps) => {
           <Minus width={100} />
         </div>
       </button>
-      <figure className="flex flex-row items-center justify-center gap-2 w-fit">
-        <ImageComponent
-          image={{
-            src: icon,
-            alt: title,
-            width: 24,
-            height: 24,
-          }}
-          className="grayscale-85"
-        />
-        <figcaption>{title}</figcaption>
-      </figure>
+      <button onClick={onClick}>
+        <figure className="flex flex-row items-center justify-center gap-2 w-fit">
+          <ImageComponent
+            image={{
+              src: icon,
+              alt: title,
+              width: 24,
+              height: 24,
+            }}
+            className="grayscale-85"
+          />
+          <figcaption>{title}</figcaption>
+        </figure>
+      </button>
     </li>
   );
 };

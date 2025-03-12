@@ -8,25 +8,26 @@ const Window = dynamic(() =>
 );
 
 export type RenderProcessProps = {
-  Component: React.ComponentType;
-  hasWindow: boolean;
+  Component: React.ComponentType<{ pid: string }>;
+  hasWindow?: boolean;
+  pid: string;
 };
 
-const withWindow = (Component: React.ComponentType) => {
+const withWindow = (Component: React.ComponentType, pid: string) => {
   return (
-    <Window>
+    <Window pid={pid}>
       <Component />
     </Window>
   );
 };
 
-const RenderProcess = ({ Component, hasWindow }: RenderProcessProps) =>
+const RenderProcess = ({ Component, hasWindow, pid }: RenderProcessProps) =>
   hasWindow ? (
-    withWindow(Component as React.ComponentType)
+    withWindow(Component as React.ComponentType, pid)
   ) : React.isValidElement(Component) ? (
     Component
   ) : (
-    <Component />
+    <Component pid={pid} />
   );
 
 export const ProcessLoader = () => {
@@ -41,6 +42,7 @@ export const ProcessLoader = () => {
               key={id}
               Component={Component}
               hasWindow={Boolean(hasWindow)}
+              pid={id}
             />
           ),
       )}

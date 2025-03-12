@@ -1,11 +1,11 @@
 "use client";
+import "@/styles/system/sys.css";
 import { useFileInfo } from "@/hooks/useFileInfo";
 import { ImageComponent } from "../ui/Image";
 import { basename, extname, resolve } from "path";
 import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
 import { useCallback } from "react";
 import { useFiles } from "@/hooks/useFiles";
-import "@/styles/system/sys.css";
 
 export type FileEntryProps = {
   path: string;
@@ -24,9 +24,9 @@ export const FileEntry = ({ path, title }: FileEntryProps) => {
   return (
     <li className="flex flex-col items-center justify-center gap-2">
       <button
-        onKeyDown={() => onActivate()}
-        onClick={() => onActivate()}
-        onDoubleClick={() => onActivate()}
+        onClick={onActivate}
+        onKeyDown={onActivate}
+        onDoubleClick={onActivate}
         className="cursor-pointer grayscale-85 focus:grayscale-25 transition-all duration-75 text-base xl:text-lg file-entry"
       >
         <figure className="flex flex-col items-center justify-center gap-2">

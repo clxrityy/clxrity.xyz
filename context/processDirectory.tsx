@@ -7,14 +7,16 @@ export type ProcessDirectoryContextState = {
   processes: Processes;
   close: (id: string) => void;
   open: (id: string) => void;
+  maximize: (id: string) => void;
+  minimize: (id: string) => void;
 };
 
-const { Provider, useContext } = contextFactory(
+const { Provider } = contextFactory(
   initialProcessesState,
   useProcessDirectoryStore,
 );
 
 export {
   Provider as ProcessDirectoryProvider,
-  useContext as useProcessDirectoryContext,
+  // useContext as useProcessDirectoryContext,
 };

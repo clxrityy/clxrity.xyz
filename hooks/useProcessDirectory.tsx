@@ -5,11 +5,15 @@ import { ProcessDirectoryContextState } from "@/context/processDirectory";
 import { create } from "zustand";
 
 export type Process = {
-  Component: ComponentType<unknown>;
+  Component: ComponentType<{
+    pid: string;
+  }>;
   hasWindow?: boolean;
   icon: string;
   title: string;
   isOpen?: boolean;
+  isMaximized?: boolean;
+  isMinimized?: boolean;
 };
 
 export type Processes = {
@@ -50,5 +54,33 @@ export const useProcessDirectoryStore = create<ProcessDirectoryContextState>(
           },
         },
       })),
+    maximize: (pid: string) =>
+      set((proc) => {
+        const process = proc.processes[pid];
+        return {
+          ...proc,
+          processes: {
+            ...proc.processes,
+            [pid]: {
+              ...process,
+              isMaximized: !process.isMaximized,
+            },
+          },
+        };
+      }),
+    minimize: (pid: string) =>
+      set((proc) => {
+        const process = proc.processes[pid];
+        return {
+          ...proc,
+          processes: {
+            ...proc.processes,
+            [pid]: {
+              ...process,
+              isMinimized: !process.isMinimized,
+            },
+          },
+        };
+      }),
   }),
 );

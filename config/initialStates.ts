@@ -21,4 +21,6 @@ export const initialProcessesState: ProcessDirectoryContextState = {
   open: () => undefined,
   // processesMap: () => [],
   processes: processDirectory,
+  maximize: () => undefined,
+  minimize: () => undefined,
 };
