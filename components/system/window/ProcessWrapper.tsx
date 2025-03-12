@@ -1,4 +1,4 @@
-import "@/styles/system/sys.css";
+import "@/styles/system/index.css";
 import { ImageComponent } from "@/components/ui/Image";
 import { useProcessDirectory } from "@/context/processDirectory";
 import { CircleX, Expand, Minimize2 } from "lucide-react";

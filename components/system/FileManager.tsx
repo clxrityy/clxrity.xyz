@@ -1,5 +1,5 @@
 "use client";
-import "@/styles/system/sys.css";
+import "@/styles/system/index.css";
 import { useFileInfo } from "@/hooks/useFileInfo";
 import { ImageComponent } from "@/components/ui/Image";
 import { basename, extname, resolve } from "path";
