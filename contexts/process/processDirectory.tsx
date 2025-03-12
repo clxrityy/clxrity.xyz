@@ -1,7 +1,7 @@
 import { initialProcessesState } from "@/config";
-import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
+import { useProcessDirectoryStore } from "@/contexts/process/useProcessDirectory";
 import { contextFactory } from "@/util/contextFactory";
-import { Processes } from "@/hooks/useProcessDirectory";
+import { Processes } from "@/contexts/process/useProcessDirectory";
 
 export type ProcessDirectoryContextState = {
   processes: Processes;

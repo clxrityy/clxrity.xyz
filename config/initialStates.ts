@@ -1,17 +1,17 @@
-import { processDirectory } from "@/hooks/useProcessDirectory";
-import { SessionContextState } from "@/context/session";
-import { type ProcessDirectoryContextState } from "@/context/processDirectory";
+import { processDirectory } from "@/contexts/process/useProcessDirectory";
+import { SessionContextState } from "@/contexts/session/session";
+import { type ProcessDirectoryContextState } from "@/contexts/process/processDirectory";
 
 export const initialSessionContextState: SessionContextState = {
   data: {},
   settings: {
     theme: "dark",
     wallpaper: {},
-    processPosition: {
+    defaultProcessPosition: {
       x: 50,
       y: 50,
     },
-    processSize: {
+    defaultProcessSize: {
       width: 400,
       height: 300,
     },
@@ -21,6 +21,13 @@ export const initialSessionContextState: SessionContextState = {
   },
   useWallpaper() {
     return null;
+  },
+  setSettings() {
+    return null;
+  },
+  currentProcesses: {},
+  setCurrentProcesses() {
+    return [];
   },
 };
 

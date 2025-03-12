@@ -2,7 +2,7 @@
 import { ImageComponent } from "@/components/ui/Image";
 import { Minus } from "lucide-react";
 import { useCallback } from "react";
-import { useProcessDirectory } from "@/context/processDirectory";
+import { useProcessDirectory } from "@/contexts/process/processDirectory";
 
 export type ToolbarProcessProps = {
   icon: string;

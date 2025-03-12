@@ -5,7 +5,7 @@ import { ImageComponent } from "@/components/ui/Image";
 import { basename, extname, resolve } from "path";
 import { useCallback } from "react";
 import { useFiles } from "@/hooks/useFiles";
-import { useProcessDirectory } from "@/context/processDirectory";
+import { useProcessDirectory } from "@/contexts/process";
 
 export type FileEntryProps = {
   path: string;

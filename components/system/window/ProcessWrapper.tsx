@@ -1,6 +1,6 @@
 import "@/styles/system/index.css";
 import { ImageComponent } from "@/components/ui/Image";
-import { useProcessDirectory } from "@/context/processDirectory";
+import { useProcessDirectory } from "@/contexts/process";
 import { CircleX, Expand, Minimize2 } from "lucide-react";
 import { useCallback } from "react";
 

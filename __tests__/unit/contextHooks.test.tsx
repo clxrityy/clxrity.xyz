@@ -1,5 +1,5 @@
-import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
-import { useSession } from "@/context/session";
+import { useProcessDirectory } from "@/contexts/process";
+import { useSession } from "@/contexts/session";
 import { contextFactory } from "@/util/contextFactory";
 import { render } from "@testing-library/react";
 
@@ -13,17 +13,23 @@ test("contextFactory returns a Provider & Consumer", () => {
 
 // SESSION CONTEXT HOOKS
 test("session data & settings are defined", () => {
-  const { data, settings } = useSession();
+  const Component = () => {
+    const { data, settings } = useSession();
 
-  expect(data).toBeDefined();
-  expect(data).toEqual({});
-  expect(settings).toBeDefined();
+    expect(data).toBeDefined();
+    expect(data).toEqual({});
+    expect(settings).toBeDefined();
+
+    return <div />;
+  };
+
+  render(<Component />);
 });
 
 // PROCESS DIRECTORY
 test("processes are defined", () => {
   const Component = () => {
-    const { processes } = useProcessDirectoryStore();
+    const { processes } = useProcessDirectory();
 
     expect(processes).toBeDefined();
 

@@ -6,7 +6,7 @@ import { FileManager } from "@/components/system/FileManager";
 import dynamic from "next/dynamic";
 
 const ProcessDirectoryProvider = dynamic(() =>
-  import("@/context/processDirectory").then(
+  import("@/contexts/process/processDirectory").then(
     (mod) => mod.ProcessDirectoryProvider,
   ),
 );

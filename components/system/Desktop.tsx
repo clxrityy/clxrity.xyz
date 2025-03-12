@@ -1,5 +1,5 @@
 "use client";
-import { useSession } from "@/context/session";
+import { useSession } from "@/contexts/session";
 import { useRef } from "react";
 
 export const Desktop = ({ children }: { children: React.ReactNode }) => {

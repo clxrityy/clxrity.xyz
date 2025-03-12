@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { ComponentType } from "react";
-import { ProcessDirectoryContextState } from "@/context/processDirectory";
+import { ProcessDirectoryContextState } from "@/contexts/process/processDirectory";
 import { create } from "zustand";
 
 export type Process = {
