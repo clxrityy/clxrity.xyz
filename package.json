@@ -22,7 +22,6 @@
     "test:watch": "jest --watch --config=jest.config.ts",
     "build:fs": "cd public/desktop && node ../../node_modules/browserfs/dist/scripts/make_xhrfs_index.js > ../public.json"
   },
-  "packageManager": "npm@10.9.2",
   "dependencies": {
     "axios": "^1.8.2",
     "browserfs": "^1.4.3",
