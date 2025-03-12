@@ -7,6 +7,14 @@ export const initialSessionContextState: SessionContextState = {
   settings: {
     theme: "dark",
     wallpaper: {},
+    processPosition: {
+      x: 50,
+      y: 50,
+    },
+    processSize: {
+      width: 400,
+      height: 300,
+    },
   },
   setTheme() {
     return null;

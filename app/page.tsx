@@ -2,7 +2,6 @@
 import { Desktop } from "@/components/system/Desktop";
 import { ProcessLoader } from "@/components/system/ProcessLoader";
 import { Toolbar } from "@/components/system/toolbar/Toolbar";
-// import { FileSystemProvider } from "@/context/fileSystem";
 import { FileManager } from "@/components/system/FileManager";
 import dynamic from "next/dynamic";
 

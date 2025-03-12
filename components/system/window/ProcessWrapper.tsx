@@ -1,6 +1,6 @@
-import { ImageComponent } from "@/components/ui/Image";
-import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
 import "@/styles/system/sys.css";
+import { ImageComponent } from "@/components/ui/Image";
+import { useProcessDirectory } from "@/context/processDirectory";
 import { CircleX, Expand, Minimize2 } from "lucide-react";
 import { useCallback } from "react";
 
@@ -17,7 +17,7 @@ export const ProcessWrapper = ({ pid, children }: ProcessWrapperProps) => {
     minimize,
     maximize,
     close,
-  } = useProcessDirectoryStore();
+  } = useProcessDirectory();
 
   const handleMinimize = useCallback(() => {
     minimize(pid);

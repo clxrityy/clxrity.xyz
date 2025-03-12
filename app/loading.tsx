@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "@/hooks/useSession";
+import { useSession } from "@/context/session";
 import { useRef } from "react";
 
 export default function Loading() {

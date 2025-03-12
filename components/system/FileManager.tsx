@@ -3,9 +3,9 @@ import "@/styles/system/sys.css";
 import { useFileInfo } from "@/hooks/useFileInfo";
 import { ImageComponent } from "../ui/Image";
 import { basename, extname, resolve } from "path";
-import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
 import { useCallback } from "react";
 import { useFiles } from "@/hooks/useFiles";
+import { useProcessDirectory } from "@/context/processDirectory";
 
 export type FileEntryProps = {
   path: string;
@@ -15,7 +15,7 @@ export type FileEntryProps = {
 export const FileEntry = ({ path, title }: FileEntryProps) => {
   const { icon, pid } = useFileInfo(path);
 
-  const { open } = useProcessDirectoryStore();
+  const { open } = useProcessDirectory();
 
   const onActivate = useCallback(() => {
     open(pid);

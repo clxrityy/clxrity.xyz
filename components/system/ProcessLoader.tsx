@@ -1,5 +1,5 @@
 "use client";
-import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
+import { useProcessDirectory } from "@/context/processDirectory";
 import dynamic from "next/dynamic";
 import React from "react";
 
@@ -31,7 +31,7 @@ const RenderProcess = ({ Component, hasWindow, pid }: RenderProcessProps) =>
   );
 
 export const ProcessLoader = () => {
-  const { processes } = useProcessDirectoryStore();
+  const { processes } = useProcessDirectory();
 
   return (
     <div className="flex items-center justify-center top-40 absolute z-[50] w-full h-auto mx-auto">

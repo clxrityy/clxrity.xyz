@@ -1,8 +1,8 @@
 "use client";
-import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
 import { ImageComponent } from "@/components/ui/Image";
 import { Minus } from "lucide-react";
 import { useCallback } from "react";
+import { useProcessDirectory } from "@/context/processDirectory";
 
 export type ToolbarProcessProps = {
   icon: string;
@@ -11,7 +11,7 @@ export type ToolbarProcessProps = {
 };
 
 export const ToolbarProcess = ({ icon, title, pid }: ToolbarProcessProps) => {
-  const { close, minimize } = useProcessDirectoryStore();
+  const { close, minimize } = useProcessDirectory();
 
   const onClose = () => close(pid);
 
@@ -49,7 +49,7 @@ export const ToolbarProcess = ({ icon, title, pid }: ToolbarProcessProps) => {
 };
 
 export const ToolbarProcesses = () => {
-  const { processes } = useProcessDirectoryStore();
+  const { processes } = useProcessDirectory();
 
   return (
     <ul className="h-full w-full flex items-center justify-between gap-3 relative">

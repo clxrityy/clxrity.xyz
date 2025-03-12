@@ -1,5 +1,7 @@
-import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
 import { ProcessWrapper } from "./ProcessWrapper";
+import { Rnd } from "react-rnd";
+import { useSession } from "@/context/session";
+import { useProcessDirectory } from "@/context/processDirectory";
 
 export const Window = ({
   children,
@@ -12,11 +14,27 @@ export const Window = ({
     processes: {
       [pid]: { isMinimized },
     },
-  } = useProcessDirectoryStore();
+  } = useProcessDirectory();
+
+  const {
+    settings: {
+      processPosition: { x, y },
+      processSize: { width, height },
+    },
+  } = useSession();
 
   return (
-    <section className={`${isMinimized ? "hidden" : "block"}`} role="window">
-      <ProcessWrapper pid={pid}>{children}</ProcessWrapper>
-    </section>
+    <Rnd
+      default={{
+        x: x!,
+        y: y!,
+        width: width!,
+        height: height!,
+      }}
+    >
+      <section className={`${isMinimized ? "hidden" : "block"}`} role="window">
+        <ProcessWrapper pid={pid}>{children}</ProcessWrapper>
+      </section>
+    </Rnd>
   );
 };

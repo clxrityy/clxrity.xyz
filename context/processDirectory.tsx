@@ -18,5 +18,5 @@ const { Provider } = contextFactory(
 
 export {
   Provider as ProcessDirectoryProvider,
-  // useContext as useProcessDirectoryContext,
+  useProcessDirectoryStore as useProcessDirectory,
 };
