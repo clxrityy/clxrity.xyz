@@ -7,4 +7,4 @@
 - [ ] <img src="./public/mc.png" width="16" /> [mc](https://github.com/clxrityy/clxrity.xyz/tree/mc)
     - [mc.clxrity.xyz](https://mc.clxrity.xyz)
 - [ ] <img src="./public/os.png" width="16" /> [os](https://github.com/clxrityy/clxrity.xyz/tree/os)
-    - [os.clxrity.xyz](https://clxrityxyz-git-os-clxritys-projects.vercel.app/)
+    - [os.clxrity.xyz](https://os.clxrity.xyz)

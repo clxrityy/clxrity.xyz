@@ -24,7 +24,7 @@ export const networks: NetworkInterface[] = [
     },
     {
         name: "os",
-        url: "https://clxrityxyz-git-os-clxritys-projects.vercel.app/",
+        url: "https://os.clxrity.xyz",
         icon: "/os.png",
         description: "An OS/desktop environment for the web"
     }
