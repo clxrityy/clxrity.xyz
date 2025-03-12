@@ -1,4 +1,4 @@
-import { initialProcessesState } from "@/config/initialStates";
+import { initialProcessesState } from "@/config";
 import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
 import { contextFactory } from "@/util/contextFactory";
 import { Processes } from "@/hooks/useProcessDirectory";

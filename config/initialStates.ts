@@ -1,5 +1,5 @@
 import { processDirectory } from "@/hooks/useProcessDirectory";
-import { SessionContextState } from "../context/session";
+import { SessionContextState } from "@/context/session";
 import { type ProcessDirectoryContextState } from "@/context/processDirectory";
 
 export const initialSessionContextState: SessionContextState = {

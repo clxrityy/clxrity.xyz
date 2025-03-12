@@ -1,5 +1,5 @@
 import { useProcessDirectoryStore } from "@/hooks/useProcessDirectory";
-import { useSession } from "@/hooks/useSession";
+import { useSession } from "@/context/session";
 import { contextFactory } from "@/util/contextFactory";
 import { render } from "@testing-library/react";
 

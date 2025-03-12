@@ -1,4 +1,4 @@
-import { ImageComponent } from "../../ui/Image";
+import { ImageComponent } from "@/components/ui/Image";
 
 export const RootButton = () => (
   // <ProcessConsumer>

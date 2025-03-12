@@ -1,7 +1,7 @@
 "use client";
 import "@/styles/system/sys.css";
 import { useFileInfo } from "@/hooks/useFileInfo";
-import { ImageComponent } from "../ui/Image";
+import { ImageComponent } from "@/components/ui/Image";
 import { basename, extname, resolve } from "path";
 import { useCallback } from "react";
 import { useFiles } from "@/hooks/useFiles";

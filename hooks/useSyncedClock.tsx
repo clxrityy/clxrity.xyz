@@ -1,6 +1,6 @@
 "use client";
 
-import { SECOND_IN_MS } from "@/config/constants";
+import { SECOND_IN_MS } from "@/config";
 import { useEffect } from "react";
 
 export const useSyncedClock = (callback: () => void): void => {
