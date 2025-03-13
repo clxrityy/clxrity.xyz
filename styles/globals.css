@@ -99,4 +99,12 @@ html {
   .font-mono {
     font-family: var(--font-ubuntu-mono);
   }
+
+  .no-selector {
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -mox-user-select: none;
+    user-select: none;
+  }
 }

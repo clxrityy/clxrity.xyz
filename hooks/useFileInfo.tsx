@@ -1,7 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useShortcut } from "@/hooks/useShortcut";
+import axios from "axios";
+
+export type Shortcut = {
+  URL: string;
+  IconFile: string;
+};
+
+export const useShortcut = (path: string): Shortcut => {
+  const [url, setUrl] = useState<string>("");
+  const [iconFile, setIconFile] = useState<string>("");
+
+  useEffect(() => {
+    async function fetchShortcut() {
+      const response = await axios.get(path);
+      const { URL, IconFile } = await response.data;
+      setUrl(URL);
+      setIconFile(IconFile);
+    }
+
+    fetchShortcut();
+  }, [path]);
+
+  return {
+    URL: url,
+    IconFile: iconFile,
+  };
+};
 
 export type FileInfo = {
   icon: string;

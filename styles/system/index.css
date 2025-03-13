@@ -19,7 +19,7 @@
 }
 
 .process-wrapper header {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   background-color: #212121;
   border-radius: 5px;
   padding: 10px;
@@ -58,5 +58,5 @@
   cursor: pointer;
   padding: 2.5px 2.5px;
 
-  @apply hover:text-zinc-300/75 transition-colors duration-150 focus:text-zinc-500;
+  @apply hover:text-zinc-300/75 transition-all duration-150 focus:text-zinc-500 focus:scale-95;
 }

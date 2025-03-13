@@ -64,6 +64,7 @@ export const useProcessDirectoryStore = create<ProcessDirectoryContextState>(
             [pid]: {
               ...process,
               isMaximized: !process.isMaximized,
+              isMinimized: false,
             },
           },
         };
@@ -78,6 +79,7 @@ export const useProcessDirectoryStore = create<ProcessDirectoryContextState>(
             [pid]: {
               ...process,
               isMinimized: !process.isMinimized,
+              isMaximized: false,
             },
           },
         };

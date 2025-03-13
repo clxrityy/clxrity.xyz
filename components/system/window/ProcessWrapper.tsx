@@ -5,11 +5,16 @@ import { CircleX, Expand, Minimize2 } from "lucide-react";
 import { useCallback } from "react";
 
 export type ProcessWrapperProps = {
+  isMaximized?: boolean;
   pid: string;
   children: React.ReactNode;
 };
 
-export const ProcessWrapper = ({ pid, children }: ProcessWrapperProps) => {
+export const ProcessWrapper = ({
+  isMaximized,
+  pid,
+  children,
+}: ProcessWrapperProps) => {
   const {
     processes: {
       [pid]: { icon, title },
@@ -32,8 +37,8 @@ export const ProcessWrapper = ({ pid, children }: ProcessWrapperProps) => {
   }, [pid, close]);
 
   return (
-    <div className="process-wrapper">
-      <header>
+    <div className="process-wrapper h-full">
+      <header className={`handle ${!isMaximized && "cursor-grab"}`}>
         <figure title={title}>
           <ImageComponent
             image={{
@@ -46,7 +51,7 @@ export const ProcessWrapper = ({ pid, children }: ProcessWrapperProps) => {
           />
           <figcaption className="process-title">{title}</figcaption>
         </figure>
-        <nav role="window-controls">
+        <nav role="window-controls no-drag">
           <button title="Minimize" onClick={handleMinimize}>
             <Minimize2 size={16} />
           </button>

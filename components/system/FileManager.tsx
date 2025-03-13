@@ -47,7 +47,7 @@ export const FileEntry = ({ path, title }: FileEntryProps) => {
 };
 
 export const FileManager = () => (
-  <ol className="w-full h-full mx-10 grid grid-cols-4 gap-4 items-center relative">
+  <ol className="w-full h-fit mx-10 grid grid-cols-4 gap-4 items-center relative z-[20] top-[4.25rem]">
     {useFiles((file) => {
       return (
         <FileEntry

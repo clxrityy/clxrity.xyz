@@ -3,6 +3,7 @@
 import Image, { ImageProps } from "next/image";
 import { ComponentPropsWithRef, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { cn } from "@/util/cn";
 
 export interface ImageComponentProps extends ComponentPropsWithRef<"image"> {
   className?: string;
@@ -23,7 +24,7 @@ export const ImageComponent = (props: ImageComponentProps) => {
     <>
       {loading && <Skeleton ref={ref} />}
       <Image
-        className={props.className}
+        className={cn("no-selector", props.className)}
         {...props.image}
         src={props.image.src}
         alt={props.image.alt || "img"}
