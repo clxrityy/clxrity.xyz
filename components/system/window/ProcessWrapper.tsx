@@ -3,6 +3,7 @@ import { ImageComponent } from "@/components/ui/Image";
 import { useProcessDirectory } from "@/contexts/process";
 import { CircleX, Expand, Minimize2 } from "lucide-react";
 import { useCallback } from "react";
+import { useSession } from "@/contexts/session";
 
 export type ProcessWrapperProps = {
   isMaximized?: boolean;
@@ -24,6 +25,10 @@ export const ProcessWrapper = ({
     close,
   } = useProcessDirectory();
 
+  const { currentProcesses: sessionProcesses } = useSession();
+
+  const sessionProcess = sessionProcesses[pid];
+
   const handleMinimize = useCallback(() => {
     minimize(pid);
   }, [pid, minimize]);
@@ -37,7 +42,7 @@ export const ProcessWrapper = ({
   }, [pid, close]);
 
   return (
-    <div className="process-wrapper h-full">
+    <div className="process-wrapper">
       <header className={`handle ${!isMaximized && "cursor-grab"}`}>
         <figure title={title}>
           <ImageComponent
@@ -63,7 +68,17 @@ export const ProcessWrapper = ({
           </button>
         </nav>
       </header>
-      <div className="process-content">{children}</div>
+      <div
+        className="process-content"
+        style={{
+          width: sessionProcess?.size?.width,
+          height: sessionProcess?.size?.height,
+          maxWidth: window.innerWidth,
+          maxHeight: window.innerHeight,
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 };

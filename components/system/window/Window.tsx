@@ -75,6 +75,7 @@ export const Window = ({
         bottomLeft: !isMaximized,
         topLeft: !isMaximized,
       }}
+      dragPositionOffset={{ x: 0, y: 0 }}
       onDrag={updatePosition}
       disableDragging={isMaximized}
       minWidth={200}
@@ -139,6 +140,7 @@ export const Window = ({
             ? sessionProcess.position.y
             : y,
       }}
+      className="transition-all duration-50 ease-linear"
     >
       <section
         className={`${isMinimized ? "hidden" : "block"} h-full w-full relative`}
