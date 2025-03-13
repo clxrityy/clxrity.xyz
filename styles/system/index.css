@@ -12,7 +12,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: auto;
+  height: screen;
   border: 2px solid #222;
   border-radius: 5px;
   border-top: 0;
@@ -63,9 +63,20 @@
 
 .file-manager {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-template-rows: repeat(auto-fill, minmax(200px, 1fr));
+  column-gap: 20px;
+  row-gap: 10px;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(auto-fill, 120px);
+  grid-template-rows: repeat(auto-fill, 70px);
   height: calc(100vh - 4.25rem);
 
-  @apply w-full h-fit mx-10 items-center relative z-[20] top-[4.25rem];
+  @apply max-w-full h-fit items-center justify-start relative z-[20] top-[4.25rem] w-auto mx-10;
+}
+
+@media only screen and (max-width: 700px) {
+  .file-manager {
+    grid-template-columns: repeat(auto-fill, 95px);
+    grid-template-rows: repeat(auto-fill, 60px);
+    grid-auto-flow: row;
+  }
 }

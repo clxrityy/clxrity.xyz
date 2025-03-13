@@ -34,7 +34,7 @@ export const ProcessLoader = () => {
   const { processes } = useProcessDirectory();
 
   return (
-    <div className="flex items-center top-[4.25rem] justify-center fixed z-[25] w-full mx-auto">
+    <div className="flex items-center top-[4.25rem] justify-center fixed z-[25] w-full mx-auto h-auto">
       {Object.entries(processes).map(
         ([id, { Component, hasWindow, isOpen }]) =>
           isOpen && (
