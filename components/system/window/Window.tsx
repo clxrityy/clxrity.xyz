@@ -140,7 +140,7 @@ export const Window = ({
             ? sessionProcess.position.y
             : y,
       }}
-      className="transition-all duration-50 ease-linear"
+      className="transition-transform ease-out"
     >
       <section
         className={`${isMinimized ? "hidden" : "block"} h-full w-full relative`}

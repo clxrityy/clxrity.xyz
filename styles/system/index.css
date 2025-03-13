@@ -60,3 +60,12 @@
 
   @apply hover:text-zinc-300/75 transition-all duration-150 focus:text-zinc-500 focus:scale-95;
 }
+
+.file-manager {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-rows: repeat(auto-fill, minmax(200px, 1fr));
+  height: calc(100vh - 4.25rem);
+
+  @apply w-full h-fit mx-10 items-center relative z-[20] top-[4.25rem];
+}
