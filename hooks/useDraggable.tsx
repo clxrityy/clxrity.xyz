@@ -20,9 +20,12 @@ export const useDraggable = (maximized = false): Draggable => {
   const [{ x, y }, setPosition] = useState<Position>(defaultPosition);
 
   const updatePosition = useCallback<RndDragCallback>(
-    (_event, { x: elementX, y: elementY }) =>
-      setPosition({ x: elementX, y: elementY }),
-    [],
+    (_event, { x: elementX, y: elementY }) => {
+      if (x >= 0 && y >= 0) {
+        setPosition({ x: elementX, y: elementY });
+      }
+    },
+    [x, y],
   );
 
   return {

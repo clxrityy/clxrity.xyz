@@ -3,7 +3,7 @@ import { ProcessWrapper } from "./ProcessWrapper";
 import { Rnd } from "react-rnd";
 import { SessionProcess, useSession } from "@/contexts/session";
 import { useProcessDirectory } from "@/contexts/process";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useResizable } from "@/hooks/useResizable";
 import { useDraggable } from "@/hooks/useDraggable";
 
@@ -33,7 +33,35 @@ export const Window = ({
 
   const rndRef = useRef<Rnd>(null);
   const { updateSize } = useResizable(isMaximized);
-  const { updatePosition } = useDraggable(isMaximized);
+  const {
+    updatePosition,
+    x: positionX,
+    y: positionY,
+  } = useDraggable(isMaximized);
+
+  const handleResize = useCallback(() => {
+    if (isMaximized) {
+      rndRef.current?.updateSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    if (positionX >= window.innerWidth || positionY >= window.innerHeight) {
+      rndRef.current?.updatePosition({
+        x: 0,
+        y: 0,
+      });
+    }
+  }, [isMaximized, positionX, positionY]);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [handleResize]);
 
   return (
     <Rnd
@@ -51,6 +79,9 @@ export const Window = ({
       disableDragging={isMaximized}
       minWidth={200}
       bounds="window"
+      minHeight={100}
+      maxWidth={window.innerWidth}
+      maxHeight={window.innerHeight}
       ref={rndRef}
       cancel=".no-drag"
       dragHandleClassName="handle"
