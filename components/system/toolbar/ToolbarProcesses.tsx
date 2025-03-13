@@ -11,14 +11,17 @@ export type ToolbarProcessProps = {
 };
 
 export const ToolbarProcess = ({ icon, title, pid }: ToolbarProcessProps) => {
-  const { close, minimize } = useProcessDirectory();
+  const { close, minimize, processes } = useProcessDirectory();
+  const { isMaximized } = processes[pid];
 
   const onClose = () => close(pid);
 
   const onClick = useCallback(() => minimize(pid), [minimize, pid]);
 
   return (
-    <li className="flex items-center justify-center h-full w-full px-4 transition-all duration-75 rounded-md relative text-xs md:text-sm lg:text-base">
+    <li
+      className={`flex items-center justify-center h-full w-full px-4 transition-all duration-75 rounded-md relative text-xs md:text-sm lg:text-base ${isMaximized && "bg-zinc-600/15"}`}
+    >
       <button
         onClick={onClose}
         className="absolute -bottom-2.5 p-2 text-white/60 hover:text-white/95 transition-all duration-75 focus:text-zinc-400/65 focus:outline-none"
