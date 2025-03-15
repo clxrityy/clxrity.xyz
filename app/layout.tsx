@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Ubuntu, Ubuntu_Mono } from "next/font/google";
 import "@/styles/globals.css";
-import { SessionProvider } from "@/contexts/session/session";
+import { SessionProvider } from "@/contexts/session";
 import { Suspense } from "react";
 import Loading from "./loading";
 

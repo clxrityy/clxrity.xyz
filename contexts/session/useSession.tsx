@@ -9,10 +9,21 @@ import { create } from "zustand";
 
 export const useSessionStore = create<SessionContextState>((set, get) => ({
   data: {},
+  sessionId: "",
   settings: {
     ...initialSessionContextState.settings,
     wallpaper: initialWallpaperSettings,
   },
+  setSessionId: (sessionId: string) =>
+    set((state) => ({
+      ...state,
+      sessionId,
+    })),
+  setData: (data) =>
+    set((state) => ({
+      ...state,
+      data: { ...state.data, ...data },
+    })),
   setTheme: (theme: Theme) =>
     set((state) => ({
       ...state,

@@ -32,9 +32,9 @@ export const processDirectory: Processes = {
 };
 
 export const useProcessDirectoryStore = create<ProcessDirectoryContextState>(
-  (set) => ({
+  (set, get) => ({
     processes: processDirectory,
-    close: (pid: string) =>
+    close: (pid: string) => {
       set((proc) => {
         const { [pid]: _closedProcess, ...remainingProcesses } = proc.processes;
         remainingProcesses[pid] = {
@@ -42,8 +42,10 @@ export const useProcessDirectoryStore = create<ProcessDirectoryContextState>(
           isOpen: false,
         };
         return { ...proc, processes: remainingProcesses };
-      }),
-    open: (pid: string) =>
+      });
+      return get().processes;
+    },
+    open: (pid: string) => {
       set((proc) => ({
         ...proc,
         processes: {
@@ -53,8 +55,10 @@ export const useProcessDirectoryStore = create<ProcessDirectoryContextState>(
             isOpen: true,
           },
         },
-      })),
-    maximize: (pid: string) =>
+      }));
+      return get().processes;
+    },
+    maximize: (pid: string) => {
       set((proc) => {
         const process = proc.processes[pid];
         return {
@@ -68,8 +72,10 @@ export const useProcessDirectoryStore = create<ProcessDirectoryContextState>(
             },
           },
         };
-      }),
-    minimize: (pid: string) =>
+      });
+      return get().processes;
+    },
+    minimize: (pid: string) => {
       set((proc) => {
         const process = proc.processes[pid];
         return {
@@ -83,6 +89,8 @@ export const useProcessDirectoryStore = create<ProcessDirectoryContextState>(
             },
           },
         };
-      }),
+      });
+      return get().processes;
+    },
   }),
 );

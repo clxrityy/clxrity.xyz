@@ -2,8 +2,8 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
-import { initialSessionContextState } from "../../config/initialStates";
-import { contextFactory } from "../../util/contextFactory";
+import { initialSessionContextState } from "@/config/initialStates";
+import { contextFactory } from "@/util/contextFactory";
 import { useSessionStore } from "@/contexts/session/useSession";
 import { WallpaperSettings } from "@/hooks/useWallpaper";
 
@@ -26,6 +26,7 @@ export type SessionProcesses = {
 }
 
 export type SessionContextState = {
+  sessionId: string;
   data: {
     [key: string]: string;
   };
@@ -41,6 +42,8 @@ export type SessionContextState = {
       height: number | string;
     };
   };
+  setSessionId: (sessionId: string) => void;
+  setData: (data: { [key: string]: string }) => void;
   setTheme: ((theme: Theme) => void) | Dispatch<SetStateAction<Theme>>;
   useWallpaper: (
     desktopRef: React.RefObject<HTMLElement | null>,
@@ -57,7 +60,7 @@ const { Consumer, Provider, useContext } = contextFactory<SessionContextState>(
 );
 
 export {
-  Consumer as SessionConsumer,
   Provider as SessionProvider,
+  Consumer as SessionConsumer,
   useContext as useSession,
 };

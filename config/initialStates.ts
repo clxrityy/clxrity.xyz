@@ -3,6 +3,7 @@ import { SessionContextState } from "@/contexts/session/session";
 import { type ProcessDirectoryContextState } from "@/contexts/process/processDirectory";
 
 export const initialSessionContextState: SessionContextState = {
+  sessionId: "",
   data: {},
   settings: {
     theme: "dark",
@@ -15,6 +16,12 @@ export const initialSessionContextState: SessionContextState = {
       width: 400,
       height: 300,
     },
+  },
+  setData() {
+    return null;
+  },
+  setSessionId() {
+    return null;
   },
   setTheme() {
     return null;
