@@ -16,6 +16,7 @@
     "@auth/prisma-adapter": "^2.7.3",
     "@neondatabase/serverless": "^0.9.3",
     "@prisma/client": "6.16.0",
+    "tweetnacl": "^1.0.3",
     "next": "14.2.10",
     "next-auth": "5.0.0-beta.25",
     "react": "18.3.1",
