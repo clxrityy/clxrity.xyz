@@ -20,13 +20,9 @@ const commands: RegisteredCommand[] = [
             return {
                 embeds: [
                     {
-                        title: 'Pong! 🏓',
-                        description: tsSec ? `Latency ~ ${delta} ms` : 'Latency unavailable',
+                        title: 'Pong!',
+                        description: tsSec ? `\`${delta}\` ms` : 'Latency unavailable',
                         color,
-                        fields: [
-                            ...(ctx.discord?.guildId ? [{ name: 'Guild', value: ctx.discord.guildId, inline: true }] : []),
-                            ...(ctx.discord?.channelId ? [{ name: 'Channel', value: ctx.discord.channelId, inline: true }] : []),
-                        ],
                         timestamp: new Date().toISOString(),
                     },
                 ],
