@@ -51,6 +51,14 @@ export async function POST(req: Request) {
             headers: req.headers,
             ip: req.headers.get('x-forwarded-for'),
             now: () => new Date(),
+            discord: {
+                applicationId: body?.application_id,
+                guildId: body?.guild_id ?? null,
+                channelId: body?.channel_id ?? null,
+                userId: body?.member?.user?.id ?? body?.user?.id ?? null,
+                memberRoleIds: Array.isArray(body?.member?.roles) ? body.member.roles : [],
+                signatureTimestamp: req.headers.get('x-signature-timestamp') || undefined,
+            },
         };
 
         try {
