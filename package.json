@@ -6,6 +6,7 @@
     "dev": "next dev",
     "dev:tunnel": "node scripts/dev-with-tunnel.js",
     "sync:discord": "tsx scripts/sync-commands.ts",
+    "postinstall": "prisma generate",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
