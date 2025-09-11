@@ -1,0 +1,133 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install dependencies",
+			"type": "shell",
+			"command": "pnpm install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Typecheck project",
+			"type": "shell",
+			"command": "pnpm typecheck",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Reinstall typescript",
+			"type": "shell",
+			"command": "pnpm install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Typecheck project (retry)",
+			"type": "shell",
+			"command": "pnpm typecheck",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Typecheck after fixes",
+			"type": "shell",
+			"command": "pnpm typecheck",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Install updated Prisma",
+			"type": "shell",
+			"command": "pnpm install",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Generate Prisma Client",
+			"type": "shell",
+			"command": "pnpm prisma:generate",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Typecheck after shims",
+			"type": "shell",
+			"command": "pnpm typecheck",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Typecheck after Prisma fix",
+			"type": "shell",
+			"command": "pnpm typecheck",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Remove middleware via shell",
+			"type": "shell",
+			"command": "rm -f middleware.ts && ls -la | sed -n '1,50p'",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Install Prisma 6.16",
+			"type": "shell",
+			"command": "pnpm install && pnpm prisma:generate",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Typecheck after env helper",
+			"type": "shell",
+			"command": "pnpm typecheck",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		}
+	]
+}
