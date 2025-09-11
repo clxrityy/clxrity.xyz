@@ -71,7 +71,7 @@ model GuildConfig {
     birthdayRoleId  String? // Role to assign on birthdays
     birthdayChannel String? // Channel to send birthday messages
     birthdayMessage String? // Template with {user}
-    changeable      Boolean  @default(true) // whether users can change birthday
+    changeable      Boolean  @default(false) // whether users can change birthday
     createdAt       DateTime @default(now())
     updatedAt       DateTime @updatedAt
 }
