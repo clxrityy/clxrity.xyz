@@ -5,7 +5,7 @@
 //   pnpm sync:discord --write              # write manifest file (default)
 //   pnpm sync:discord --guild <GUILD_ID>   # sync to a guild (faster propagation)
 //   pnpm sync:discord                      # sync globally (slower propagation)
-// Env required to sync:
+//   Env required to sync:
 //   DISCORD_APP_ID, DISCORD_BOT_TOKEN
 
 import { registry } from '../lib/commands/registry';
@@ -56,7 +56,7 @@ function getDef(schema: z.ZodTypeAny): any {
 
 function getDescription(schema: z.ZodTypeAny, fallback: string): string {
     const d = getDef(schema)?.description as string | undefined;
-    return (d && d.trim()) || fallback;
+    return d?.trim() || fallback;
 }
 
 function unwrap(schema: z.ZodTypeAny): z.ZodTypeAny {
@@ -137,7 +137,7 @@ function optionFromSchema(name: string, schema: z.ZodTypeAny, required: boolean)
     }
 
     if (s instanceof z.ZodNativeEnum) {
-        const values = Object.values((s as any)._def.values).filter((v) => typeof v === 'string') as string[];
+        const values = Object.values((s as any)._def.values).filter((v) => typeof v === 'string');
         return {
             name,
             type: OptionType.STRING,
@@ -164,7 +164,7 @@ function schemaToOptions(schema: z.ZodTypeAny | undefined): any[] | undefined {
         for (const [key, value] of Object.entries(shape)) {
             // determine requiredness: optional/default/nullable means not required
             let required = true;
-            let cur: z.ZodTypeAny = value as z.ZodTypeAny;
+            let cur: z.ZodTypeAny = value;
             // unwrap to detect optional/default/nullable
             const tn = (cur as any)?._def?.typeName as string | undefined;
             if (tn === 'ZodOptional' || tn === 'ZodDefault' || tn === 'ZodNullable') required = false;
@@ -180,71 +180,115 @@ function schemaToOptions(schema: z.ZodTypeAny | undefined): any[] | undefined {
     return undefined;
 }
 
-function buildCommands(): DiscordCommand[] {
-    const defs = registry.list();
-    // Group by name tokens: "parent", "parent sub", "parent group sub"
-    type SubDef = { name: string; description: string; options?: any[] };
-    const parents = new Map<string, { standalone?: SubDef; subs: SubDef[]; groups: Map<string, SubDef[]> }>();
+// Type definition moved outside the function
+type SubDef = { name: string; description: string; options?: any[] };
+type ParentMap = Map<string, { standalone?: SubDef; subs: SubDef[]; groups: Map<string, SubDef[]> }>;
 
-    function ensureParent(p: string) {
-        if (!parents.has(p)) parents.set(p, { subs: [], groups: new Map() });
-        return parents.get(p)!;
+function ensureParent(p: string, parents: ParentMap): { standalone?: SubDef; subs: SubDef[]; groups: Map<string, SubDef[]> } {
+    if (!parents.has(p)) parents.set(p, { subs: [], groups: new Map() });
+    return parents.get(p)!;
+}
+
+function processCommandDefinition(def: any, parents: ParentMap): void {
+    const description = (def.description || `${def.name} command`).slice(0, 100);
+    const options = schemaToOptions(def.schema);
+    const tokens = def.name.trim().split(/\s+/);
+
+    if (tokens.length === 1) {
+        const parent = ensureParent(tokens[0], parents);
+        parent.standalone = { name: tokens[0], description, options };
+        return;
     }
 
-    for (const def of defs) {
-        const description = (def.description || `${def.name} command`).slice(0, 100);
-        const options = schemaToOptions(def.schema);
-        const tokens = def.name.trim().split(/\s+/);
-        if (tokens.length === 1) {
-            const parent = ensureParent(tokens[0]);
-            parent.standalone = { name: tokens[0], description, options };
-            continue;
-        }
-        if (tokens.length === 2) {
-            const [p, sub] = tokens;
-            const parent = ensureParent(p);
-            parent.subs.push({ name: sub, description, options });
-            continue;
-        }
-        // 3+ tokens -> treat as group + sub; group is second token, sub is remainder joined with '-'
-        const p = tokens[0];
-        const group = tokens[1];
-        const sub = tokens.slice(2).join('-');
-        const parent = ensureParent(p);
-        const list = parent.groups.get(group) ?? [];
-        list.push({ name: sub, description, options });
-        parent.groups.set(group, list);
+    if (tokens.length === 2) {
+        const [p, sub] = tokens;
+        const parent = ensureParent(p, parents);
+        parent.subs.push({ name: sub, description, options });
+        return;
     }
 
+    // 3+ tokens -> treat as group + sub
+    const p = tokens[0];
+    const group = tokens[1];
+    const sub = tokens.slice(2).join('-');
+    const parent = ensureParent(p, parents);
+    const list = parent.groups.get(group) ?? [];
+    list.push({ name: sub, description, options });
+    parent.groups.set(group, list);
+}
+
+function createSubcommandOptions(data: { subs: SubDef[]; groups: Map<string, SubDef[]> }, parentName: string): any[] {
+    const options: any[] = [];
+
+    // Add subcommands
+    for (const s of data.subs) {
+        options.push({
+            type: OptionType.SUB_COMMAND,
+            name: s.name,
+            description: s.description,
+            options: s.options
+        });
+    }
+
+    // Add subcommand groups
+    for (const [gname, subs] of data.groups) {
+        options.push({
+            type: OptionType.SUB_COMMAND_GROUP,
+            name: gname,
+            description: `${parentName} ${gname}`.slice(0, 100),
+            options: subs.map((s) => ({
+                type: OptionType.SUB_COMMAND,
+                name: s.name,
+                description: s.description,
+                options: s.options
+            })),
+        });
+    }
+
+    return options;
+}
+
+function buildCommandsFromParentMap(parents: ParentMap): DiscordCommand[] {
     const out: DiscordCommand[] = [];
+
     for (const [name, data] of parents) {
         // If there are any subs/groups, produce a parent command with subcommands/groups
         if (data.subs.length || data.groups.size) {
-            const options: any[] = [];
-            if (data.subs.length) {
-                for (const s of data.subs) {
-                    options.push({ type: OptionType.SUB_COMMAND, name: s.name, description: s.description, options: s.options });
-                }
-            }
-            if (data.groups.size) {
-                for (const [gname, subs] of data.groups) {
-                    options.push({
-                        type: OptionType.SUB_COMMAND_GROUP,
-                        name: gname,
-                        description: `${name} ${gname}`.slice(0, 100),
-                        options: subs.map((s) => ({ type: OptionType.SUB_COMMAND, name: s.name, description: s.description, options: s.options })),
-                    });
-                }
-            }
-            out.push({ name, description: data.standalone?.description || `${name} command`, type: 1, options, dm_permission: true });
-            continue;
+            const options = createSubcommandOptions(data, name);
+            out.push({
+                name,
+                description: data.standalone?.description || `${name} command`,
+                type: 1,
+                options,
+                dm_permission: true
+            });
         }
         // Otherwise standalone simple command
-        if (data.standalone) {
-            out.push({ name, description: data.standalone.description, type: 1, options: data.standalone.options, dm_permission: true });
+        else if (data.standalone) {
+            out.push({
+                name,
+                description: data.standalone.description,
+                type: 1,
+                options: data.standalone.options,
+                dm_permission: true
+            });
         }
     }
+
     return out;
+}
+
+function buildCommands(): DiscordCommand[] {
+    const defs = registry.list();
+    const parents: ParentMap = new Map();
+
+    // Process each command definition
+    for (const def of defs) {
+        processCommandDefinition(def, parents);
+    }
+
+    // Build the final command array
+    return buildCommandsFromParentMap(parents);
 }
 
 async function main() {
