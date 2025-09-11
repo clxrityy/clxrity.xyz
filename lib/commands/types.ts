@@ -13,6 +13,15 @@ export type CommandContext = {
     headers: Headers;
     ip?: string | null;
     now: () => Date; // useful for consistent timestamps in tests
+    // Discord context (when invoked via interactions)
+    discord?: {
+        applicationId?: string;
+        guildId?: string | null;
+        channelId?: string | null;
+        userId?: string | null;
+        memberRoleIds?: string[];
+        signatureTimestamp?: string; // seconds as string from header
+    };
 };
 
 // A type-safe command definition: args schema + execute handler
