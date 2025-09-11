@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:tunnel": "node scripts/dev-with-tunnel.js",
+    "sync:discord": "tsx scripts/sync-commands.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -30,6 +31,8 @@
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.10",
     "prisma": "6.16.0",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "tsx": "^4.19.0",
+    "dotenv": "^16.4.5"
   }
 }
