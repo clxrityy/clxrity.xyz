@@ -62,3 +62,28 @@ model Event {
     payload   Json
     createdAt DateTime @default(now())
 }
+
+// Guild configuration and birthdays for hbd bot
+model GuildConfig {
+    id              String   @id @default(cuid())
+    guildId         String   @unique
+    adminRoleId     String? // Role required for admin-only commands
+    birthdayRoleId  String? // Role to assign on birthdays
+    birthdayChannel String? // Channel to send birthday messages
+    birthdayMessage String? // Template with {user}
+    changeable      Boolean  @default(true) // whether users can change birthday
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+}
+
+model Birthday {
+    id        String   @id @default(cuid())
+    userId    String // Discord user ID
+    guildId   String // Discord guild ID (per-guild birthdays)
+    month     Int
+    day       Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([userId, guildId])
+}
