@@ -13,3 +13,4 @@ prisma/dev.db-journal
 *buildinfo
 prisma/migrations
 lib/commands/manifest.json
+.idea
