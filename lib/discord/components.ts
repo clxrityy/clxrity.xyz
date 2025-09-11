@@ -20,9 +20,9 @@ export function buildConfigMenuResponse(cfg: GuildConfigRow): Extract<CommandRep
             {
                 title: 'Configuration',
                 fields: [
-                    { name: 'Admin Role', value: cfg.adminRoleId || 'none', inline: true },
-                    { name: 'Birthday Role', value: cfg.birthdayRoleId || 'none', inline: true },
-                    { name: 'Birthday Channel', value: cfg.birthdayChannel || 'none', inline: true },
+                    { name: 'Admin Role', value: cfg.adminRoleId ? `<@&${cfg.adminRoleId}>` : 'none', inline: true },
+                    { name: 'Birthday Role', value: cfg.birthdayRoleId ? `<@&${cfg.birthdayRoleId}>` : 'none', inline: true },
+                    { name: 'Birthday Channel', value: cfg.birthdayChannel ? `<#${cfg.birthdayChannel}>` : 'none', inline: true },
                     { name: 'Changeable', value: String(cfg.changeable), inline: true },
                     { name: 'Message', value: cfg.birthdayMessage || 'default', inline: false },
                 ],
