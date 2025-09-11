@@ -21,6 +21,8 @@ export type CommandContext = {
         userId?: string | null;
         memberRoleIds?: string[];
         signatureTimestamp?: string; // seconds as string from header
+        permissions?: string; // bitfield as string from Discord
+        resolvedUsers?: Record<string, any>;
     };
 };
 
