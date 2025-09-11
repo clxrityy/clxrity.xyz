@@ -20,6 +20,12 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfigRow | 
 
 export async function upsertGuildConfig(input: Partial<GuildConfigRow> & { guildId: string }): Promise<GuildConfigRow> {
     const sql = getEdgeDb();
+    // Track which fields were explicitly provided so we only update those
+    const hasAdminRoleId = Object.hasOwn(input, 'adminRoleId');
+    const hasBirthdayRoleId = Object.hasOwn(input, 'birthdayRoleId');
+    const hasBirthdayChannel = Object.hasOwn(input, 'birthdayChannel');
+    const hasBirthdayMessage = Object.hasOwn(input, 'birthdayMessage');
+    const hasChangeable = Object.hasOwn(input, 'changeable');
     const rows = await sql`
     insert into "GuildConfig" (id, "guildId", "adminRoleId", "birthdayRoleId", "birthdayChannel", "birthdayMessage", changeable, "createdAt", "updatedAt")
     values (
@@ -29,16 +35,16 @@ export async function upsertGuildConfig(input: Partial<GuildConfigRow> & { guild
       ${input.birthdayRoleId ?? null},
       ${input.birthdayChannel ?? null},
       ${input.birthdayMessage ?? null},
-  coalesce(${input.changeable as any}, false),
+      coalesce(${input.changeable as any}, false),
       now(),
       now()
     )
     on conflict ("guildId") do update set
-      "adminRoleId" = excluded."adminRoleId",
-      "birthdayRoleId" = excluded."birthdayRoleId",
-      "birthdayChannel" = excluded."birthdayChannel",
-      "birthdayMessage" = excluded."birthdayMessage",
-      changeable = excluded.changeable,
+      "adminRoleId" = case when ${hasAdminRoleId} then excluded."adminRoleId" else "GuildConfig"."adminRoleId" end,
+      "birthdayRoleId" = case when ${hasBirthdayRoleId} then excluded."birthdayRoleId" else "GuildConfig"."birthdayRoleId" end,
+      "birthdayChannel" = case when ${hasBirthdayChannel} then excluded."birthdayChannel" else "GuildConfig"."birthdayChannel" end,
+      "birthdayMessage" = case when ${hasBirthdayMessage} then excluded."birthdayMessage" else "GuildConfig"."birthdayMessage" end,
+      changeable = case when ${hasChangeable} then excluded.changeable else "GuildConfig".changeable end,
       "updatedAt" = now()
     returning *
   `;
