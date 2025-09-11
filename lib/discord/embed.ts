@@ -26,7 +26,34 @@ export function warnColor() { return 0xfee75c; }
 export function errorColor() { return 0xed4245; }
 
 export function latencyColor(ms: number) {
-    if (ms < 150) return successColor();
-    if (ms < 300) return warnColor();
+    if (ms < 400) return successColor();
+    if (ms < 800) return warnColor();
     return errorColor();
+}
+
+function truncate(text: string, max = 1000): string {
+    if (text.length <= max) return text;
+    return text.slice(0, max - 1) + '…';
+}
+
+// Build a standardized error embed with color, type, and message/stack
+export function errorEmbedFromError(err: unknown, opts?: { title?: string; includeStack?: boolean; maxStack?: number }) {
+    const anyErr = err as any;
+    const name = anyErr?.name || 'Error';
+    const message = typeof anyErr?.message === 'string' ? anyErr.message : String(anyErr);
+    const stack = typeof anyErr?.stack === 'string' ? anyErr.stack : undefined;
+    const title = opts?.title || 'Error';
+    const includeStack = opts?.includeStack ?? false;
+    const maxStack = opts?.maxStack ?? 900;
+
+    return {
+        title,
+        color: errorColor(),
+        fields: [
+            { name: 'Type', value: name, inline: true },
+            { name: 'Message', value: '```\n' + truncate(message, 1000) + '\n```' },
+            ...(includeStack && stack ? [{ name: 'Stack', value: '```\n' + truncate(stack, maxStack) + '\n```' }] : []),
+        ],
+        timestamp: new Date().toISOString(),
+    };
 }

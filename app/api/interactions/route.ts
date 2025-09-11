@@ -5,6 +5,7 @@ import { dispatch, type CommandContext, replyToInteractionData } from '@/lib/com
 import { registry } from '@/lib/commands/registry';
 import { getGuildConfig, upsertGuildConfig } from '@/lib/db/config';
 import { buildConfigMenuResponse } from '@/lib/discord/components';
+import { errorEmbedFromError } from '@/lib/discord/embed';
 import { hasAdminPermission, hasRole } from '@/lib/discord/permissions';
 
 // registry is imported from shared module
@@ -63,8 +64,8 @@ async function handleCommand(req: Request, body: any) {
         const data = replyToInteractionData((result as any) ?? '✅ Command executed.');
         return Response.json({ type: 4, data });
     } catch (err: any) {
-        const msg = err?.message || 'Command failed';
-        return Response.json({ type: 4, data: { content: `❌ ${msg}`, flags: 64 } });
+        const embed = errorEmbedFromError(err, { title: 'Command Error', includeStack: false });
+        return Response.json({ type: 4, data: { embeds: [embed], flags: 64 } });
     }
 }
 
@@ -79,7 +80,8 @@ async function handleComponent(body: any) {
         const roles: string[] = Array.isArray(body?.member?.roles) ? body.member.roles : [];
         const perms: string | undefined = body?.member?.permissions;
         if (!(hasAdminPermission(perms) || hasRole(roles, cfg?.adminRoleId))) {
-            return Response.json({ type: 4, data: { content: 'Unauthorized', flags: 64 } });
+            const embed = errorEmbedFromError(new Error('Unauthorized'), { title: 'Access Denied' });
+            return Response.json({ type: 4, data: { embeds: [embed], flags: 64 } });
         }
 
         let patch: any = {};
