@@ -14,7 +14,7 @@ Refined Next.js (App Router) app using:
 cp .env.example .env
 ```
 
-2. Fill `DATABASE_URL`/`NEON_DATABASE_URL`, `AUTH_SECRET`, `GITHUB_ID`, `GITHUB_SECRET`.
+2. Fill `DATABASE_URL`/`NEON_DATABASE_URL`, `AUTH_SECRET`, `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`.
 3. Install deps
 
 ```sh
@@ -113,3 +113,33 @@ Additionally, the script writes `.env.local` keys:
 Discord note: Discord does not expose an API to modify the app’s allowed redirect URLs programmatically.
 
 - For zero-churn dev, use a Cloudflare Named Tunnel with a custom hostname (e.g., `dev.example.com`) and register that once in the Discord Developer Portal.
+
+## Discord interactions (slash commands)
+
+- Endpoint: `POST /api/interactions` (Edge runtime). Requests are verified using Discord's Ed25519 signature.
+- Required env:
+  - `DISCORD_PUBLIC_KEY` – from your Discord application (General Information).
+
+To enable interactions:
+
+1. Set your app's Interactions Endpoint URL in the Discord Developer Portal to your public base URL + `/api/interactions`.
+2. Add `DISCORD_PUBLIC_KEY` to `.env.local` (or your platform's secret manager in production).
+3. Register your commands in `lib/commands/registry.ts` by adding `RegisteredCommand` definitions.
+
+Minimal command example (add to registry array):
+
+```ts
+import { z } from 'zod';
+
+{
+  name: 'ping',
+  description: 'Respond with pong',
+  schema: z.object({}),
+  execute: () => 'Pong!',
+}
+```
+
+Notes:
+
+- PING (type 1) is answered automatically.
+- Application commands (type 2) are dispatched via a typed registry with Zod validation.
