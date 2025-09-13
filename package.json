@@ -35,5 +35,6 @@
     "prisma": "6.16.0",
     "tsx": "^4.19.0",
     "typescript": "5.5.4"
-  }
+  },
+  "packageManager": "pnpm@10.15.1"
 }
