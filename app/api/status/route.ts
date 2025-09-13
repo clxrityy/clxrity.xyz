@@ -1,9 +1,10 @@
 export const runtime = 'edge';
-let startedAt = Date.now();
+import { getCoreStatus } from './shared';
 
 export async function GET() {
-    // NOTE: Replace guilds with real value when bot service available
-    const uptimeMs = Date.now() - startedAt;
-    const guilds = 0;
-    return Response.json({ online: true, uptimeMs, guilds });
+    // NOTE: Replace guilds/online with real values when bot service available
+    const core = getCoreStatus();
+    const uptimeMs = Date.now() - core.startedAt; // Backwards compatibility for polling clients
+    return Response.json({ ...core, uptimeMs });
 }
+
