@@ -1,6 +1,10 @@
-export default function IconDiscord(props: Readonly<React.SVGProps<SVGSVGElement>>) {
+import * as React from 'react';
+import { IconProps, applyIconSize } from './IconProps';
+
+export default function IconDiscord(props: Readonly<IconProps>) {
+    const svgProps = applyIconSize(props, 20);
     return (
-        <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" {...props}>
+        <svg viewBox="0 0 24 24" aria-hidden="true" {...svgProps}>
             <path fill="currentColor" d="M20.317 4.369A19.791 19.791 0 0 0 16.558 3c-.2.355-.43.83-.589 1.205a18.27 18.27 0 0 0-7.938 0C7.871 3.83 7.64 3.355 7.44 3a19.736 19.736 0 0 0-3.76 1.369C1.273 8.089.485 11.65.82 15.159A19.9 19.9 0 0 0 6.172 18c.4-.55.757-1.137 1.064-1.748-.584-.22-1.142-.493-1.664-.814.14-.102.277-.208.409-.316 3.22 1.504 6.703 1.504 9.887 0 .134.108.27.214.409.316-.522.321-1.08.595-1.664.814.307.611.663 1.198 1.064 1.748a19.9 19.9 0 0 0 5.352-2.841c.423-4.385-.72-7.91-2.172-10.79ZM9.35 13.348c-.956 0-1.733-.873-1.733-1.948 0-1.074.764-1.948 1.733-1.948.968 0 1.75.874 1.733 1.948 0 1.075-.765 1.948-1.733 1.948Zm5.298 0c-.956 0-1.733-.873-1.733-1.948 0-1.074.764-1.948 1.733-1.948.968 0 1.75.874 1.733 1.948 0 1.075-.765 1.948-1.733 1.948Z" />
         </svg>
     );

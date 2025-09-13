@@ -1,0 +1,10 @@
+export { default as IconDiscord } from './IconDiscord';
+export { default as IconSun } from './IconSun';
+export { default as IconMenu } from './IconMenu';
+export { default as IconMoon } from './IconMoon';
+export { default as IconDashboard } from './IconDashboard';
+export { default as IconGithub } from './IconGithub';
+export { default as IconInvite } from './IconInvite';
+export { default as IconCake } from './IconCake';
+export type { IconProps } from './IconProps';
+export { applyIconSize } from './IconProps';
