@@ -77,7 +77,16 @@ main {
 
 .stack-lg {
     display: grid;
-    gap: 12px;
+    gap: 14px;
+}
+
+.stack-lg h1 {
+    white-space: wrap;
+    padding-bottom: 4px;
+}
+
+.stack-lg p {
+    padding: 1rex;
 }
 
 .grid-center {
@@ -146,8 +155,11 @@ main {
 
 .nav {
     align-items: center;
+    display: flex;
+    justify-content: center;
     gap: 20px;
-    font-size: 1.02rem;
+    font-size: 0.8rem;
+    text-align: center;
 }
 
 .nav a,
@@ -404,8 +416,40 @@ a {
 
 .kpis {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 180px);
+    gap: 28px;
+    justify-content: start;
+    align-items: stretch;
+}
+
+.kpis-centered {
+    margin-top: clamp(40px, 8vh, 120px);
+    margin-bottom: clamp(40px, 10vh, 160px);
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+}
+
+.kpis-centered .card {
+    min-width: 180px;
+}
+
+@media (max-width: 680px) {
+    .kpis {
+        grid-auto-flow: row;
+        grid-template-columns: 1fr;
+    }
+
+    .kpis-centered {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .kpis-centered .card {
+        width: 100%;
+        max-width: 320px;
+    }
 }
 
 .card {
