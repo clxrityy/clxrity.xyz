@@ -1,9 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import IconMenu from "./icons/IconMenu";
-import IconSun from "./icons/IconSun";
-import IconMoon from "./icons/IconMoon";
+import { IconMenu, IconSun, IconMoon } from "./icons";
 import { useTheme } from "./ThemeProvider";
 import { INVITE_URL, DASHBOARD_URL } from "@/lib/config/urls";
 
@@ -19,6 +17,8 @@ export default function Header() {
     const minSwipe = 60; // minimum horizontal travel to act
     const maxAngle = 32; // degrees off pure horizontal allowed
     const panelRef = useRef<HTMLElement | null>(null);
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const lastFocusedBeforeOpen = useRef<HTMLElement | null>(null);
     const renderDashboardLink = (onClick?: () => void) => {
         if (typeof DASHBOARD_URL !== 'string' || !DASHBOARD_URL) return null;
         if (DASHBOARD_URL.startsWith('/')) {
@@ -37,8 +37,11 @@ export default function Header() {
             setMounted(true);
             requestAnimationFrame(() => setOpen(true));
         }
+        lastFocusedBeforeOpen.current = document.activeElement as HTMLElement | null;
     };
-    const closeMenu = () => setOpen(false);
+    const closeMenu = () => {
+        setOpen(false);
+    };
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeMenu(); };
         window.addEventListener('keydown', onKey);
@@ -46,16 +49,22 @@ export default function Header() {
     }, []);
     // Touch gesture: open with rightward swipe from left edge; close with leftward swipe on panel/overlay
     useEffect(() => {
+        let lastMoveTime = 0;
+        let lastMoveX = 0;
         const onTouchStart = (e: TouchEvent) => {
             if (e.touches.length !== 1) return;
             const t = e.touches[0];
             touchStartX.current = t.clientX;
             touchStartY.current = t.clientY;
-            // Only begin tracking open gesture if closed & near edge; if open track close gesture anywhere over panel/wrap
+            lastMoveTime = performance.now();
+            lastMoveX = t.clientX;
             if (!open) {
-                if (t.clientX <= edgeWidth) tracking.current = true; else tracking.current = false;
+                tracking.current = t.clientX <= edgeWidth;
             } else {
                 tracking.current = true;
+            }
+            if (tracking.current && panelRef.current) {
+                panelRef.current.style.transition = 'none';
             }
         };
         const onTouchMove = (e: TouchEvent) => {
@@ -63,22 +72,50 @@ export default function Header() {
             const t = e.touches[0];
             const dx = t.clientX - touchStartX.current;
             const dy = t.clientY - touchStartY.current;
-            // abort if mostly vertical
             const angle = Math.abs(Math.atan2(dy, dx) * 180 / Math.PI);
-            if (angle > maxAngle) return; // let vertical scroll proceed
-            // Prevent horizontal scroll interference
+            if (angle > maxAngle) return;
             if (Math.abs(dx) > 8) e.preventDefault();
+            if (panelRef.current) {
+                if (!open) {
+                    // Opening: translate from -40px towards 0 as dx increases
+                    const progress = Math.min(Math.max(dx / 260, 0), 1);
+                    const translate = -40 + (40 * progress);
+                    panelRef.current.style.transform = `translateX(${translate}px)`;
+                    panelRef.current.style.opacity = String(0.2 + 0.8 * progress);
+                } else {
+                    // Closing (drag left): dx negative
+                    const progClose = Math.min(Math.max(-dx / 260, 0), 1);
+                    const translate = -12 - (28 * progClose);
+                    panelRef.current.style.transform = `translateX(${translate}px)`;
+                    panelRef.current.style.opacity = String(1 - 0.6 * progClose);
+                }
+            }
+            lastMoveTime = performance.now();
+            lastMoveX = t.clientX;
+        };
+        const revertPanel = () => {
+            if (panelRef.current) {
+                panelRef.current.style.transition = '';
+                panelRef.current.style.removeProperty('opacity');
+                panelRef.current.style.removeProperty('transform');
+            }
         };
         const onTouchEnd = (e: TouchEvent) => {
             if (!tracking.current || touchStartX.current == null) { tracking.current = false; return; }
             const changed = e.changedTouches[0];
             const dx = changed.clientX - touchStartX.current;
-            // Decide action
-            if (!open && dx > minSwipe) {
+            const dt = performance.now() - lastMoveTime;
+            const vx = dt > 0 ? (changed.clientX - lastMoveX) / dt : 0; // px per ms
+            const fastSwipe = Math.abs(vx) > 0.5; // velocity threshold
+            const shouldOpen = !open
+                ? (dx > minSwipe || (fastSwipe && dx > 20))
+                : !(dx < -minSwipe || (fastSwipe && dx < -20));
+            if (shouldOpen) {
                 setOpen(true);
-            } else if (open && dx < -minSwipe) {
+            } else {
                 setOpen(false);
             }
+            revertPanel();
             tracking.current = false;
             touchStartX.current = null;
             touchStartY.current = null;
@@ -97,7 +134,7 @@ export default function Header() {
         if (open) document.body.style.overflow = 'hidden'; else document.body.style.overflow = prev || '';
         return () => { document.body.style.overflow = prev || ''; };
     }, [open]);
-    // Unmount after fade-out
+    // Unmount after fade-out & restore focus
     useEffect(() => {
         if (open || !mounted) return;
         const overlay = document.querySelector('.mm-root .mm-overlay');
@@ -105,6 +142,12 @@ export default function Header() {
         const onEnd = (e: Event) => {
             if (e.target !== overlay) return;
             if (!open) setMounted(false);
+            // Restore focus to trigger if still in document
+            if (!open && lastFocusedBeforeOpen.current) {
+                requestAnimationFrame(() => {
+                    try { lastFocusedBeforeOpen.current?.focus(); } catch { }
+                });
+            }
         };
         overlay.addEventListener('transitionend', onEnd as EventListener);
         return () => overlay.removeEventListener('transitionend', onEnd as EventListener);
@@ -134,10 +177,52 @@ export default function Header() {
         window.addEventListener('pointerdown', handlePointerDown, { capture: true });
         return () => window.removeEventListener('pointerdown', handlePointerDown, { capture: true } as any);
     }, [open]);
+    // Focus trap: when opening, move focus into panel
+    useEffect(() => {
+        if (!open || !panelRef.current) return;
+        // Find first focusable element inside panel
+        const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length) {
+            requestAnimationFrame(() => {
+                focusable[0].focus();
+            });
+        } else {
+            panelRef.current.focus();
+        }
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key !== 'Tab') return;
+            if (!panelRef.current) return;
+            const nodes = Array.from(panelRef.current.querySelectorAll<HTMLElement>(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            )).filter(el => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
+            if (!nodes.length) {
+                e.preventDefault();
+                panelRef.current?.focus();
+                return;
+            }
+            const first = nodes[0];
+            const last = nodes[nodes.length - 1];
+            const active = document.activeElement as HTMLElement | null;
+            if (e.shiftKey) {
+                if (active === first || !panelRef.current.contains(active)) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else if (active === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        };
+        window.addEventListener('keydown', handleKey, true);
+        return () => window.removeEventListener('keydown', handleKey, true);
+    }, [open]);
+
     return (
         <header className="site-header">
             <div className="container row">
-                <button type="button" className="icon-btn mobile-only" aria-label="Open menu" onClick={openMenu}>
+                <button ref={triggerRef} type="button" className="icon-btn mobile-only" aria-label="Open menu" onClick={openMenu}>
                     <IconMenu />
                 </button>
                 <Link href="/" className="brand">hbd</Link>
