@@ -1,9 +1,13 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { SITE_NAME, SITE_TAGLINE, SITE_URL, SITE_TWITTER } from "@/lib/config/site";
 
 export const metadata: Metadata = {
-    title: "hbd",
-    description: "A Discord birthday bot",
+    title: SITE_NAME,
+    description: SITE_TAGLINE,
     manifest: "/site.webmanifest",
     icons: [
         { rel: "icon", url: "/favicon.ico" },
@@ -24,10 +28,10 @@ export const metadata: Metadata = {
     keywords: ["discord", "bot", "birthday", "birthdays", "reminder", "role", "channel", "celebration", "fun", "announcement", "track"],
     category: "discord bot",
     twitter: {
-        title: "hbd",
-        description: "A Discord birthday bot",
+        title: SITE_NAME,
+        description: SITE_TAGLINE,
         card: "summary",
-        creator: "@yourclxrity",
+        creator: SITE_TWITTER,
         images: [
             {
                 url: "/android-chrome-192x192.png",
@@ -51,10 +55,10 @@ export const metadata: Metadata = {
         ]
     },
     openGraph: {
-        title: "hbd",
-        description: "A Discord birthday bot",
-        url: "https://hbd.clxrity.xyz",
-        siteName: "hbd",
+        title: SITE_NAME,
+        description: SITE_TAGLINE,
+        url: SITE_URL,
+        siteName: SITE_NAME,
         images: [
             {
                 url: "/android-chrome-192x192.png",
@@ -83,8 +87,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <html lang="en">
-            <body>{children}</body>
+        <html lang="en" suppressHydrationWarning>
+            <body>
+                <script
+                    // Inline no-FOUC theme bootstrap
+                    dangerouslySetInnerHTML={{
+                        __html: `(()=>{try{const LS_KEY='theme';var t=localStorage.getItem(LS_KEY);if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`
+                    }}
+                />
+                <ThemeProvider>
+                    <Header />
+                    {children}
+                    <Footer />
+                </ThemeProvider>
+            </body>
         </html>
     );
 }
