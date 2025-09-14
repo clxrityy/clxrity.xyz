@@ -136,7 +136,7 @@ function optionFromSchema(name: string, schema: z.ZodTypeAny, required: boolean)
         return handleEnumSchema(name, s, required);
     }
 
-    if (s instanceof z.ZodNativeEnum) {
+    if (s instanceof z.nativeEnum) {
         const values = Object.values((s as any)._def.values).filter((v) => typeof v === 'string');
         return {
             name,
@@ -162,22 +162,34 @@ function schemaToOptions(schema: z.ZodTypeAny | undefined): any[] | undefined {
         const shape: Record<string, z.ZodTypeAny> = (s as any).shape;
         const opts: any[] = [];
         for (const [key, value] of Object.entries(shape)) {
-            // determine requiredness: optional/default/nullable means not required
-            let required = true;
-            let cur: z.ZodTypeAny = value;
-            // unwrap to detect optional/default/nullable
-            const tn = (cur as any)?._def?.typeName as string | undefined;
-            if (tn === 'ZodOptional' || tn === 'ZodDefault' || tn === 'ZodNullable') required = false;
-            const opt = optionFromSchema(key, cur, required);
+            const { inner, required } = unwrapAndDetectRequired(value);
+            const opt = optionFromSchema(key, inner, required);
             opts.push(opt);
         }
         return opts.length ? opts : undefined;
     }
     // Primitive arg schemas: expose a single option named 'value'
-    if (s instanceof z.ZodString || s instanceof z.ZodNumber || s instanceof z.ZodBoolean || s instanceof z.ZodEnum || s instanceof z.ZodNativeEnum || s instanceof z.ZodLiteral) {
+    if (s instanceof z.ZodString || s instanceof z.ZodNumber || s instanceof z.ZodBoolean || s instanceof z.ZodEnum || s instanceof z.nativeEnum || s instanceof z.ZodLiteral) {
         return [optionFromSchema('value', s, true)];
     }
     return undefined;
+}
+
+function unwrapAndDetectRequired(schema: z.ZodTypeAny): { inner: z.ZodTypeAny; required: boolean } {
+    let cur: z.ZodTypeAny = schema;
+    let required = true;
+    const seen = new Set<any>();
+    const isOptLike = (s: any) => !!(s?.isOptional?.() || ['ZodOptional', 'ZodDefault', 'ZodNullable'].includes(s?._def?.typeName));
+    for (let i = 0; i < 15; i++) {
+        if (seen.has(cur)) break;
+        seen.add(cur);
+        if (isOptLike(cur)) required = false;
+        const def: any = (cur as any)?._def;
+        const next = def?.innerType || def?.schema || def?.inner || def?.type || null;
+        if (!next || next === cur) break;
+        cur = next;
+    }
+    return { inner: cur, required };
 }
 
 // Type definition moved outside the function
@@ -288,7 +300,17 @@ function buildCommands(): DiscordCommand[] {
     }
 
     // Build the final command array
-    return buildCommandsFromParentMap(parents);
+    const built = buildCommandsFromParentMap(parents);
+    // Post-process: add choices to help command's single 'command' option (if present)
+    const help = built.find(c => c.name === 'help');
+    if (help && Array.isArray(help.options)) {
+        const opt = help.options.find((o: any) => o.name === 'command' && o.type === 3);
+        if (opt) {
+            const commandNames = defs.map(d => d.name).filter(n => n !== 'help');
+            opt.choices = commandNames.slice(0, 25).map(n => ({ name: n.slice(0, 100), value: n }));
+        }
+    }
+    return built;
 }
 
 async function main() {

@@ -33,6 +33,7 @@ export interface CommandDefinition<
 > {
     name: string;
     description?: string;
+    category?: string; // logical grouping (e.g., Utility, General, Admin)
     schema: TArgsSchema;
     // Optional authorization hook before execute
     authorize?: (input: { ctx: CommandContext; args: z.infer<TArgsSchema> }) => boolean | Promise<boolean>;
@@ -62,7 +63,7 @@ export class CommandUnauthorizedError extends Error {
 }
 
 export class CommandValidationError extends Error {
-    constructor(public readonly issues: z.ZodIssue[]) {
+    constructor(public readonly issues: z.core.$ZodIssue[]) {
         super("Invalid command arguments");
         this.name = "CommandValidationError";
     }

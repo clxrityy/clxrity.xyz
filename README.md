@@ -4,7 +4,7 @@ Refined Next.js (App Router) app using:
 
 - Neon Postgres + Prisma (Node runtime)
 - Vercel Edge API routes using `@neondatabase/serverless`
-- OAuth2 dashboard with NextAuth (GitHub provider example)
+- OAuth2 dashboard with NextAuth
 
 ## Setup
 

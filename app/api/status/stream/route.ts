@@ -1,45 +1,50 @@
 export const runtime = 'edge';
 
-import { getCoreStatus } from '../shared';
+import { subscribe } from '../shared';
 
-// Server-Sent Events stream for status updates.
-// Emits an initial status event immediately, then periodic refresh events.
-// Uptime is derived client-side from startedAt; we don't stream a ticking value.
-export async function GET() {
+// SSE endpoint that emits status only when it changes plus periodic keepalive comments.
+export async function GET(request: Request) {
+    const { signal } = request;
     const stream = new ReadableStream({
         start(controller) {
             const encoder = new TextEncoder();
+            let open = true;
+            let unsubscribe: (() => void) | null = null;
+            let keepAliveInterval: ReturnType<typeof setInterval> | null = null;
 
-            const send = () => {
-                const status = getCoreStatus();
-                const payload = `event: status\ndata: ${JSON.stringify(status)}\n\n`;
-                controller.enqueue(encoder.encode(payload));
+            const safeEnqueue = (chunk: string) => {
+                if (!open) return;
+                try {
+                    controller.enqueue(encoder.encode(chunk));
+                } catch {
+                    close();
+                }
             };
 
-            // Initial push
-            send();
+            const sendStatus = (status: any) => {
+                safeEnqueue(`event: status\ndata: ${JSON.stringify(status)}\n\n`);
+            };
 
-            // Periodic status every 15s (adjustable)
-            const statusInterval = setInterval(send, 15000);
-
-            // Keepalive comment every 30s (some proxies require activity)
-            const keepAliveInterval = setInterval(() => {
-                controller.enqueue(encoder.encode(`: keepalive ${Date.now()}\n\n`));
-            }, 30000);
+            const sendKeepAlive = () => safeEnqueue(`: keepalive ${Date.now()}\n\n`);
 
             const close = () => {
-                clearInterval(statusInterval);
-                clearInterval(keepAliveInterval);
-                controller.close();
+                if (!open) return;
+                open = false;
+                if (unsubscribe) { try { unsubscribe(); } catch { /* ignore */ } }
+                if (keepAliveInterval) clearInterval(keepAliveInterval);
+                try { controller.close(); } catch { /* ignore */ }
             };
 
-            // In edge runtime there is no 'request.on'—rely on GC/connection close.
-            // We expose a visibility timeout failsafe: if enqueue throws, close.
-            try {
-                // no-op; send already called
-            } catch {
-                close();
-            }
+            if (signal.aborted) { close(); return; }
+            signal.addEventListener('abort', close);
+
+            // Subscribe (immediate push occurs inside shared.subscribe)
+            unsubscribe = subscribe(sendStatus);
+            // Keepalive every 30s regardless of changes
+            keepAliveInterval = setInterval(sendKeepAlive, 30000);
+        },
+        cancel() {
+            // reader canceled
         }
     });
 
@@ -48,7 +53,6 @@ export async function GET() {
             'Content-Type': 'text/event-stream; charset=utf-8',
             'Cache-Control': 'no-cache, no-transform',
             'Connection': 'keep-alive',
-            // Disable Next.js body buffering
             'X-Accel-Buffering': 'no'
         }
     });

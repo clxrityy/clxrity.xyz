@@ -8,7 +8,7 @@ export function getNodeEnv() {
     return process.env.NODE_ENV ?? "development";
 }
 
-export function getBaseUrl(opts: GetBaseUrlOptions = {}) {
+export async function getBaseUrl(opts: GetBaseUrlOptions = {}) {
     // 1) Prefer explicit tunnel or configured public URL
     const cf = process.env.CF_TUNNEL_URL; // e.g., https://random-subdomain.trycloudflare.com
     if (cf) return stripTrailingSlash(cf);
@@ -21,7 +21,7 @@ export function getBaseUrl(opts: GetBaseUrlOptions = {}) {
     if (process.env.RENDER_EXTERNAL_URL) return stripTrailingSlash(process.env.RENDER_EXTERNAL_URL);
 
     // 3) Infer from headers if available (in route handlers/server components)
-    const hdrs = opts.headers ?? tryGetNextHeaders();
+    const hdrs = opts.headers ?? await tryGetNextHeaders();
     if (hdrs) {
         const proto = hdrs.get("x-forwarded-proto") || "https";
         const host = hdrs.get("x-forwarded-host") || hdrs.get("host");
@@ -32,22 +32,22 @@ export function getBaseUrl(opts: GetBaseUrlOptions = {}) {
     return getNodeEnv() === "production" ? "https://localhost" : "http://localhost:3000";
 }
 
-export function getAuthUrl(opts: GetBaseUrlOptions = {}) {
+export async function getAuthUrl(opts: GetBaseUrlOptions = {}) {
     // Allow explicit override via AUTH_URL first
     if (process.env.AUTH_URL) return stripTrailingSlash(process.env.AUTH_URL);
-    return getBaseUrl(opts);
+    return await getBaseUrl(opts);
 }
 
-export function absoluteUrl(path = "/", opts: GetBaseUrlOptions = {}) {
-    const base = getBaseUrl(opts);
+export async function absoluteUrl(path = "/", opts: GetBaseUrlOptions = {}) {
+    const base = await getBaseUrl(opts);
     const p = path.startsWith("/") ? path : `/${path}`;
     return `${base}${p}`;
 }
 
-function tryGetNextHeaders(): Headers | null {
+async function tryGetNextHeaders(): Promise<Headers | null> {
     try {
         // At build time or outside request context this can throw
-        return nextHeaders();
+        return await nextHeaders();
     } catch {
         return null;
     }
