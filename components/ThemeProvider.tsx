@@ -7,13 +7,9 @@ type ThemeContextValue = { theme: Theme; toggle: () => void; set: (t: Theme) => 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode }>) {
-    const [theme, setTheme] = useState<Theme>(() => {
-        if (typeof document !== 'undefined') {
-            const attr = document.documentElement.getAttribute('data-theme');
-            if (attr === 'light' || attr === 'dark') return attr;
-        }
-        return 'light';
-    });
+    // Important: Use a deterministic initial value so SSR and the first client render match.
+    // We'll sync to the real user preference (from localStorage or system) after mount.
+    const [theme, setTheme] = useState<Theme>('light');
     // Sync (only runs client)
     // Initial sync and optional system listener
     useEffect(() => {
@@ -24,6 +20,9 @@ export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode
             setTheme(stored);
         } else if (!stored) {
             const mql = window.matchMedia('(prefers-color-scheme: dark)');
+            // Set initial based on system preference
+            const sysTheme: Theme = mql.matches ? 'dark' : 'light';
+            if (sysTheme !== theme) setTheme(sysTheme);
             const listener = (e: MediaQueryListEvent) => setTheme(e.matches ? 'dark' : 'light');
             mql.addEventListener('change', listener);
             cleanup = () => mql.removeEventListener('change', listener);

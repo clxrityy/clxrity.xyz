@@ -1,32 +1,32 @@
 import { getEdgeDb } from '../neon';
 
 export type GuildConfigRow = {
-    id: string;
-    guildId: string;
-    adminRoleId: string | null;
-    birthdayRoleId: string | null;
-    birthdayChannel: string | null;
-    birthdayMessage: string | null;
-    changeable: boolean;
-    createdAt: string;
-    updatedAt: string;
+  id: string;
+  guildId: string;
+  adminRoleId: string | null;
+  birthdayRoleId: string | null;
+  birthdayChannel: string | null;
+  birthdayMessage: string | null;
+  changeable: boolean;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export async function getGuildConfig(guildId: string): Promise<GuildConfigRow | null> {
-    const sql = getEdgeDb();
-    const rows = await sql`select * from "GuildConfig" where "guildId" = ${guildId} limit 1`;
-    return (rows as any[])[0] || null;
+  const sql = getEdgeDb();
+  const rows = await sql`select * from "GuildConfig" where "guildId" = ${guildId} limit 1`;
+  return (rows as any[])[0] || null;
 }
 
 export async function upsertGuildConfig(input: Partial<GuildConfigRow> & { guildId: string }): Promise<GuildConfigRow> {
-    const sql = getEdgeDb();
-    // Track which fields were explicitly provided so we only update those
-    const hasAdminRoleId = Object.hasOwn(input, 'adminRoleId');
-    const hasBirthdayRoleId = Object.hasOwn(input, 'birthdayRoleId');
-    const hasBirthdayChannel = Object.hasOwn(input, 'birthdayChannel');
-    const hasBirthdayMessage = Object.hasOwn(input, 'birthdayMessage');
-    const hasChangeable = Object.hasOwn(input, 'changeable');
-    const rows = await sql`
+  const sql = getEdgeDb();
+  // Track which fields were explicitly provided so we only update those
+  const hasAdminRoleId = Object.hasOwn(input, 'adminRoleId');
+  const hasBirthdayRoleId = Object.hasOwn(input, 'birthdayRoleId');
+  const hasBirthdayChannel = Object.hasOwn(input, 'birthdayChannel');
+  const hasBirthdayMessage = Object.hasOwn(input, 'birthdayMessage');
+  const hasChangeable = Object.hasOwn(input, 'changeable');
+  const rows = await sql`
     insert into "GuildConfig" (id, "guildId", "adminRoleId", "birthdayRoleId", "birthdayChannel", "birthdayMessage", changeable, "createdAt", "updatedAt")
     values (
       gen_random_uuid()::text,
@@ -48,5 +48,12 @@ export async function upsertGuildConfig(input: Partial<GuildConfigRow> & { guild
       "updatedAt" = now()
     returning *
   `;
-    return (rows as any[])[0];
+  return (rows as any[])[0];
+}
+
+// List guild configs that have a non-null birthdayChannel (eligible for announcements)
+export async function listGuildsWithBirthdayChannel(): Promise<GuildConfigRow[]> {
+  const sql = getEdgeDb();
+  const rows = await sql`select * from "GuildConfig" where "birthdayChannel" is not null`;
+  return rows as any as GuildConfigRow[];
 }

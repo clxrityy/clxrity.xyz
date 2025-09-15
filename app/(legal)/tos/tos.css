@@ -1,0 +1,218 @@
+/* Legal (Terms & Privacy) Page Styles */
+/* Scope everything to the .legal-doc root to avoid global leakage */
+
+.tos-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.tos-layout .tos-container {
+    max-width: 1200px;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 640px) {
+    .tos-layout .tos-container {
+        padding: 10px;
+    }
+
+}
+
+.legal-doc {
+    /* Defaults (optimized for dark). Light theme overrides below. */
+    --legal-bg: transparent;
+    --legal-border: #2d2d2d;
+    --legal-accent: #3b82f6;
+    /* blue-500 */
+    --legal-accent-muted: #1e3a8a;
+    /* blue-900 */
+    --legal-text: #e5e7eb;
+    /* gray-200 */
+    --legal-text-dim: #9ca3af;
+    /* gray-400 */
+    --legal-code-bg: #111827;
+    /* gray-900 */
+    --legal-inline-code-bg: #1f2937;
+    /* gray-800 */
+    --legal-radius: 6px;
+    position: relative;
+    color: var(--legal-text);
+}
+
+/* Light theme overrides */
+[data-theme='light'] .legal-doc {
+    --legal-bg: transparent;
+    --legal-border: #e5e7eb;
+    /* gray-200 */
+    --legal-accent: #2563eb;
+    /* blue-600 */
+    --legal-accent-muted: #93c5fd;
+    /* blue-300 */
+    --legal-text: #1f2937;
+    /* gray-800 */
+    --legal-text-dim: #6b7280;
+    /* gray-500 */
+    --legal-code-bg: #f3f4f6;
+    /* gray-100 for blocks */
+    --legal-inline-code-bg: #f9fafb;
+    /* gray-50 for inline */
+}
+
+/* Dark theme explicit (optional, keeps intent clear) */
+[data-theme='dark'] .legal-doc {
+    --legal-bg: transparent;
+    --legal-border: #2d2d2d;
+    --legal-accent: #3b82f6;
+    --legal-accent-muted: #1e3a8a;
+    --legal-text: #e5e7eb;
+    --legal-text-dim: #9ca3af;
+    --legal-code-bg: #111827;
+    --legal-inline-code-bg: #1f2937;
+}
+
+.legal-doc h1,
+.legal-doc h2,
+.legal-doc h3 {
+    scroll-margin-top: 6rem;
+}
+
+/* Anchor link (#) styling */
+.legal-doc .anchor-link {
+    opacity: 0;
+    transition: opacity .15s ease, background-color .15s ease;
+    text-decoration: none;
+    margin-left: 8px;
+}
+
+.legal-doc section:hover .anchor-link,
+.legal-doc section:focus-within .anchor-link {
+    opacity: 1;
+}
+
+.legal-doc .anchor-link:hover {
+    background: var(--legal-accent);
+    color: #fff !important;
+}
+
+/* TOC */
+.legal-doc .toc {
+    background: linear-gradient(to bottom right, rgba(30, 41, 59, .55), rgba(17, 24, 39, .55));
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--legal-border);
+    border-radius: var(--legal-radius);
+    padding-left: 12px;
+}
+
+/* TOC in light theme uses a light translucent panel */
+[data-theme='light'] .legal-doc .toc {
+    background: linear-gradient(to bottom right, rgba(243, 244, 246, .8), rgba(229, 231, 235, .8));
+    /* gray-100/200 */
+}
+
+.legal-doc .toc a {
+    text-decoration: none;
+    color: var(--legal-accent);
+}
+
+.legal-doc .toc a:hover {
+    text-decoration: underline;
+}
+
+/* Lists */
+.legal-doc ul {
+    padding-left: 1.25rem;
+}
+
+.legal-doc li {
+    margin: .15rem 0;
+}
+
+/* Inline code */
+.legal-doc code {
+    background: var(--legal-inline-code-bg);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: .85em;
+}
+
+/* Code blocks (if any pre elements are used) */
+.legal-doc pre {
+    background: var(--legal-code-bg);
+    border-radius: var(--legal-radius);
+    padding: .75rem .9rem;
+    overflow-x: auto;
+}
+
+/* Paragraph rhythm */
+.legal-doc p {
+    line-height: 1.55;
+}
+
+/* Divider for header */
+.legal-doc .legal-header {
+    border-bottom: 1px solid var(--legal-border);
+}
+
+.legal-header p {
+    display: inline-flex;
+    color: var(--legal-text-dim);
+    align-items: center;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.legal-header strong {
+    display: inline;
+    font-size: inherit;
+    color: inherit;
+    background: none;
+    padding: 0;
+    margin: 0;
+    padding-left: 4px;
+}
+
+/* Back to top link */
+.legal-doc .back-top {
+    text-decoration: none;
+    font-size: .7rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--legal-text-dim);
+}
+
+.legal-doc .back-top:hover {
+    color: var(--legal-text);
+}
+
+/* Section spacing refinement */
+.legal-doc article>section+section {
+    padding-top: .75rem;
+}
+
+@media (max-width: 640px) {
+    .legal-doc .toc {
+        font-size: .85rem;
+    }
+
+    .legal-doc h1 {
+        font-size: 1.9rem;
+    }
+
+    .legal-doc h2 {
+        font-size: 1.35rem;
+    }
+}
+
+/* Links inside legal content */
+.legal-doc a {
+    color: var(--legal-accent);
+}
+
+.legal-doc a:hover {
+    text-decoration: underline;
+}

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { SITE_NAME, SITE_TAGLINE, SITE_URL, SITE_TWITTER } from "@/lib/config/site";
+import { SITE_NAME, SITE_TAGLINE, SITE_TWITTER } from "@/lib/config/site";
 
 export const metadata: Metadata = {
     title: SITE_NAME,
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: SITE_NAME,
         description: SITE_TAGLINE,
-        url: SITE_URL,
+        url: new URL("https://hbd.clxrity.xyz"),
         siteName: SITE_NAME,
         images: [
             {
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" suppressHydrationWarning>
             <body>

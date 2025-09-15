@@ -1,4 +1,5 @@
 import { getPrismaEdge } from '../prismaEdge';
+import { getEdgeDb } from '../neon';
 
 export type BirthdayRow = {
     id: string;
@@ -70,8 +71,27 @@ export async function listTodayBirthdays(guildId: string, refDate = new Date(), 
     }
 }
 
+// Fetch all birthdays (all guilds) that match today's UTC month/day in a single SQL query (for announcements)
+export async function listTodaysBirthdaysAllGuilds(refDate = new Date()): Promise<BirthdayRow[]> {
+    const month = refDate.getUTCMonth() + 1;
+    const day = refDate.getUTCDate();
+    const sql = getEdgeDb();
+    const rows = await sql`select * from "Birthday" where month = ${month} and day = ${day}`;
+    return rows as any as BirthdayRow[];
+}
+
 export async function canChangeBirthday(guildId: string, userId: string, changeable: boolean, prisma?: PrismaClientLike): Promise<boolean> {
     if (changeable) return true;
     const existing = await getBirthday(guildId, userId, prisma);
     return !existing; // only allow if not set yet
+}
+
+export async function listGuildBirthdays(guildId: string, prisma?: PrismaClientLike): Promise<BirthdayRow[]> {
+    const client = prisma ?? getPrismaEdge();
+    const own = !prisma;
+    try {
+        return await client.birthday.findMany({ where: { guildId } });
+    } finally {
+        if (own) await client.$disconnect().catch(() => { });
+    }
 }
