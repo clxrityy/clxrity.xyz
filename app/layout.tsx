@@ -1,9 +1,17 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SITE_NAME, SITE_TAGLINE, SITE_TWITTER } from "@/lib/config/site";
+import { Quicksand } from "next/font/google";
+
+const quicksand = Quicksand({
+    subsets: ["latin"],
+    weight: ["300", "400", "500", "600", "700"],
+    variable: "--font-quicksand",
+    display: "swap",
+});
 
 export const metadata: Metadata = {
     title: SITE_NAME,
@@ -88,7 +96,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body>
+            <body className={`${quicksand.variable}`}>
                 <script
                     // Inline no-FOUC theme bootstrap
                     dangerouslySetInnerHTML={{
