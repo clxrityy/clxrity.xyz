@@ -1,0 +1,20 @@
+/* Mobile menu category styling (theme-aware). Core layout/styles live in app/globals.css */
+
+.mm-categories {
+  display: grid;
+  gap: 12px;
+}
+
+.mm-category+.mm-category {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+
+.mm-category-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0 0 6px 2px;
+}
