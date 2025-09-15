@@ -5,8 +5,8 @@ import { dispatch, type CommandContext, replyToInteractionData } from '@/lib/com
 import { getGuildConfig, upsertGuildConfig } from '@/lib/db/config';
 import { errorEmbedFromError } from '@/lib/discord/embed';
 import { hasAdminPermission, hasRole } from '@/lib/discord/permissions';
-// buildHelpPageResponse will be loaded on demand
-import { buildBirthdayRootEmbed, buildBirthdayRootComponents, buildMonthSelect, buildDaySelectRows, buildConfirmRow, buildSetFlowEmbeds, buildViewEmbed } from '@/lib/discord/birthdayComponents';
+// Birthday UI builders will be loaded on demand per-handler to keep Edge bundle small
+// Help/config helpers are also lazy-loaded where used
 
 // registry is imported from shared module
 
@@ -192,6 +192,7 @@ async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any
     if (existing && !changeAllowed) {
         return Response.json({ type: 4, data: { content: 'You cannot change your birthday.', flags: 64 } });
     }
+    const { buildSetFlowEmbeds, buildMonthSelect } = await import('@/lib/discord/birthdayComponents');
     const embeds = buildSetFlowEmbeds();
     return Response.json({ type: 4, data: replyToInteractionData({ embeds, components: [buildMonthSelect()], ephemeral: true }) });
 }
@@ -199,6 +200,7 @@ async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any
 async function handleBirthdayViewAction(userId: string, guildId: string) {
     const { getBirthday } = await import('@/lib/db/birthdays');
     const existing = await getBirthday(guildId, userId);
+    const { buildViewEmbed } = await import('@/lib/discord/birthdayComponents');
     return Response.json({
         type: 4,
         data: replyToInteractionData({
@@ -232,6 +234,7 @@ async function handleBirthdayCancelAction(userId: string, guildId: string) {
     const existing = await getBirthday(guildId, userId);
     const cfg = await getGuildConfig(guildId);
     const changeable = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
+    const { buildBirthdayRootEmbed, buildBirthdayRootComponents } = await import('@/lib/discord/birthdayComponents');
     const embed = buildBirthdayRootEmbed({
         hasBirthday: !!existing,
         changeable,
@@ -250,6 +253,7 @@ async function handleBirthdayMonthAction(body: any) {
         if (!Number.isInteger(month) || month < 1 || month > 12) {
             return Response.json({ type: 4, data: { content: 'Invalid month selection.', flags: 64 } });
         }
+        const { buildSetFlowEmbeds, buildDaySelectRows, buildMonthSelect } = await import('@/lib/discord/birthdayComponents');
         const embeds = buildSetFlowEmbeds(month);
         const dayRows = buildDaySelectRows(month);
         return Response.json({
@@ -276,6 +280,7 @@ async function handleBirthdayDayAction(body: any) {
             return Response.json({ type: 4, data: { content: 'Invalid day.', flags: 64 } });
         }
         const { isValidMonthDay } = await import('@/lib/db/birthdays');
+        const { buildSetFlowEmbeds, buildDaySelectRows, buildMonthSelect, buildConfirmRow } = await import('@/lib/discord/birthdayComponents');
         const embeds = buildSetFlowEmbeds(month, day);
         const rows: any[] = [buildMonthSelect(month), ...buildDaySelectRows(month, day)];
         if (isValidMonthDay(month, day)) rows.push(buildConfirmRow(month, day));
