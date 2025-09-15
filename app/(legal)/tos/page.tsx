@@ -7,7 +7,7 @@ const sections: Section[] = [
         body: (
             <p>
                 Welcome to <strong>hbd</strong>, a Discord bot designed to help communities celebrate member birthdays. By
-                adding or using hbd in a Discord server ("Guild"), you agree to these Terms of Service ("Terms") and our <a href="#privacy">Privacy Policy</a>. If you do not agree, you should remove the bot from your server and cease using its commands.
+                adding or using hbd in a Discord server (&quot;Guild&quot;), you agree to these Terms of Service (&quot;Terms&quot;) and our <a href="#privacy">Privacy Policy</a>. If you do not agree, you should remove the bot from your server and cease using its commands.
             </p>
         )
     },
