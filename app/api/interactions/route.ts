@@ -9,7 +9,8 @@ import { hasAdminPermission, hasRole } from '@/lib/discord/permissions';
 import { buildHelpPageResponse } from '@/lib/commands/helpEmbed';
 import { registry } from '@/lib/commands/registry';
 import { getBirthday, setBirthday, canChangeBirthday, isValidMonthDay, daysUntil, listTodayBirthdays } from '@/lib/db/birthdays';
-import { buildBirthdayRootEmbed, buildBirthdayRootComponents, buildMonthSelect, buildDaySelect, buildConfirmRow, buildSetFlowEmbeds, buildViewEmbed } from '@/lib/discord/birthdayComponents';
+import { getPrismaEdge } from '@/lib/prismaEdge';
+import { buildBirthdayRootEmbed, buildBirthdayRootComponents, buildMonthSelect, buildDaySelectRows, buildConfirmRow, buildSetFlowEmbeds, buildViewEmbed } from '@/lib/discord/birthdayComponents';
 
 // registry is imported from shared module
 
@@ -111,7 +112,7 @@ async function handleConfigInteraction(customId: string, body: any, guildId: str
     const cfg = await getGuildConfig(guildId);
     const roles: string[] = Array.isArray(body?.member?.roles) ? body.member.roles : [];
     const perms: string | undefined = body?.member?.permissions;
-    
+
     if (!(hasAdminPermission(perms) || hasRole(roles, cfg?.adminRoleId))) {
         const embed = errorEmbedFromError(new Error('Unauthorized'), { title: 'Access Denied' });
         return Response.json({ type: 4, data: { embeds: [embed], flags: 64 } });
@@ -143,40 +144,55 @@ function buildConfigPatch(key: string, body: any, cfg: any) {
 async function handleBirthdayInteraction(customId: string, body: any, guildId: string) {
     const userId: string | undefined = body?.member?.user?.id || body?.user?.id;
     if (!userId) return new Response('No user', { status: 400 });
-    const cfg = await getGuildConfig(guildId);
-    
+    // Create a single Prisma client for the entire birthday interaction chain
+    const prisma = getPrismaEdge();
+    const cfg = await getGuildConfig(guildId); // still using raw SQL config (not prisma)
+
     // Handle specific birthday interactions
     if (customId === 'bday:set') {
-        return handleBirthdaySetAction(userId, guildId, cfg);
+        const res = await handleBirthdaySetAction(userId, guildId, cfg, prisma);
+        await prisma.$disconnect().catch(() => { });
+        return res;
     }
     if (customId === 'bday:view') {
-        return handleBirthdayViewAction(userId, guildId);
+        const res = await handleBirthdayViewAction(userId, guildId, prisma);
+        await prisma.$disconnect().catch(() => { });
+        return res;
     }
     if (customId === 'bday:countdown') {
-        return handleBirthdayCountdownAction(userId, guildId);
+        const res = await handleBirthdayCountdownAction(userId, guildId, prisma);
+        await prisma.$disconnect().catch(() => { });
+        return res;
     }
     if (customId === 'bday:today') {
-        return handleBirthdayTodayAction(guildId);
+        const res = await handleBirthdayTodayAction(guildId, prisma);
+        await prisma.$disconnect().catch(() => { });
+        return res;
     }
     if (customId === 'bday:cancel') {
-        return handleBirthdayCancelAction(userId, guildId);
+        const res = await handleBirthdayCancelAction(userId, guildId, prisma);
+        await prisma.$disconnect().catch(() => { });
+        return res;
     }
     if (customId === 'bday:month') {
+        // month/day actions are ephemeral and don't need DB unless month selected depends on existing state; no DB operations
         return handleBirthdayMonthAction(body);
     }
-    if (customId === 'bday:day') {
+    if (customId === 'bday:day' || customId === 'bday:day1' || customId === 'bday:day2') {
         return handleBirthdayDayAction(body);
     }
     if (customId.startsWith('bday:confirm:')) {
-        return handleBirthdayConfirmAction(customId, userId, guildId, cfg);
+        const res = await handleBirthdayConfirmAction(customId, userId, guildId, cfg, prisma);
+        await prisma.$disconnect().catch(() => { });
+        return res;
     }
-    
+
     return new Response('Unhandled birthday action', { status: 400 });
 }
 
-async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any) {
-    const existing = await getBirthday(guildId, userId);
-    const changeAllowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
+async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any, prisma: any) {
+    const existing = await getBirthday(guildId, userId, prisma);
+    const changeAllowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable, prisma);
     if (existing && !changeAllowed) {
         return Response.json({ type: 4, data: { content: 'You cannot change your birthday.', flags: 64 } });
     }
@@ -184,19 +200,19 @@ async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any
     return Response.json({ type: 4, data: replyToInteractionData({ embeds, components: [buildMonthSelect()], ephemeral: true }) });
 }
 
-async function handleBirthdayViewAction(userId: string, guildId: string) {
-    const existing = await getBirthday(guildId, userId);
-    return Response.json({ 
-        type: 4, 
-        data: replyToInteractionData({ 
-            embeds: [buildViewEmbed(existing ? { month: existing.month, day: existing.day } : null, userId)], 
-            ephemeral: true 
-        }) 
+async function handleBirthdayViewAction(userId: string, guildId: string, prisma: any) {
+    const existing = await getBirthday(guildId, userId, prisma);
+    return Response.json({
+        type: 4,
+        data: replyToInteractionData({
+            embeds: [buildViewEmbed(existing ? { month: existing.month, day: existing.day } : null, userId)],
+            ephemeral: true
+        })
     });
 }
 
-async function handleBirthdayCountdownAction(userId: string, guildId: string) {
-    const existing = await getBirthday(guildId, userId);
+async function handleBirthdayCountdownAction(userId: string, guildId: string, prisma: any) {
+    const existing = await getBirthday(guildId, userId, prisma);
     if (!existing) return Response.json({ type: 4, data: { content: 'No birthday set.', flags: 64 } });
     const until = daysUntil(existing.month, existing.day);
     let msg: string;
@@ -205,67 +221,86 @@ async function handleBirthdayCountdownAction(userId: string, guildId: string) {
     return Response.json({ type: 4, data: { content: msg, flags: 64 } });
 }
 
-async function handleBirthdayTodayAction(guildId: string) {
-    const todays = await listTodayBirthdays(guildId);
+async function handleBirthdayTodayAction(guildId: string, prisma: any) {
+    const todays = await listTodayBirthdays(guildId, new Date(), prisma);
     if (!todays.length) return Response.json({ type: 4, data: { content: 'No birthdays today.', flags: 64 } });
     const list = todays.map(b => `<@${b.userId}>`).join(', ');
     return Response.json({ type: 4, data: { content: `🎂 Today: ${list}`, flags: 64 } });
 }
 
-async function handleBirthdayCancelAction(userId: string, guildId: string) {
-    const existing = await getBirthday(guildId, userId);
+async function handleBirthdayCancelAction(userId: string, guildId: string, prisma: any) {
+    const existing = await getBirthday(guildId, userId, prisma);
     const cfg = await getGuildConfig(guildId);
-    const changeable = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
-    const embed = buildBirthdayRootEmbed({ 
-        hasBirthday: !!existing, 
-        changeable, 
-        existing: existing ? { month: existing.month, day: existing.day } : null 
+    const changeable = await canChangeBirthday(guildId, userId, !!cfg?.changeable, prisma);
+    const embed = buildBirthdayRootEmbed({
+        hasBirthday: !!existing,
+        changeable,
+        existing: existing ? { month: existing.month, day: existing.day } : null
     });
     const components = buildBirthdayRootComponents({ hasBirthday: !!existing, changeable });
     return Response.json({ type: 7, data: replyToInteractionData({ embeds: [embed], components }) });
 }
 
 async function handleBirthdayMonthAction(body: any) {
-    const values: string[] = body?.data?.values || [];
-    const month = parseInt(values[0], 10);
-    const embeds = buildSetFlowEmbeds(month);
-    return Response.json({ 
-        type: 7, 
-        data: replyToInteractionData({ embeds, components: [buildMonthSelect(month), buildDaySelect(month)] }) 
-    });
+    try {
+        const values: string[] = body?.data?.values || [];
+        const raw = values[0];
+        if (!raw) return Response.json({ type: 4, data: { content: 'No month selected.', flags: 64 } });
+        const month = parseInt(raw, 10);
+        if (!Number.isInteger(month) || month < 1 || month > 12) {
+            return Response.json({ type: 4, data: { content: 'Invalid month selection.', flags: 64 } });
+        }
+        const embeds = buildSetFlowEmbeds(month);
+        const dayRows = buildDaySelectRows(month);
+        return Response.json({
+            type: 4,
+            data: replyToInteractionData({ embeds, components: [buildMonthSelect(month), ...dayRows], ephemeral: true })
+        });
+    } catch (e: any) {
+        const msg = e?.message ? `Month handler error: ${e.message}` : 'Month handler error.';
+        return Response.json({ type: 4, data: { content: msg, flags: 64 } });
+    }
 }
 
 async function handleBirthdayDayAction(body: any) {
-    const values: string[] = body?.data?.values || [];
-    const day = parseInt(values[0], 10);
-    // Extract month from existing select
-    const prevMonth = body?.message?.components?.[0]?.components?.[0]?.options?.find?.((o: any) => o.default)?.value;
-    const month = prevMonth ? parseInt(prevMonth, 10) : undefined;
-    if (!month) return Response.json({ type: 4, data: { content: 'Month missing, restart flow.', flags: 64 } });
-    
-    const embeds = buildSetFlowEmbeds(month, day);
-    const rows: any[] = [buildMonthSelect(month), buildDaySelect(month, day)];
-    if (isValidMonthDay(month, day)) rows.push(buildConfirmRow(month, day));
-    
-    return Response.json({ type: 7, data: replyToInteractionData({ embeds, components: rows }) });
+    try {
+        const values: string[] = body?.data?.values || [];
+        const dayRaw = values[0];
+        if (!dayRaw) return Response.json({ type: 4, data: { content: 'No day selected.', flags: 64 } });
+        const day = parseInt(dayRaw, 10);
+        // Reconstruct month by locating the month select row (first row) and its selected option
+        const prevMonth = body?.message?.components?.[0]?.components?.[0]?.options?.find?.((o: any) => o.default)?.value;
+        const month = prevMonth ? parseInt(prevMonth, 10) : undefined;
+        if (!month) return Response.json({ type: 4, data: { content: 'Month missing, restart flow.', flags: 64 } });
+        if (!Number.isInteger(day) || day < 1 || day > 31) {
+            return Response.json({ type: 4, data: { content: 'Invalid day.', flags: 64 } });
+        }
+        const embeds = buildSetFlowEmbeds(month, day);
+        const rows: any[] = [buildMonthSelect(month), ...buildDaySelectRows(month, day)];
+        if (isValidMonthDay(month, day)) rows.push(buildConfirmRow(month, day));
+        return Response.json({ type: 4, data: replyToInteractionData({ embeds, components: rows, ephemeral: true }) });
+    } catch (e: any) {
+        const msg = e?.message ? `Day handler error: ${e.message}` : 'Day handler error.';
+        return Response.json({ type: 4, data: { content: msg, flags: 64 } });
+    }
 }
 
-async function handleBirthdayConfirmAction(customId: string, userId: string, guildId: string, cfg: any) {
+async function handleBirthdayConfirmAction(customId: string, userId: string, guildId: string, cfg: any, prisma: any) {
     const parts = customId.split(':');
     const month = parseInt(parts[2], 10);
     const day = parseInt(parts[3], 10);
-    
+
     if (!isValidMonthDay(month, day)) {
         return Response.json({ type: 4, data: { content: 'Invalid date.', flags: 64 } });
     }
-    
+
     // enforce change rules
-    const allowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
+    const allowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable, prisma);
     if (!allowed) {
         return Response.json({ type: 4, data: { content: 'You cannot change your birthday.', flags: 64 } });
     }
-    
-    await setBirthday(guildId, userId, month, day);
+
+    await setBirthday(guildId, userId, month, day, prisma);
     return Response.json({ type: 4, data: { content: `Birthday saved: ${month}/${day}`, flags: 64 } });
 }
 

@@ -1,4 +1,4 @@
-import { getEdgeDb } from '../neon';
+import { getPrismaEdge } from '../prismaEdge';
 
 export type BirthdayRow = {
     id: string;
@@ -31,37 +31,47 @@ export function daysUntil(month: number, day: number, refDate = new Date()): num
     return Math.round((nextYear - nowUtc) / 86400000);
 }
 
-export async function getBirthday(guildId: string, userId: string): Promise<BirthdayRow | null> {
-    const sql = getEdgeDb();
-    const rows = await sql`select * from "Birthday" where "guildId" = ${guildId} and "userId" = ${userId} limit 1`;
-    return (rows as any[])[0] || null;
+type PrismaClientLike = ReturnType<typeof getPrismaEdge>;
+
+export async function getBirthday(guildId: string, userId: string, prisma?: PrismaClientLike): Promise<BirthdayRow | null> {
+    const client = prisma ?? getPrismaEdge();
+    const own = !prisma;
+    try {
+        return await client.birthday.findUnique({ where: { userId_guildId: { userId, guildId } } });
+    } finally {
+        if (own) await client.$disconnect().catch(() => { });
+    }
 }
 
-export async function setBirthday(guildId: string, userId: string, month: number, day: number): Promise<BirthdayRow> {
+export async function setBirthday(guildId: string, userId: string, month: number, day: number, prisma?: PrismaClientLike): Promise<BirthdayRow> {
     if (!isValidMonthDay(month, day)) throw new Error('Invalid date');
-    const sql = getEdgeDb();
-    const rows = await sql`
-    insert into "Birthday" (id, "guildId", "userId", month, day, "createdAt", "updatedAt")
-    values (gen_random_uuid()::text, ${guildId}, ${userId}, ${month}, ${day}, now(), now())
-    on conflict ("userId", "guildId") do update set
-      month = excluded.month,
-      day = excluded.day,
-      "updatedAt" = now()
-    returning *
-  `;
-    return (rows as any[])[0];
+    const client = prisma ?? getPrismaEdge();
+    const own = !prisma;
+    try {
+        return await client.birthday.upsert({
+            where: { userId_guildId: { userId, guildId } },
+            update: { month, day },
+            create: { userId, guildId, month, day },
+        });
+    } finally {
+        if (own) await client.$disconnect().catch(() => { });
+    }
 }
 
-export async function listTodayBirthdays(guildId: string, refDate = new Date()): Promise<BirthdayRow[]> {
+export async function listTodayBirthdays(guildId: string, refDate = new Date(), prisma?: PrismaClientLike): Promise<BirthdayRow[]> {
     const month = refDate.getUTCMonth() + 1;
     const day = refDate.getUTCDate();
-    const sql = getEdgeDb();
-    const rows = await sql`select * from "Birthday" where "guildId" = ${guildId} and month = ${month} and day = ${day}`;
-    return rows as any[];
+    const client = prisma ?? getPrismaEdge();
+    const own = !prisma;
+    try {
+        return await client.birthday.findMany({ where: { guildId, month, day } });
+    } finally {
+        if (own) await client.$disconnect().catch(() => { });
+    }
 }
 
-export async function canChangeBirthday(guildId: string, userId: string, changeable: boolean): Promise<boolean> {
+export async function canChangeBirthday(guildId: string, userId: string, changeable: boolean, prisma?: PrismaClientLike): Promise<boolean> {
     if (changeable) return true;
-    const existing = await getBirthday(guildId, userId);
+    const existing = await getBirthday(guildId, userId, prisma);
     return !existing; // only allow if not set yet
 }

@@ -18,6 +18,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
     "@neondatabase/serverless": "^1.0.1",
+    "@prisma/adapter-neon": "^6.16.1",
     "@prisma/client": "6.16.1",
     "next": "15.5.3",
     "next-auth": "5.0.0-beta.25",
@@ -37,5 +38,5 @@
     "tsx": "^4.20.5",
     "typescript": "5.9.2"
   },
-  "packageManager": "pnpm@10.16.0"
+  "packageManager": "pnpm@10.16.1"
 }

@@ -1,5 +1,6 @@
 import type { Component, Embed } from '@/lib/commands/types';
 import { daysUntil } from '@/lib/db/birthdays';
+import { MONTH_NAMES } from '@/lib/constants/dates';
 
 export function buildBirthdayRootEmbed(opts: { hasBirthday: boolean; changeable: boolean; existing?: { month: number; day: number } | null }): Embed {
     let desc: string;
@@ -39,7 +40,7 @@ export function buildMonthSelect(selected?: number): Component {
                 min_values: 1,
                 max_values: 1,
                 options: Array.from({ length: 12 }, (_, i) => ({
-                    label: `Month ${i + 1}`,
+                    label: MONTH_NAMES[i],
                     value: String(i + 1),
                     default: selected === i + 1
                 }))
@@ -48,26 +49,54 @@ export function buildMonthSelect(selected?: number): Component {
     } as Component;
 }
 
-export function buildDaySelect(month: number, selected?: number): Component {
+// Build day select rows (split into two menus if >25 days)
+export function buildDaySelectRows(month: number, selected?: number): Component[] {
     const monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     const max = monthLengths[month - 1] || 31;
-    return {
+    const days = Array.from({ length: max }, (_, i) => i + 1);
+    const first = days.slice(0, 25);
+    const second = days.slice(25);
+
+    const row1: Component = {
         type: 1,
         components: [
             {
                 type: 3,
-                custom_id: 'bday:day',
-                placeholder: 'Select day',
+                custom_id: 'bday:day1',
+                placeholder: 'Select day (1-25)',
                 min_values: 1,
                 max_values: 1,
-                options: Array.from({ length: max }, (_, i) => ({
-                    label: String(i + 1),
-                    value: String(i + 1),
-                    default: selected === i + 1
+                options: first.map(d => ({
+                    label: String(d),
+                    value: String(d),
+                    default: selected === d
                 }))
             }
         ]
     } as Component;
+
+    const rows: Component[] = [row1];
+    if (second.length) {
+        const row2: Component = {
+            type: 1,
+            components: [
+                {
+                    type: 3,
+                    custom_id: 'bday:day2',
+                    placeholder: 'Select day (26+)',
+                    min_values: 1,
+                    max_values: 1,
+                    options: second.map(d => ({
+                        label: String(d),
+                        value: String(d),
+                        default: selected === d
+                    }))
+                }
+            ]
+        } as Component;
+        rows.push(row2);
+    }
+    return rows;
 }
 
 export function buildConfirmRow(month: number, day: number): Component {
@@ -82,7 +111,9 @@ export function buildConfirmRow(month: number, day: number): Component {
 
 export function buildSetFlowEmbeds(month?: number, day?: number): Embed[] {
     const lines: string[] = [];
-    if (month) lines.push(`Month: **${month}**`);
+    if (month) {
+        lines.push(`Month: **${MONTH_NAMES[month - 1]} (${month})**`);
+    }
     if (day) lines.push(`Day: **${day}**`);
     return [{ title: 'Set Birthday', description: lines.length ? lines.join('\n') : 'Select month and day.' }];
 }
