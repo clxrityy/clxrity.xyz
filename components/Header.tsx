@@ -271,8 +271,8 @@ export default function Header() {
                                         <li>{renderDashboardLink(closeMenu)}</li>
                                     )}
                                     <li><Link href="/commands" onClick={closeMenu}>Commands</Link></li>
-                                    <li><Link href="/privacy" onClick={closeMenu}>Privacy</Link></li>
-                                    <li><Link href="/terms" onClick={closeMenu}>Terms</Link></li>
+                                    <li><Link href="/tos" onClick={closeMenu}>Privacy</Link></li>
+                                    <li><Link href="/tos#privacy" onClick={closeMenu}>Terms</Link></li>
                                     {renderInviteLink(closeMenu) && (
                                         <li>{renderInviteLink(closeMenu)}</li>
                                     )}
