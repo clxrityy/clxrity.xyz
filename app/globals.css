@@ -31,6 +31,7 @@
 html,
 body {
     height: 100%;
+    font-family: var(--font-quicksand), ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
 }
 
 button {
@@ -87,6 +88,142 @@ main {
 
 .stack-lg p {
     padding: 1rex;
+}
+
+/* Tiny text utilities */
+.text-2xs {
+    font-size: 10px;
+}
+
+/* Grid utilities potentially used by UI components (if not using Tailwind) */
+.grid {
+    display: grid;
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.gap-3 {
+    gap: 12px;
+}
+
+.gap-4 {
+    gap: 16px;
+}
+
+.gap-6 {
+    gap: 24px;
+}
+
+.rounded-full {
+    border-radius: 9999px;
+}
+
+.inline-grid {
+    display: inline-grid;
+}
+
+.grid-flow-col {
+    grid-auto-flow: column;
+}
+
+.auto-cols-max {
+    grid-auto-columns: max-content;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.gap-2 {
+    gap: 8px;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.transition-all {
+    transition: all .2s ease;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.opacity-60 {
+    opacity: .6;
+}
+
+.cursor-not-allowed {
+    cursor: not-allowed;
+}
+
+.px-3 {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.py-1\.5 {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.px-4 {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.py-2 {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.px-5 {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.py-3 {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.text-sm {
+    font-size: 0.9rem;
+}
+
+.text-base {
+    font-size: 1rem;
+}
+
+.focus\:outline-none {
+    outline: none;
+}
+
+.focus-visible\:ring-2:focus-visible {
+    box-shadow: 0 0 0 2px var(--accent);
+}
+
+.focus-visible\:ring-\[var\(--accent\)\]:focus-visible {
+    box-shadow: 0 0 0 2px var(--accent);
 }
 
 .grid-center {
