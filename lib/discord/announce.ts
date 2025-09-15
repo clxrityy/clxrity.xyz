@@ -1,5 +1,5 @@
 import { listGuildsWithBirthdayChannel, getGuildConfig } from '@/lib/db/config';
-import { listTodaysBirthdaysAllGuilds, listTodayBirthdays } from '@/lib/db/birthdays';
+import { listTodaysBirthdaysAllGuilds } from '@/lib/db/birthdays';
 
 export type BirthdayAnnouncement = {
     guildId: string;
@@ -77,6 +77,8 @@ export async function buildAnnouncements(today = new Date()): Promise<BirthdayAn
 export async function buildSingleGuildAnnouncement(guildId: string, today = new Date()): Promise<BirthdayAnnouncement | null> {
     const cfg = await getGuildConfig(guildId);
     if (!cfg?.birthdayChannel) return null;
+    // Dynamic import to avoid pulling Prisma into bundles that don't need it (e.g., cron edge function)
+    const { listTodayBirthdays } = await import('@/lib/db/birthdays');
     const todays = await listTodayBirthdays(guildId, today);
     if (!todays.length) return null;
     return {

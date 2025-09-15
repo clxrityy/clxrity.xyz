@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 import { buildAnnouncements, formatBirthdayMessage, postDiscordMessage } from '@/lib/discord/announce';
 import { ensureRunMarkerTable, markGuildRunIfAbsent, hasGuildRun } from '@/lib/db/runMarkers';
