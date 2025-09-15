@@ -3,11 +3,9 @@ export const runtime = 'edge';
 import nacl from 'tweetnacl';
 import { dispatch, type CommandContext, replyToInteractionData } from '@/lib/commands/types';
 import { getGuildConfig, upsertGuildConfig } from '@/lib/db/config';
-import { buildConfigMenuResponse } from '@/lib/discord/components';
 import { errorEmbedFromError } from '@/lib/discord/embed';
 import { hasAdminPermission, hasRole } from '@/lib/discord/permissions';
-import { buildHelpPageResponse } from '@/lib/commands/helpEmbed';
-import { registry } from '@/lib/commands/registry';
+// buildHelpPageResponse will be loaded on demand
 import { buildBirthdayRootEmbed, buildBirthdayRootComponents, buildMonthSelect, buildDaySelectRows, buildConfirmRow, buildSetFlowEmbeds, buildViewEmbed } from '@/lib/discord/birthdayComponents';
 
 // registry is imported from shared module
@@ -62,6 +60,8 @@ async function handleCommand(req: Request, body: any) {
     const ctx = buildCtx(req, body);
     try {
         if (!name) throw new Error('Missing command name');
+        // Lazy-load the command registry to keep the Edge bundle small
+        const { registry } = await import('@/lib/commands/registry');
         const result: unknown = await dispatch(registry, ctx, name, args);
         const data = replyToInteractionData((result as any) ?? '✅ Command executed.');
         return Response.json({ type: 4, data });
@@ -100,6 +100,10 @@ async function handleHelpPageInteraction(customId: string) {
         return new Response('No-op', { status: 200 });
     }
     const page = Math.max(1, parseInt(pageStr, 10) || 1);
+    const [{ registry }, { buildHelpPageResponse }] = await Promise.all([
+        import('@/lib/commands/registry'),
+        import('@/lib/commands/helpEmbed')
+    ]);
     const commands = registry.list();
     const reply = buildHelpPageResponse(commands, page);
     return Response.json({ type: 7, data: replyToInteractionData(reply) });
@@ -118,6 +122,7 @@ async function handleConfigInteraction(customId: string, body: any, guildId: str
 
     const patch = buildConfigPatch(key, body, cfg);
     const updated = await upsertGuildConfig({ guildId, ...patch });
+    const { buildConfigMenuResponse } = await import('@/lib/discord/components');
     const reply = buildConfigMenuResponse(updated);
     return Response.json({ type: 7, data: replyToInteractionData(reply) });
 }
