@@ -12,6 +12,24 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/terms", destination: "/tos", permanent: true },
+      { source: "/terms-of-service", destination: "/tos", permanent: true },
+      // Privacy aliases → anchor
+      { source: "/privacy", destination: "/tos#privacy", permanent: true },
+      {
+        source: "/privacy-policy",
+        destination: "/tos#privacy",
+        permanent: true,
+      },
+      {
+        source: "/privacy-policty",
+        destination: "/tos#privacy",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
