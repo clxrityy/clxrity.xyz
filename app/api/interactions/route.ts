@@ -25,7 +25,11 @@ async function verifyDiscordRequest(req: Request) {
 
 async function forwardToExec(req: Request, body: any) {
     const secret = process.env.INTERNAL_INTERACTIONS_SECRET || '';
-    const url = new URL('/api/interactions/exec', req.url);
+    // Derive origin robustly: prefer forwarded proto/host, fall back to req.url
+    const proto = req.headers.get('x-forwarded-proto') || 'http';
+    const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+    const origin = host ? `${proto}://${host}` : new URL(req.url).origin;
+    const url = new URL('/api/interactions/exec', origin);
     const fwdHeaders: Record<string, string> = {
         'Content-Type': 'application/json',
         'x-internal-interactions': secret,
@@ -34,13 +38,19 @@ async function forwardToExec(req: Request, body: any) {
     if (sigTs) fwdHeaders['x-signature-timestamp'] = sigTs;
     const xff = req.headers.get('x-forwarded-for');
     if (xff) fwdHeaders['x-forwarded-for'] = xff;
-    const res = await fetch(url.toString(), {
-        method: 'POST',
-        headers: fwdHeaders,
-        body: JSON.stringify(body),
-    });
-    const json = await res.json().catch(() => ({ type: 4, data: { content: 'Internal error', flags: 64 } }));
-    return Response.json(json, { status: res.status });
+    try {
+        const res = await fetch(url.toString(), {
+            method: 'POST',
+            headers: fwdHeaders,
+            body: JSON.stringify(body),
+        });
+        const json = await res.json().catch(() => ({ type: 4, data: { content: 'Internal error', flags: 64 } }));
+        return Response.json(json, { status: res.status });
+    } catch (e: any) {
+        // Return ephemeral error to Discord to avoid timeouts
+        const msg = e?.message ? `Forward error: ${e.message}` : 'Forward error';
+        return Response.json({ type: 4, data: { content: msg, flags: 64 } }, { status: 502 });
+    }
 }
 
 export async function POST(req: Request) {
