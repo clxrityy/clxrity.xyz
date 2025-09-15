@@ -6,7 +6,7 @@ export async function executeBirthdayRoot({ ctx }: { ctx: CommandContext }): Pro
     if (!guildId || !userId) return { content: 'Must be used in a server.', ephemeral: true };
 
     const [{ getBirthday, canChangeBirthday }, { getGuildConfig }] = await Promise.all([
-        import('@/lib/db/birthdays'),
+        import('@/lib/db/birthdaysEdge'),
         import('@/lib/db/config')
     ]);
     const cfg = await getGuildConfig(guildId);

@@ -64,7 +64,7 @@ export async function executeHbd({ ctx, args }: { ctx: CommandContext; args: z.i
     if (ann.roleId) {
         try {
             const [{ listGuildBirthdays }, { addRole, removeRole }] = await Promise.all([
-                import('@/lib/db/birthdays'),
+                import('@/lib/db/birthdaysEdge'),
                 import('@/lib/discord/roles')
             ]);
             const all = await listGuildBirthdays(guildId);

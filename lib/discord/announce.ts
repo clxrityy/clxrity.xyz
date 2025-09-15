@@ -1,5 +1,4 @@
 import { listGuildsWithBirthdayChannel, getGuildConfig } from '@/lib/db/config';
-import { listTodaysBirthdaysAllGuilds } from '@/lib/db/birthdays';
 
 export type BirthdayAnnouncement = {
     guildId: string;
@@ -46,10 +45,11 @@ export function formatBirthdayMessage(rawTemplate: string | null | undefined, da
 }
 
 export async function buildAnnouncements(today = new Date()): Promise<BirthdayAnnouncement[]> {
-    const [configs, todays] = await Promise.all([
+    const [configs, { listTodaysBirthdaysAllGuilds }] = await Promise.all([
         listGuildsWithBirthdayChannel(),
-        listTodaysBirthdaysAllGuilds(today)
+        import('@/lib/db/birthdaysEdge')
     ]);
+    const todays = await listTodaysBirthdaysAllGuilds(today);
     if (!todays.length) return [];
     const byGuild = new Map<string, { channelId: string; roleId: string | null; template: string | null; userIds: string[] }>();
     for (const cfg of configs) {
@@ -77,8 +77,8 @@ export async function buildAnnouncements(today = new Date()): Promise<BirthdayAn
 export async function buildSingleGuildAnnouncement(guildId: string, today = new Date()): Promise<BirthdayAnnouncement | null> {
     const cfg = await getGuildConfig(guildId);
     if (!cfg?.birthdayChannel) return null;
-    // Dynamic import to avoid pulling Prisma into bundles that don't need it (e.g., cron edge function)
-    const { listTodayBirthdays } = await import('@/lib/db/birthdays');
+    // Dynamic import to avoid pulling heavy modules into Edge bundles unnecessarily
+    const { listTodayBirthdays } = await import('@/lib/db/birthdaysEdge');
     const todays = await listTodayBirthdays(guildId, today);
     if (!todays.length) return null;
     return {
