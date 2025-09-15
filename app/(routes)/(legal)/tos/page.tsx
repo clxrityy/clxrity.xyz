@@ -1,3 +1,5 @@
+import { DISCORD_SERVER_URL, GITHUB_URL } from "@/lib/config/urls";
+
 type Section = { id: string; title: string; body: React.ReactNode };
 
 const sections: Section[] = [
@@ -164,9 +166,22 @@ const sections: Section[] = [
         id: 'contact',
         title: 'Contact',
         body: (
-            <p>
-                For questions, data access, or deletion requests, contact: <code>contact@mjanglin.com</code>.
-            </p>
+            <div>
+                <h4>
+                    For questions, ideas, bugs/issues, data access, or deletion requests:
+                </h4>
+                <ul className="list-disc pl-5 space-y-1">
+                    <li>
+                        Join the <a href={DISCORD_SERVER_URL} target="_blank" rel="noreferrer noopener">support server</a>.
+                    </li>
+                    <li>
+                        <a href="mailto:contact@mjanglin.com" target="_blank" rel="noreferrer noopener">Email</a> the operator.
+                    </li>
+                    <li>
+                        Make an issue or pull request on <a href={GITHUB_URL} target="_blank" rel="noreferrer noopener">GitHub</a>.
+                    </li>
+                </ul>
+            </div>
         )
     }
 ];
