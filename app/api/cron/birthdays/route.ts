@@ -7,9 +7,13 @@ import { addRole, removeRole } from '@/lib/discord/roles';
 import { ensureRunMarkerTable, markGuildRunIfAbsent, hasGuildRun } from '@/lib/db/runMarkers';
 
 function authOk(req: Request) {
-    const header = req.headers.get('x-cron-secret');
+    // Accept either our custom secret header OR Vercel's scheduled function header
+    const cronHeader = req.headers.get('x-cron-secret');
     const expected = process.env.CRON_SECRET;
-    return expected && header && header === expected;
+    if (expected && cronHeader && cronHeader === expected) return true;
+    // Vercel adds x-vercel-cron for scheduled runs
+    if (req.headers.has('x-vercel-cron')) return true;
+    return false;
 }
 
 export async function GET(req: Request) {
