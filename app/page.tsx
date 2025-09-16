@@ -85,12 +85,12 @@ export default function HomePage() {
                         <h1>hbd — Celebrate birthdays on Discord</h1>
                         <p>Automated birthday roles, announcements, and more.</p>
                         <div className="row kpis gap-24">
-                            <a className="btn" href={INVITE_URL} target="_blank" rel="noreferrer noopener"><IconInvite /> Invite</a>
                             {DASHBOARD_URL.startsWith("/") ? (
                                 <Link className="btn secondary" href={DASHBOARD_URL}><IconDashboard /> Dashboard</Link>
                             ) : (
                                 <a className="btn secondary" href={DASHBOARD_URL} target="_blank" rel="noreferrer noopener"><IconDashboard /> Dashboard</a>
                             )}
+                            <a className="btn" href={INVITE_URL} target="_blank" rel="noreferrer noopener"><IconInvite /> Invite</a>
                         </div>
                     </div>
                     <div className="container">
