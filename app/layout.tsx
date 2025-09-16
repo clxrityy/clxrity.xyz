@@ -18,17 +18,17 @@ export const metadata: Metadata = {
     description: SITE_TAGLINE,
     manifest: "/site.webmanifest",
     icons: [
-        { rel: "icon", url: "/favicon.ico" },
-        { rel: "apple-touch-icon", url: "/apple-touch-icon.png", sizes: "180x180" },
-        { rel: "icon", url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-        { rel: "icon", url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+        { rel: "icon", url: "https://hbd.clxrity.xyz/favicon.ico" },
+        { rel: "apple-touch-icon", url: "https://hbd.clxrity.xyz/apple-touch-icon.png", sizes: "180x180" },
+        { rel: "icon", url: "https://hbd.clxrity.xyz/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+        { rel: "icon", url: "https://hbd.clxrity.xyz/favicon-16x16.png", sizes: "16x16", type: "image/png" },
         {
-            rel: "icon", url: "/android-chrome-192x192.png",
+            rel: "icon", url: "https://hbd.clxrity.xyz/android-chrome-192x192.png",
             sizes: "192x192",
             type: "image/png",
         },
         {
-            rel: "icon", url: "/android-chrome-512x512.png",
+            rel: "icon", url: "https://hbd.clxrity.xyz/android-chrome-512x512.png",
             sizes: "512x512",
             type: "image/png",
         },
@@ -42,20 +42,20 @@ export const metadata: Metadata = {
         creator: SITE_TWITTER,
         images: [
             {
-                url: "/android-chrome-192x192.png",
+                url: "https://hbd.clxrity.xyz/android-chrome-192x192.png",
                 width: 192,
                 height: 192,
                 alt: "hbd logo",
             },
-            { url: "/android-chrome-512x512.png", width: 512, height: 512, alt: "hbd logo" },
+            { url: "https://hbd.clxrity.xyz/android-chrome-512x512.png", width: 512, height: 512, alt: "hbd logo" },
             {
-                url: "/favicon-32x32.png",
+                url: "https://hbd.clxrity.xyz/favicon-32x32.png",
                 width: 32,
                 height: 32,
                 alt: "hbd logo",
             },
             {
-                url: "/favicon-16x16.png",
+                url: "https://hbd.clxrity.xyz/favicon-16x16.png",
                 width: 16,
                 height: 16,
                 alt: "hbd logo",
@@ -69,20 +69,20 @@ export const metadata: Metadata = {
         siteName: SITE_NAME,
         images: [
             {
-                url: "/android-chrome-192x192.png",
+                url: "https://hbd.clxrity.xyz/android-chrome-192x192.png",
                 width: 192,
                 height: 192,
                 alt: "hbd logo",
             },
-            { url: "/android-chrome-512x512.png", width: 512, height: 512, alt: "hbd logo" },
+            { url: "https://hbd.clxrity.xyz/android-chrome-512x512.png", width: 512, height: 512, alt: "hbd logo" },
             {
-                url: "/favicon-32x32.png",
+                url: "https://hbd.clxrity.xyz/favicon-32x32.png",
                 width: 32,
                 height: 32,
                 alt: "hbd logo",
             },
             {
-                url: "/favicon-16x16.png",
+                url: "https://hbd.clxrity.xyz/favicon-16x16.png",
                 width: 16,
                 height: 16,
                 alt: "hbd logo",
