@@ -57,3 +57,10 @@ export async function listGuildsWithBirthdayChannel(): Promise<GuildConfigRow[]>
   const rows = await sql`select * from "GuildConfig" where "birthdayChannel" is not null`;
   return rows as any as GuildConfigRow[];
 }
+
+// List guild configs that have a non-null birthdayRoleId (eligible for role sync)
+export async function listGuildsWithBirthdayRole(): Promise<GuildConfigRow[]> {
+  const sql = getEdgeDb();
+  const rows = await sql`select * from "GuildConfig" where "birthdayRoleId" is not null`;
+  return rows as any as GuildConfigRow[];
+}
