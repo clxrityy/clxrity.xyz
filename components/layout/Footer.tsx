@@ -9,9 +9,8 @@ export default function Footer() {
             <div className="container row">
                 <div className="brand">hbd</div>
                 <nav className="nav">
-                    <Link href="/commands">Commands</Link>
-                    <Link href="/privacy">Privacy</Link>
-                    <Link href="/terms">Terms</Link>
+                    <Link aria-label="Privacy Policy" href="/privacy">Privacy</Link>
+                    <Link aria-label="Terms of Service" href="/terms">Terms</Link>
                     <a href={DISCORD_SERVER_URL} target="_blank" rel="noreferrer noopener" aria-label="Discord"><IconDiscord size={16} /></a>
                     <a href={GITHUB_URL} target="_blank" rel="noreferrer noopener" aria-label="GitHub"><IconGithub size={16} /></a>
                 </nav>
