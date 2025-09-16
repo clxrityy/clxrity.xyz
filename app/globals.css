@@ -305,6 +305,23 @@ main {
     text-decoration: none;
 }
 
+/* Active link state (desktop nav) */
+.nav a[aria-current="page"] {
+    color: var(--accent);
+    position: relative;
+}
+
+.nav a[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+}
+
 a {
     color: var(--fg);
 }
