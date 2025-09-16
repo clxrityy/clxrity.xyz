@@ -1,0 +1,25 @@
+.wrap {
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    display: grid;
+    place-items: center
+}
+
+.inner {
+    text-align: center
+}
+
+.title {
+    margin: 0
+}
+
+.desc {
+    margin: 0;
+    color: var(--muted-foreground)
+}
+
+.cta {
+    margin-top: 6px
+}
