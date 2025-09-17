@@ -39,6 +39,14 @@ export interface CommandDefinition<
     authorize?: (input: { ctx: CommandContext; args: z.infer<TArgsSchema> }) => boolean | Promise<boolean>;
     // Execute the command
     execute: (input: { ctx: CommandContext; args: z.infer<TArgsSchema> }) => Promise<TResult> | TResult;
+    /**
+     * If true (or resolves true), the interaction will be deferred (type 5) immediately
+     * and the execute() result will be sent later via follow-up webhook. Use this for
+     * commands that may exceed ~2s to avoid Discord "The application did not respond" errors.
+     */
+    defer?: boolean | ((input: { ctx: CommandContext; args: z.infer<TArgsSchema> }) => boolean | Promise<boolean>);
+    /** If deferring, whether the initial defer ACK should be ephemeral (flags 64). */
+    deferEphemeral?: boolean;
 }
 
 export type RegisteredCommand = CommandDefinition<any, any>;

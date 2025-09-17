@@ -33,8 +33,46 @@ async function handleCommand(req: Request, body: any) {
     const ctx = buildCtx(req, body);
     if (!name) throw new Error('Missing command name');
     const { registry } = await import('@/lib/commands/registry');
-    const result: unknown = await dispatch(registry, ctx, name, args);
-    return { type: 4, data: replyToInteractionData((result as any) ?? '✅ Command executed.') };
+    const def: any = registry.get(name);
+    let shouldDefer = false;
+    if (def?.defer) {
+        try {
+            shouldDefer = typeof def.defer === 'function' ? await def.defer({ ctx, args }) : !!def.defer;
+        } catch { /* ignore defer errors */ }
+    }
+    if (!shouldDefer) {
+        const result: unknown = await dispatch(registry, ctx, name, args);
+        return { type: 4, data: replyToInteractionData((result as any) ?? '✅ Command executed.') };
+    }
+    // Defer immediately (acknowledge) then process in background
+    queueMicrotask(async () => {
+        try {
+            const result: any = await dispatch(registry, ctx, name, args);
+            const data = replyToInteractionData(result ?? '✅ Done');
+            await sendFollowup(body, data);
+        } catch (err: any) {
+            const { errorEmbedFromError } = await import('@/lib/discord/embed');
+            const embed = errorEmbedFromError(err, { title: 'Command Error', includeStack: false });
+            await sendFollowup(body, { embeds: [embed] });
+        }
+    });
+    return { type: 5, data: { flags: def?.deferEphemeral ? 64 : undefined } };
+}
+
+async function sendFollowup(body: any, data: any) {
+    try {
+        const appId = body?.application_id;
+        const token = body?.token;
+        if (!appId || !token) return;
+        const url = `https://discord.com/api/v10/webhooks/${appId}/${token}`;
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+    } catch (e) {
+        console.error('[followup:error]', (e as any)?.message || e);
+    }
 }
 
 async function handleHelpPageInteraction(customId: string) {

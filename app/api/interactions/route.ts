@@ -74,13 +74,28 @@ export async function POST(req: Request) {
     }
     // Forward everything else.
     const res = await forwardToExec(req, body);
+    const elapsed = Date.now() - t0;
     try {
-        // Basic timing log (Edge console shows in Vercel logs)
-        console.log('[interactions-edge] forwarded', {
-            name: body?.data?.name,
-            type: body?.type,
-            ms: Date.now() - t0
-        });
-    } catch { /* ignore logging errors */ }
+        recordLatency(elapsed, body?.data?.name);
+    } catch { /* ignore metrics errors */ }
     return res;
+}
+
+// --- Lightweight in-memory latency tracking (per Edge isolate instance) ---
+// Not durable across cold starts; good enough for ad-hoc p95 visibility in logs.
+const _latSamples: number[] = [];
+let _latLogCounter = 0;
+function recordLatency(ms: number, name?: string) {
+    _latSamples.push(ms);
+    if (_latSamples.length > 500) _latSamples.splice(0, _latSamples.length - 500); // keep last 500
+    if (++_latLogCounter % 25 === 0) {
+        const p95 = percentile(_latSamples, 0.95);
+        console.log('[metrics] edge_latency', { count: _latSamples.length, p95, last: ms, cmd: name });
+    }
+}
+function percentile(arr: number[], p: number) {
+    if (!arr.length) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const idx = Math.min(sorted.length - 1, Math.floor(p * sorted.length));
+    return sorted[idx];
 }

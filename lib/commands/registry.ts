@@ -40,6 +40,8 @@ const commands: RegisteredCommand[] = [
         category: 'Utility',
         description: 'Create a custom embed (admin only)',
         schema: embedArgsSchema,
+        defer: true,
+        deferEphemeral: true,
         authorize: ({ ctx }) => hasAdminPermission(ctx.discord?.permissions),
         execute: async ({ args }) => {
             const { buildEmbed } = await import('../discord/embedBuilder');
@@ -70,6 +72,8 @@ const commands: RegisteredCommand[] = [
         category: 'Admin',
         description: 'Open interactive menu to configure guild settings',
         schema: z.object({}),
+        defer: true,
+        deferEphemeral: true,
         authorize: async ({ ctx }) => {
             const guildId = ctx.discord?.guildId;
             if (!guildId) return false;
@@ -99,6 +103,8 @@ const commands: RegisteredCommand[] = [
         category: 'General',
         description: 'Manage or view birthdays',
         schema: z.object({}),
+        defer: true,
+        deferEphemeral: true,
         execute: async ({ ctx }) => {
             const { executeBirthdayRoot } = await import('@/lib/commands/registry/birthday');
             return executeBirthdayRoot({ ctx });
@@ -110,6 +116,8 @@ const commands: RegisteredCommand[] = [
         category: 'General',
         description: 'Announce today\'s birthdays now (once per UTC day, optional admin force)',
         schema: hbdSchema,
+        defer: ({ ctx }) => !!ctx.discord?.guildId, // only defer in guild context
+        deferEphemeral: false,
         execute: async ({ ctx, args }) => {
             const { executeHbd } = await import('@/lib/commands/registry/hbd');
             return executeHbd({ ctx, args });
