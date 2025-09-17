@@ -124,11 +124,15 @@ async function sendFollowup(body: any, data: any) {
         const token = body?.token;
         if (!appId || !token) return;
         const url = `https://discord.com/api/v10/webhooks/${appId}/${token}`;
+        // Add a safety timeout so we never hang the runtime on slow network
+        const controller = new AbortController();
+        const t = setTimeout(() => controller.abort(), 15000);
         await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
-        });
+            signal: controller.signal,
+        }).finally(() => clearTimeout(t));
     } catch (e) {
         console.error('[followup:error]', (e as any)?.message || e);
     }
@@ -343,7 +347,14 @@ export async function POST(req: Request) {
         if (background) {
             // Already deferred at Edge; only execute & follow-up.
             if (body?.type === 2) {
-                await handleCommand(req, body); // handleCommand will manage follow-up dispatch
+                // Execute command; if it returns an immediate response (type 4), we must
+                // translate that into a follow-up message since the initial ACK was sent at Edge.
+                const result = await handleCommand(req, body);
+                if (result && typeof result === 'object' && (result as any).type === 4) {
+                    try {
+                        await sendFollowupWithRetry(body, (result as any).data ?? { content: 'Done' });
+                    } catch { /* swallow */ }
+                }
                 return new Response(null, { status: 204 });
             }
             if (body?.type === 3 || body?.type === 5) {
