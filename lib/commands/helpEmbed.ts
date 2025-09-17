@@ -89,12 +89,17 @@ export function buildHelpPages(commands: RegisteredCommand[]): HelpPage[] {
         });
 
     const pages: HelpPage[] = [];
-    let current: Embed = { title: 'Help' };
+    let current: Embed = {
+        title: 'hbd', url: 'https://hbd.clxrity.xyz/commands', author: { name: 'Terms of Service', url: 'https://hbd.clxrity.xyz/tos' }, thumbnail: {
+            url: 'https://hbd.clxrity.xyz/android-chrome-192x192.png'
+
+        }
+    };
     let descParts: string[] = [];
     let charCount = (current.title?.length || 0);
     const pushCurrent = () => {
         pages.push({ page: pages.length + 1, total: 0, embed: { ...current, description: descParts.join('\n\n') } });
-        current = { title: 'Help (cont.)' };
+        current = { title: 'hbd', url: 'https://hbd.clxrity.xyz/commands', author: { name: 'Terms of Service', url: 'https://hbd.clxrity.xyz/tos' }, thumbnail: { url: 'https://hbd.clxrity.xyz/android-chrome-192x192.png' } };
         descParts = [];
         charCount = (current.title?.length || 0);
     };
