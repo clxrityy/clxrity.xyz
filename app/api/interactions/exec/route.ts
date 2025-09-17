@@ -27,7 +27,7 @@ function buildCtx(req: Request, body: any): CommandContext {
     };
 }
 
-async function handleCommand(req: Request, body: any) {
+async function handleCommand(req: Request, body: any, opts?: { background?: boolean }) {
     const name: string | undefined = body?.data?.name;
     const options: Array<{ name: string; value: unknown }> = body?.data?.options ?? [];
     const args = Object.fromEntries(options.map((o: any) => [o.name, o.value]));
@@ -70,9 +70,9 @@ async function handleCommand(req: Request, body: any) {
         } catch { }
         return { type: 4, data };
     }
-    // Defer immediately (acknowledge) then process in background
+    // Defer: either run inline (background mode) or schedule microtask (foreground)
     const ackTime = Date.now();
-    queueMicrotask(async () => {
+    if (opts?.background) {
         try {
             const t1 = Date.now();
             const result: any = await dispatch(registry, ctx, name, args);
@@ -95,7 +95,7 @@ async function handleCommand(req: Request, body: any) {
         } catch (err: any) {
             const { errorEmbedFromError } = await import('@/lib/discord/embed');
             const embed = errorEmbedFromError(err, { title: 'Command Error', includeStack: false });
-            await sendFollowupWithRetry(body, { embeds: [embed] });
+            await sendFollowupWithRetry(body, { embeds: [embed] }).catch(() => { });
             console.error('[command:error]', name, err?.message || err);
             try {
                 await writeGuildLog({
@@ -108,14 +108,58 @@ async function handleCommand(req: Request, body: any) {
                     userId: ctx.discord?.userId || null,
                     success: false,
                     latencyMs: Date.now() - ackTime,
-                    // Store sanitized error details encrypted
                     details: { message: err?.message || String(err), name: err?.name || 'Error' },
                 });
             } catch { }
         }
-    });
-    try { console.log('[command] deferred ack', { name, ephemeral: !!def?.deferEphemeral }); } catch { }
-    return { type: 5, data: { flags: def?.deferEphemeral ? 64 : undefined } };
+        try { console.log('[command] deferred ack (bg)', { name, ephemeral: !!def?.deferEphemeral }); } catch { }
+        return { type: 5, data: { flags: def?.deferEphemeral ? 64 : undefined } };
+    } else {
+        queueMicrotask(async () => {
+            try {
+                const t1 = Date.now();
+                const result: any = await dispatch(registry, ctx, name, args);
+                const data = replyToInteractionData(result ?? '✅ Done');
+                await sendFollowupWithRetry(body, data);
+                try { console.log('[command] followup', { name, msExec: Date.now() - t1, msTotal: Date.now() - ackTime }); } catch { }
+                try {
+                    await writeGuildLog({
+                        guildId: ctx.discord?.guildId || 'dm',
+                        level: 'INFO',
+                        category: 'COMMAND',
+                        summary: `/${name} follow-up sent`,
+                        command: name,
+                        action: 'followup',
+                        userId: ctx.discord?.userId || null,
+                        success: true,
+                        latencyMs: Date.now() - t1,
+                    });
+                } catch { }
+            } catch (err: any) {
+                const { errorEmbedFromError } = await import('@/lib/discord/embed');
+                const embed = errorEmbedFromError(err, { title: 'Command Error', includeStack: false });
+                await sendFollowupWithRetry(body, { embeds: [embed] });
+                console.error('[command:error]', name, err?.message || err);
+                try {
+                    await writeGuildLog({
+                        guildId: ctx.discord?.guildId || 'dm',
+                        level: 'ERROR',
+                        category: 'COMMAND',
+                        summary: `/${name} failed`,
+                        command: name,
+                        action: 'followup',
+                        userId: ctx.discord?.userId || null,
+                        success: false,
+                        latencyMs: Date.now() - ackTime,
+                        // Store sanitized error details encrypted
+                        details: { message: err?.message || String(err), name: err?.name || 'Error' },
+                    });
+                } catch { }
+            }
+        });
+        try { console.log('[command] deferred ack', { name, ephemeral: !!def?.deferEphemeral }); } catch { }
+        return { type: 5, data: { flags: def?.deferEphemeral ? 64 : undefined } };
+    }
 }
 
 async function sendFollowup(body: any, data: any) {
@@ -347,9 +391,9 @@ export async function POST(req: Request) {
         if (background) {
             // Already deferred at Edge; only execute & follow-up.
             if (body?.type === 2) {
-                // Execute command; if it returns an immediate response (type 4), we must
-                // translate that into a follow-up message since the initial ACK was sent at Edge.
-                const result = await handleCommand(req, body);
+                // Execute command in background mode so deferred commands run inline
+                // and send their follow-up before we return.
+                const result = await handleCommand(req, body, { background: true });
                 if (result && typeof result === 'object' && (result as any).type === 4) {
                     try {
                         await sendFollowupWithRetry(body, (result as any).data ?? { content: 'Done' });
