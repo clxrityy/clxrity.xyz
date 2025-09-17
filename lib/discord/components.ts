@@ -24,7 +24,8 @@ export function buildConfigMenuResponse(cfg: GuildConfigRow): Extract<CommandRep
                     { name: 'Birthday Role', value: cfg.birthdayRoleId ? `<@&${cfg.birthdayRoleId}>` : 'none', inline: true },
                     { name: 'Birthday Channel', value: cfg.birthdayChannel ? `<#${cfg.birthdayChannel}>` : 'none', inline: true },
                     { name: 'Changeable', value: String(cfg.changeable), inline: true },
-                    { name: 'Message', value: cfg.birthdayMessage || 'default', inline: false },
+                    { name: 'Message', value: cfg.birthdayMessage || 'default (e.g., "🎉 Happy Birthday {user}! Enjoy your day! {@}")', inline: false },
+                    { name: 'Placeholders', value: '`{user}` → user mention(s), `{@}` → birthday role, `{count}` `{date}` `{month}` `{day}` supported', inline: false },
                 ],
             },
         ],
@@ -76,6 +77,23 @@ export function buildConfigMenuResponse(cfg: GuildConfigRow): Extract<CommandRep
                         style: cfg.changeable ? 3 /* success */ : 2 /* secondary */,
                         label: cfg.changeable ? 'Changeable: ON' : 'Changeable: OFF',
                         custom_id: 'config:changeable_toggle',
+                    },
+                ],
+            },
+            {
+                type: 1,
+                components: [
+                    {
+                        type: 2, // Button to edit message (opens modal)
+                        style: 1, // primary
+                        label: 'Edit Message',
+                        custom_id: 'config:message_edit',
+                    },
+                    {
+                        type: 2, // Button to reset message
+                        style: 4, // danger
+                        label: 'Reset Message',
+                        custom_id: 'config:message_reset',
                     },
                 ],
             },

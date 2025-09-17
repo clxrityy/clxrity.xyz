@@ -237,6 +237,42 @@ async function handleConfigInteraction(customId: string, body: any, guildId: str
         return { type: 4, data: { embeds: [embed], flags: 64 } };
     }
 
+    if (key === 'message_edit') {
+        // Open a modal to edit the message template
+        const current = cfg?.birthdayMessage || '🎉 Happy Birthday {user}! Enjoy your day! {@}';
+        return {
+            type: 9, // MODAL
+            data: {
+                custom_id: 'config:message_modal',
+                title: 'Edit Birthday Message',
+                components: [
+                    {
+                        type: 1,
+                        components: [
+                            {
+                                type: 4, // Text input
+                                custom_id: 'message_template',
+                                label: 'Message Template',
+                                style: 2, // paragraph
+                                min_length: 1,
+                                max_length: 500,
+                                required: true,
+                                value: current,
+                                placeholder: 'Use {user} for mentions and {@} for birthday role',
+                            },
+                        ],
+                    },
+                ],
+            },
+        };
+    }
+    if (key === 'message_reset') {
+        const updated = await upsertGuildConfig({ guildId, birthdayMessage: null });
+        const { buildConfigMenuResponse } = await import('@/lib/discord/components');
+        const reply = buildConfigMenuResponse(updated);
+        return { type: 7, data: replyToInteractionData(reply) };
+    }
+
     const patch = buildConfigPatch(key, body, cfg);
     const updated = await upsertGuildConfig({ guildId, ...patch });
     const { buildConfigMenuResponse } = await import('@/lib/discord/components');
@@ -341,6 +377,15 @@ async function handleComponent(body: any) {
     if (!customId || !guildId) return { type: 4, data: { content: 'Bad interaction', flags: 64 } };
     if (customId.startsWith('help:page:')) return handleHelpPageInteraction(customId);
     if (customId.startsWith('config:')) {
+        // Modal submit comes through as type 5 with a different structure; handle save
+        if (customId === 'config:message_modal' && body?.type === 5) {
+            const val = body?.data?.components?.[0]?.components?.[0]?.value;
+            const newTemplate = (typeof val === 'string' ? val : '').slice(0, 500);
+            const updated = await upsertGuildConfig({ guildId, birthdayMessage: newTemplate });
+            const { buildConfigMenuResponse } = await import('@/lib/discord/components');
+            const reply = buildConfigMenuResponse(updated);
+            return { type: 4, data: replyToInteractionData({ ...reply, ephemeral: true }) };
+        }
         const res = await handleConfigInteraction(customId, body, guildId);
         try { await writeGuildLog({ guildId, level: 'INFO', category: 'INTERACTION', summary: `config interaction ${customId}`, action: 'update', success: true }); } catch { }
         return res;

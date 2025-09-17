@@ -48,8 +48,9 @@ export async function GET(req: Request) {
                 count: ann.userIds.length,
                 date: dateStr,
                 month,
-                day
-            }) + (ann.roleId ? `\n<@&${ann.roleId}>` : '');
+                day,
+                roleMention: ann.roleId ? `<@&${ann.roleId}>` : ''
+            });
             const posted = await postDiscordMessage(ann.channelId, content);
             const marked = await markGuildRunIfAbsent(ann.guildId, today);
             processed.push(ann.guildId);

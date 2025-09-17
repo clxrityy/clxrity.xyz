@@ -93,6 +93,12 @@ export async function POST(req: Request) {
         // Do not defer pings handled above.
         const interactionName = body?.data?.name;
         const isEphemeralDefer = interactionName === 'config' || interactionName === 'embed' || interactionName === 'birthday';
+        // Special-case: opening a modal must be synchronous (component click -> modal response)
+        const customId = body?.data?.custom_id;
+        if (body?.type === 3 && customId === 'config:message_edit') {
+            const res = await forwardToExec(req, body, { background: false });
+            return res || Response.json({ type: 4, data: { content: 'Error', flags: 64 } }, { status: 500 });
+        }
         await forwardToExec(req, body, { background: true });
         const elapsed = Date.now() - t0;
         try { recordLatency(elapsed, interactionName); } catch { }

@@ -34,14 +34,18 @@ export async function postDiscordMessage(channelId: string, content: string): Pr
     }
 }
 
-export function formatBirthdayMessage(rawTemplate: string | null | undefined, data: { mentions: string; count: number; date: string; month: number; day: number }): string {
-    const base = rawTemplate && rawTemplate.trim().length > 0 ? rawTemplate : '🎉 Happy Birthday {mentions}! Enjoy your day!';
-    return base
+export function formatBirthdayMessage(rawTemplate: string | null | undefined, data: { mentions: string; count: number; date: string; month: number; day: number; roleMention?: string }): string {
+    const base = rawTemplate && rawTemplate.trim().length > 0 ? rawTemplate : '🎉 Happy Birthday {user}! Enjoy your day! {@}';
+    // Backward compatibility: {mentions} behaves same as {user}
+    let out = base
         .replace(/\{mentions\}/g, data.mentions)
+        .replace(/\{user\}/g, data.mentions)
+        .replace(/\{@\}/g, data.roleMention ?? '')
         .replace(/\{count\}/g, String(data.count))
         .replace(/\{date\}/g, data.date)
         .replace(/\{month\}/g, String(data.month))
         .replace(/\{day\}/g, String(data.day));
+    return out;
 }
 
 export async function buildAnnouncements(today = new Date()): Promise<BirthdayAnnouncement[]> {

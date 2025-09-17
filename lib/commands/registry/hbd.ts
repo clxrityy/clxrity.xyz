@@ -54,7 +54,7 @@ export async function executeHbd({ ctx, args }: { ctx: CommandContext; args: z.i
     const day = today.getUTCDate();
     const dateStr = `${month}/${day}`;
     const mentions = ann.userIds.map(id => `<@${id}>`).join(', ');
-    const content = formatBirthdayMessage(ann.template, { mentions, count: ann.userIds.length, date: dateStr, month, day }) + (ann.roleId ? `\n<@&${ann.roleId}>` : '');
+    const content = formatBirthdayMessage(ann.template, { mentions, count: ann.userIds.length, date: dateStr, month, day, roleMention: ann.roleId ? `<@&${ann.roleId}>` : '' });
     const posted = await postDiscordMessage(ann.channelId, content);
     const marked = await markGuildRunIfAbsent(guildId, today);
     const postStatus = buildPostStatus(posted);
