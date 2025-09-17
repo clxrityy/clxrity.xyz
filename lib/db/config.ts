@@ -14,8 +14,16 @@ export type GuildConfigRow = {
 
 export async function getGuildConfig(guildId: string): Promise<GuildConfigRow | null> {
   const sql = getEdgeDb();
-  const rows = await sql`select * from "GuildConfig" where "guildId" = ${guildId} limit 1`;
-  return (rows as any[])[0] || null;
+  try {
+    const rows = await sql`select * from "GuildConfig" where "guildId" = ${guildId} limit 1`;
+    return (rows as any[])[0] || null;
+  } catch (err: any) {
+    if (err?.code === '42P01') { // undefined_table
+      console.error('[db] GuildConfig table missing. Run `prisma migrate deploy` on production database.');
+      return null; // treat as no config rather than throwing
+    }
+    throw err;
+  }
 }
 
 export async function upsertGuildConfig(input: Partial<GuildConfigRow> & { guildId: string }): Promise<GuildConfigRow> {
@@ -26,7 +34,8 @@ export async function upsertGuildConfig(input: Partial<GuildConfigRow> & { guild
   const hasBirthdayChannel = Object.hasOwn(input, 'birthdayChannel');
   const hasBirthdayMessage = Object.hasOwn(input, 'birthdayMessage');
   const hasChangeable = Object.hasOwn(input, 'changeable');
-  const rows = await sql`
+  try {
+    const rows = await sql`
     insert into "GuildConfig" (id, "guildId", "adminRoleId", "birthdayRoleId", "birthdayChannel", "birthdayMessage", changeable, "createdAt", "updatedAt")
     values (
       gen_random_uuid()::text,
@@ -47,8 +56,15 @@ export async function upsertGuildConfig(input: Partial<GuildConfigRow> & { guild
       changeable = case when ${hasChangeable} then excluded.changeable else "GuildConfig".changeable end,
       "updatedAt" = now()
     returning *
-  `;
-  return (rows as any[])[0];
+    `;
+    return (rows as any[])[0];
+  } catch (err: any) {
+    if (err?.code === '42P01') {
+      console.error('[db] GuildConfig table missing during upsert. Run `prisma migrate deploy` on production.');
+      throw new Error('Configuration storage not initialized. Please run database migrations.');
+    }
+    throw err;
+  }
 }
 
 // List guild configs that have a non-null birthdayChannel (eligible for announcements)
