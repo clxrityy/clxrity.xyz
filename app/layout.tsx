@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SITE_NAME, SITE_TAGLINE, SITE_TWITTER } from "@/lib/config/site";
 import { Quicksand } from "next/font/google";
+import MaintenanceBanner from "@/components/MaintenanceBanner";
 
 const quicksand = Quicksand({
     subsets: ["latin"],
@@ -104,6 +105,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                     }}
                 />
                 <ThemeProvider>
+                    {/* Maintenance banner (conditionally rendered client-side) */}
+                    <MaintenanceBanner />
                     <Header />
                     {children}
                     <Footer />
