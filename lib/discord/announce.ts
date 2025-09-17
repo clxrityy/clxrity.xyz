@@ -47,7 +47,7 @@ export function formatBirthdayMessage(rawTemplate: string | null | undefined, da
 export async function buildAnnouncements(today = new Date()): Promise<BirthdayAnnouncement[]> {
     const [configs, { listTodaysBirthdaysAllGuilds }] = await Promise.all([
         listGuildsWithBirthdayChannel(),
-        import('@/lib/db/birthdaysEdge')
+        import('@/lib/db/birthday/birthdaysEdge')
     ]);
     const todays = await listTodaysBirthdaysAllGuilds(today);
     if (!todays.length) return [];
@@ -78,7 +78,7 @@ export async function buildSingleGuildAnnouncement(guildId: string, today = new 
     const cfg = await getGuildConfig(guildId);
     if (!cfg?.birthdayChannel) return null;
     // Dynamic import to avoid pulling heavy modules into Edge bundles unnecessarily
-    const { listTodayBirthdays } = await import('@/lib/db/birthdaysEdge');
+    const { listTodayBirthdays } = await import('@/lib/db/birthday/birthdaysEdge');
     const todays = await listTodayBirthdays(guildId, today);
     if (!todays.length) return null;
     return {

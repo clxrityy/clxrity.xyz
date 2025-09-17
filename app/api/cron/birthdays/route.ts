@@ -2,7 +2,7 @@ export const runtime = 'nodejs';
 
 import { buildAnnouncements, formatBirthdayMessage, postDiscordMessage } from '@/lib/discord/announce';
 import { listGuildsWithBirthdayRole } from '@/lib/db/config';
-import { listGuildBirthdays, listTodayBirthdays } from '@/lib/db/birthdaysEdge';
+import { listGuildBirthdays, listTodayBirthdays } from '@/lib/db/birthday/birthdaysEdge';
 import { addRole, removeRole } from '@/lib/discord/roles';
 import { ensureRunMarkerTable, markGuildRunIfAbsent, hasGuildRun } from '@/lib/db/runMarkers';
 

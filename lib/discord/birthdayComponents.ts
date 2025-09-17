@@ -1,5 +1,5 @@
 import type { Component, Embed } from '@/lib/commands/types';
-import { daysUntil } from '@/lib/db/birthdays';
+import { daysUntil } from '@/lib/db/birthday/birthdayUtils';
 import { MONTH_NAMES } from '@/lib/constants/dates';
 
 export function buildBirthdayRootEmbed(opts: { hasBirthday: boolean; changeable: boolean; existing?: { month: number; day: number } | null }): Embed {

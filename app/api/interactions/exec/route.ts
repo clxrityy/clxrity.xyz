@@ -154,7 +154,7 @@ async function handleConfigInteraction(customId: string, body: any, guildId: str
 }
 
 async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any) {
-    const { getBirthday, canChangeBirthday } = await import('@/lib/db/birthdaysEdge');
+    const { getBirthday, canChangeBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
     const existing = await getBirthday(guildId, userId);
     const changeAllowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
     if (existing && !changeAllowed) {
@@ -166,14 +166,15 @@ async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any
 }
 
 async function handleBirthdayViewAction(userId: string, guildId: string) {
-    const { getBirthday } = await import('@/lib/db/birthdaysEdge');
+    const { getBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
     const existing = await getBirthday(guildId, userId);
     const { buildViewEmbed } = await import('@/lib/discord/birthdayComponents');
     return { type: 4, data: replyToInteractionData({ embeds: [buildViewEmbed(existing ? { month: existing.month, day: existing.day } : null, userId)], ephemeral: true }) };
 }
 
 async function handleBirthdayCountdownAction(userId: string, guildId: string) {
-    const { getBirthday, daysUntil } = await import('@/lib/db/birthdaysEdge');
+    const { getBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
+    const { daysUntil } = await import('@/lib/db/birthday/birthdayUtils');
     const existing = await getBirthday(guildId, userId);
     if (!existing) return { type: 4, data: { content: 'No birthday set.', flags: 64 } };
     const until = daysUntil(existing.month, existing.day);
@@ -183,7 +184,7 @@ async function handleBirthdayCountdownAction(userId: string, guildId: string) {
 }
 
 async function handleBirthdayTodayAction(guildId: string) {
-    const { listTodayBirthdays } = await import('@/lib/db/birthdaysEdge');
+    const { listTodayBirthdays } = await import('@/lib/db/birthday/birthdaysEdge');
     const todays = await listTodayBirthdays(guildId, new Date());
     if (!todays.length) return { type: 4, data: { content: 'No birthdays today.', flags: 64 } };
     const list = todays.map(b => `<@${b.userId}>`).join(', ');
@@ -191,7 +192,7 @@ async function handleBirthdayTodayAction(guildId: string) {
 }
 
 async function handleBirthdayCancelAction(userId: string, guildId: string) {
-    const { getBirthday, canChangeBirthday } = await import('@/lib/db/birthdaysEdge');
+    const { getBirthday, canChangeBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
     const existing = await getBirthday(guildId, userId);
     const cfg = await getGuildConfig(guildId);
     const changeable = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
@@ -222,7 +223,7 @@ async function handleBirthdayDayAction(body: any) {
     const month = prevMonth ? parseInt(prevMonth, 10) : undefined;
     if (!month) return { type: 4, data: { content: 'Month missing, restart flow.', flags: 64 } };
     if (!Number.isInteger(day) || day < 1 || day > 31) return { type: 4, data: { content: 'Invalid day.', flags: 64 } };
-    const { isValidMonthDay } = await import('@/lib/db/birthdaysEdge');
+    const { isValidMonthDay } = await import('@/lib/db/birthday/birthdayUtils');
     const { buildSetFlowEmbeds, buildDaySelectRows, buildMonthSelect, buildConfirmRow } = await import('@/lib/discord/birthdayComponents');
     const embeds = buildSetFlowEmbeds(month, day);
     const rows: any[] = [buildMonthSelect(month), ...buildDaySelectRows(month, day)];
@@ -234,7 +235,8 @@ async function handleBirthdayConfirmAction(customId: string, userId: string, gui
     const parts = customId.split(':');
     const month = parseInt(parts[2], 10);
     const day = parseInt(parts[3], 10);
-    const { isValidMonthDay, canChangeBirthday, setBirthday } = await import('@/lib/db/birthdaysEdge');
+    const { isValidMonthDay } = await import('@/lib/db/birthday/birthdayUtils');
+    const { canChangeBirthday, setBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
     if (!isValidMonthDay(month, day)) return { type: 4, data: { content: 'Invalid date.', flags: 64 } };
     const allowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
     if (!allowed) return { type: 4, data: { content: 'You cannot change your birthday.', flags: 64 } };
