@@ -24,7 +24,7 @@ async function verifyDiscordRequest(req: Request) {
     return ok ? body : false;
 }
 
-async function forwardToExec(req: Request, body: any) {
+async function forwardToExec(req: Request, body: any, opts?: { background?: boolean }) {
     const secret = process.env.INTERNAL_INTERACTIONS_SECRET || '';
     // Derive origin robustly: prefer forwarded proto/host, fall back to req.url
     const proto = req.headers.get('x-forwarded-proto') || 'http';
@@ -39,18 +39,32 @@ async function forwardToExec(req: Request, body: any) {
     if (sigTs) fwdHeaders['x-signature-timestamp'] = sigTs;
     const xff = req.headers.get('x-forwarded-for');
     if (xff) fwdHeaders['x-forwarded-for'] = xff;
-    try {
-        const res = await fetch(url.toString(), {
-            method: 'POST',
-            headers: fwdHeaders,
-            body: JSON.stringify(body),
-        });
-        const json = await res.json().catch(() => ({ type: 4, data: { content: 'Internal error', flags: 64 } }));
-        return Response.json(json, { status: res.status });
-    } catch (e: any) {
-        // Return ephemeral error to Discord to avoid timeouts
-        const msg = e?.message ? `Forward error: ${e.message}` : 'Forward error';
-        return Response.json({ type: 4, data: { content: msg, flags: 64 } }, { status: 502 });
+    if (opts?.background) fwdHeaders['x-background-dispatch'] = '1';
+    if (opts?.background) {
+        // Fire-and-forget: we don't await response; log errors but still return to Discord quickly.
+        try {
+            fetch(url.toString(), {
+                method: 'POST',
+                headers: fwdHeaders,
+                body: JSON.stringify(body),
+            }).catch(err => console.error('[bg:forward:error]', err?.message || err));
+        } catch (err: any) {
+            console.error('[bg:forward:sync-error]', err?.message || err);
+        }
+        return null;
+    } else {
+        try {
+            const res = await fetch(url.toString(), {
+                method: 'POST',
+                headers: fwdHeaders,
+                body: JSON.stringify(body),
+            });
+            const json = await res.json().catch(() => ({ type: 4, data: { content: 'Internal error', flags: 64 } }));
+            return Response.json(json, { status: res.status });
+        } catch (e: any) {
+            const msg = e?.message ? `Forward error: ${e.message}` : 'Forward error';
+            return Response.json({ type: 4, data: { content: msg, flags: 64 } }, { status: 502 });
+        }
     }
 }
 
@@ -72,13 +86,23 @@ export async function POST(req: Request) {
         const embed = buildPingEmbed({ signatureTimestamp: sigTs, nowMs: Date.now() });
         return Response.json({ type: 4, data: { embeds: [embed], flags: 64 } });
     }
-    // Forward everything else.
+    // For all other interactions:
+    // Slash command type 2 or component/types that we want to handle via Node.
+    // Strategy: Always send a defer (type 5) from Edge (fast) then background forward to Node.
+    if (body?.type === 2 || body?.type === 3 || body?.type === 5) {
+        // Do not defer pings handled above.
+        const interactionName = body?.data?.name;
+        const isEphemeralDefer = interactionName === 'config' || interactionName === 'embed' || interactionName === 'birthday';
+        await forwardToExec(req, body, { background: true });
+        const elapsed = Date.now() - t0;
+        try { recordLatency(elapsed, interactionName); } catch { }
+        return Response.json({ type: 5, data: { flags: isEphemeralDefer ? 64 : undefined } });
+    }
+    // Fallback for unexpected types: forward synchronously.
     const res = await forwardToExec(req, body);
     const elapsed = Date.now() - t0;
-    try {
-        recordLatency(elapsed, body?.data?.name);
-    } catch { /* ignore metrics errors */ }
-    return res;
+    try { recordLatency(elapsed, body?.data?.name); } catch { }
+    return res || Response.json({ type: 4, data: { content: 'Unhandled', flags: 64 } }, { status: 400 });
 }
 
 // --- Lightweight in-memory latency tracking (per Edge isolate instance) ---

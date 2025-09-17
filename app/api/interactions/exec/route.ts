@@ -35,27 +35,43 @@ async function handleCommand(req: Request, body: any) {
     const { registry } = await import('@/lib/commands/registry');
     const def: any = registry.get(name);
     let shouldDefer = false;
-    if (def?.defer) {
+    const deferDisabled = process.env.DISABLE_DEFER?.toLowerCase?.() === 'true';
+    if (!deferDisabled && def?.defer) {
         try {
             shouldDefer = typeof def.defer === 'function' ? await def.defer({ ctx, args }) : !!def.defer;
-        } catch { /* ignore defer errors */ }
+        } catch (e) {
+            console.error('[defer:decision:error]', (e as any)?.message || e);
+        }
+    }
+    if (deferDisabled && shouldDefer) {
+        console.log('[defer] override disabled by env for command', name);
+        shouldDefer = false;
     }
     if (!shouldDefer) {
+        const t0 = Date.now();
         const result: unknown = await dispatch(registry, ctx, name, args);
-        return { type: 4, data: replyToInteractionData((result as any) ?? '✅ Command executed.') };
+        const data = replyToInteractionData((result as any) ?? '✅ Command executed.');
+        const ms = Date.now() - t0;
+        try { console.log('[command] immediate', { name, ms, deferred: false }); } catch { }
+        return { type: 4, data };
     }
     // Defer immediately (acknowledge) then process in background
+    const ackTime = Date.now();
     queueMicrotask(async () => {
         try {
+            const t1 = Date.now();
             const result: any = await dispatch(registry, ctx, name, args);
             const data = replyToInteractionData(result ?? '✅ Done');
-            await sendFollowup(body, data);
+            await sendFollowupWithRetry(body, data);
+            try { console.log('[command] followup', { name, msExec: Date.now() - t1, msTotal: Date.now() - ackTime }); } catch { }
         } catch (err: any) {
             const { errorEmbedFromError } = await import('@/lib/discord/embed');
             const embed = errorEmbedFromError(err, { title: 'Command Error', includeStack: false });
-            await sendFollowup(body, { embeds: [embed] });
+            await sendFollowupWithRetry(body, { embeds: [embed] });
+            console.error('[command:error]', name, err?.message || err);
         }
     });
+    try { console.log('[command] deferred ack', { name, ephemeral: !!def?.deferEphemeral }); } catch { }
     return { type: 5, data: { flags: def?.deferEphemeral ? 64 : undefined } };
 }
 
@@ -72,6 +88,17 @@ async function sendFollowup(body: any, data: any) {
         });
     } catch (e) {
         console.error('[followup:error]', (e as any)?.message || e);
+    }
+}
+
+async function sendFollowupWithRetry(body: any, data: any, attempts = 0): Promise<void> {
+    try {
+        await sendFollowup(body, data);
+    } catch (e) {
+        if (attempts >= 2) throw e;
+        const backoff = 150 * Math.pow(2, attempts); // 150ms, 300ms
+        await new Promise(r => setTimeout(r, backoff));
+        return sendFollowupWithRetry(body, data, attempts + 1);
     }
 }
 
@@ -249,16 +276,35 @@ export async function POST(req: Request) {
     const secret = process.env.INTERNAL_INTERACTIONS_SECRET || '';
     const header = req.headers.get('x-internal-interactions') || '';
     if (!secret || header !== secret) return Response.json(unauthorized());
+    const background = req.headers.get('x-background-dispatch') === '1';
 
     const body = await req.json().catch(() => null);
     if (!body) return Response.json({ type: 4, data: { content: 'Invalid body', flags: 64 } }, { status: 400 });
     try {
         if (body?.type === 1) return Response.json({ type: 1 });
-        if (body?.type === 2) return Response.json(await handleCommand(req, body));
-        if (body?.type === 3 || body?.type === 5) return Response.json(await handleComponent(body));
+        if (background) {
+            // Already deferred at Edge; only execute & follow-up.
+            if (body?.type === 2) {
+                await handleCommand(req, body); // handleCommand will manage follow-up dispatch
+                return new Response(null, { status: 204 });
+            }
+            if (body?.type === 3 || body?.type === 5) {
+                const result = await handleComponent(body);
+                // Send follow-up manually since original ACK was already sent.
+                await sendFollowupWithRetry(body, result.data ?? { content: 'Done' });
+                return new Response(null, { status: 204 });
+            }
+        } else {
+            if (body?.type === 2) return Response.json(await handleCommand(req, body));
+            if (body?.type === 3 || body?.type === 5) return Response.json(await handleComponent(body));
+        }
         return Response.json({ type: 4, data: { content: 'Unhandled interaction type', flags: 64 } }, { status: 400 });
     } catch (err: any) {
         const embed = errorEmbedFromError(err, { title: 'Command Error', includeStack: false });
+        if (background) {
+            await sendFollowupWithRetry(body, { embeds: [embed], flags: 64 }).catch(() => { });
+            return new Response(null, { status: 204 });
+        }
         return Response.json({ type: 4, data: { embeds: [embed], flags: 64 } });
     }
 }
