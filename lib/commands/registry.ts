@@ -1,6 +1,6 @@
 import { createRegistry, type RegisteredCommand } from './types';
 import { z } from 'zod';
-import { latencyColor } from '../discord/embed';
+import { buildPingEmbed } from './pingUtil';
 import { hasAdminPermission, hasRole } from '../discord/permissions';
 import { embedArgsSchema } from '../discord/embedBuilder';
 // Heavy helpers (config DB, components, help builders, embed builder) will be lazy-loaded in execute paths
@@ -32,13 +32,7 @@ const commands: RegisteredCommand[] = [
         category: 'Utility',
         description: 'Respond with pong and latency',
         schema: z.object({}),
-        execute: ({ ctx }) => {
-            const tsSec = ctx.discord?.signatureTimestamp ? Number(ctx.discord.signatureTimestamp) : undefined;
-            const nowMs = Date.now();
-            const delta = tsSec ? Math.max(0, nowMs - tsSec * 1000) : 0;
-            const color = latencyColor(delta || 0);
-            return { embeds: [{ title: 'Pong!', description: tsSec ? `\`${delta}\` ms` : 'Latency unavailable', color, timestamp: new Date().toISOString() }] };
-        }
+        execute: ({ ctx }) => ({ embeds: [buildPingEmbed({ signatureTimestamp: ctx.discord?.signatureTimestamp })] })
     },
     // Utility: embed
     {

@@ -1,6 +1,7 @@
 export const runtime = 'edge';
 
 import nacl from 'tweetnacl';
+import { buildPingEmbed } from '@/lib/commands/pingUtil';
 function hexToUint8Array(hex: string) {
     if (!/^([0-9a-f]{2})+$/i.test(hex)) throw new Error('Invalid hex');
     const len = hex.length / 2;
@@ -54,9 +55,32 @@ async function forwardToExec(req: Request, body: any) {
 }
 
 export async function POST(req: Request) {
+    const t0 = Date.now();
     const bodyText = await verifyDiscordRequest(req);
     if (!bodyText) return new Response('Bad request signature', { status: 401 });
-    const body = JSON.parse(bodyText);
+    let body: any;
+    try {
+        body = JSON.parse(bodyText);
+    } catch {
+        return new Response('Invalid JSON', { status: 400 });
+    }
+    // Discord ping (handshake)
     if (body?.type === 1) return Response.json({ type: 1 });
-    return await forwardToExec(req, body);
+    // Fast path for /ping using shared embed builder (avoids Node cold starts while preserving latency display)
+    if (body?.type === 2 && body?.data?.name === 'ping') {
+        const sigTs = req.headers.get('x-signature-timestamp');
+        const embed = buildPingEmbed({ signatureTimestamp: sigTs, nowMs: Date.now() });
+        return Response.json({ type: 4, data: { embeds: [embed], flags: 64 } });
+    }
+    // Forward everything else.
+    const res = await forwardToExec(req, body);
+    try {
+        // Basic timing log (Edge console shows in Vercel logs)
+        console.log('[interactions-edge] forwarded', {
+            name: body?.data?.name,
+            type: body?.type,
+            ms: Date.now() - t0
+        });
+    } catch { /* ignore logging errors */ }
+    return res;
 }
