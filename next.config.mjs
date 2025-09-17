@@ -30,7 +30,7 @@ const nextConfig = {
       },
     ];
   },
-  allowedDevOrigins: [process.env.CF_TUNNEL_URL],
+  // allowedDevOrigins: [process.env.CF_TUNNEL_URL]
 };
 
 export default nextConfig;
