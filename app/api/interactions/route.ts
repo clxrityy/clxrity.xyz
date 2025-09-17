@@ -58,5 +58,5 @@ export async function POST(req: Request) {
     if (!bodyText) return new Response('Bad request signature', { status: 401 });
     const body = JSON.parse(bodyText);
     if (body?.type === 1) return Response.json({ type: 1 });
-    return forwardToExec(req, body);
+    return await forwardToExec(req, body);
 }
