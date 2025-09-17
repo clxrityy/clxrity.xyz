@@ -87,3 +87,62 @@ model Birthday {
 
     @@unique([userId, guildId])
 }
+
+// --- Logging for per-guild visibility in dashboard ---
+
+enum LogLevel {
+    ERROR
+    WARN
+    INFO
+    DEBUG
+}
+
+enum LogCategory {
+    COMMAND // slash commands registry/dispatch
+    INTERACTION // component interactions
+    CRON // scheduled jobs
+    DISCORD_API // outbound Discord REST calls
+    DATABASE // storage operations
+    AUTH // auth/session
+    SYSTEM // boot/runtime
+}
+
+model GuildLog {
+    id        String      @id @default(cuid())
+    guildId   String
+    level     LogLevel
+    category  LogCategory
+    // High-level, safe-to-display summary (non-sensitive)
+    summary   String?
+    // Optional command or action context
+    command   String? // e.g., command name like "hbd"/"config"
+    action    String? // e.g., "execute", "followup", "announce"
+    userId    String? // Discord user id (actor)
+    success   Boolean? // whether the operation succeeded
+    latencyMs Int?
+
+    // Sensitive payloads MUST be encrypted at rest. Store ciphertext as Bytes.
+    // Encryption/Decryption is handled in application code.
+    messageCiphertext Bytes?
+    detailsCiphertext Bytes?
+    // Optional encryption metadata to support key rotation
+    keyId             String? // identifier for the encryption key used
+    encVer            Int     @default(1)
+
+    createdAt DateTime @default(now())
+
+    @@index([guildId, createdAt])
+    @@index([guildId, category, createdAt])
+    @@index([guildId, level, createdAt])
+}
+
+// Mirror runtime-created table to avoid drift during migrations
+model BirthdayRunMarker {
+    id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    guildId   String
+    runDate   DateTime @db.Date
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@unique([guildId, runDate])
+    @@map("BirthdayRunMarker")
+}
