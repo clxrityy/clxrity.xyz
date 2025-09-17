@@ -1,6 +1,7 @@
 export const runtime = 'nodejs';
 
 import { dispatch, type CommandContext, replyToInteractionData } from '@/lib/commands/types';
+import { writeGuildLog } from '@/lib/db/logs';
 import { getGuildConfig, upsertGuildConfig } from '@/lib/db/config';
 import { errorEmbedFromError } from '@/lib/discord/embed';
 import { hasAdminPermission, hasRole } from '@/lib/discord/permissions';
@@ -53,6 +54,20 @@ async function handleCommand(req: Request, body: any) {
         const data = replyToInteractionData((result as any) ?? '✅ Command executed.');
         const ms = Date.now() - t0;
         try { console.log('[command] immediate', { name, ms, deferred: false }); } catch { }
+        // Log success (non-sensitive summary; sensitive details go in encrypted fields if needed)
+        try {
+            await writeGuildLog({
+                guildId: ctx.discord?.guildId || 'dm',
+                level: 'INFO',
+                category: 'COMMAND',
+                summary: `/${name} executed`,
+                command: name,
+                action: 'immediate',
+                userId: ctx.discord?.userId || null,
+                success: true,
+                latencyMs: ms,
+            });
+        } catch { }
         return { type: 4, data };
     }
     // Defer immediately (acknowledge) then process in background
@@ -64,11 +79,39 @@ async function handleCommand(req: Request, body: any) {
             const data = replyToInteractionData(result ?? '✅ Done');
             await sendFollowupWithRetry(body, data);
             try { console.log('[command] followup', { name, msExec: Date.now() - t1, msTotal: Date.now() - ackTime }); } catch { }
+            try {
+                await writeGuildLog({
+                    guildId: ctx.discord?.guildId || 'dm',
+                    level: 'INFO',
+                    category: 'COMMAND',
+                    summary: `/${name} follow-up sent`,
+                    command: name,
+                    action: 'followup',
+                    userId: ctx.discord?.userId || null,
+                    success: true,
+                    latencyMs: Date.now() - t1,
+                });
+            } catch { }
         } catch (err: any) {
             const { errorEmbedFromError } = await import('@/lib/discord/embed');
             const embed = errorEmbedFromError(err, { title: 'Command Error', includeStack: false });
             await sendFollowupWithRetry(body, { embeds: [embed] });
             console.error('[command:error]', name, err?.message || err);
+            try {
+                await writeGuildLog({
+                    guildId: ctx.discord?.guildId || 'dm',
+                    level: 'ERROR',
+                    category: 'COMMAND',
+                    summary: `/${name} failed`,
+                    command: name,
+                    action: 'followup',
+                    userId: ctx.discord?.userId || null,
+                    success: false,
+                    latencyMs: Date.now() - ackTime,
+                    // Store sanitized error details encrypted
+                    details: { message: err?.message || String(err), name: err?.name || 'Error' },
+                });
+            } catch { }
         }
     });
     try { console.log('[command] deferred ack', { name, ephemeral: !!def?.deferEphemeral }); } catch { }
@@ -249,8 +292,21 @@ async function handleComponent(body: any) {
     const guildId: string | undefined = body?.guild_id;
     if (!customId || !guildId) return { type: 4, data: { content: 'Bad interaction', flags: 64 } };
     if (customId.startsWith('help:page:')) return handleHelpPageInteraction(customId);
-    if (customId.startsWith('config:')) return handleConfigInteraction(customId, body, guildId);
-    if (customId.startsWith('bday')) return handleBirthdayInteraction(customId, body, guildId);
+    if (customId.startsWith('config:')) {
+        const res = await handleConfigInteraction(customId, body, guildId);
+        try { await writeGuildLog({ guildId, level: 'INFO', category: 'INTERACTION', summary: `config interaction ${customId}`, action: 'update', success: true }); } catch { }
+        return res;
+    }
+    if (customId.startsWith('bday')) {
+        try {
+            const res = await handleBirthdayInteraction(customId, body, guildId);
+            try { await writeGuildLog({ guildId, level: 'INFO', category: 'INTERACTION', summary: `bday interaction ${customId}`, action: 'update', success: true }); } catch { }
+            return res;
+        } catch (err: any) {
+            try { await writeGuildLog({ guildId, level: 'ERROR', category: 'INTERACTION', summary: `bday interaction error`, action: 'update', success: false, details: { customId, message: err?.message || String(err) } }); } catch { }
+            throw err;
+        }
+    }
     return { type: 4, data: { content: 'Unhandled component', flags: 64 } };
 }
 
