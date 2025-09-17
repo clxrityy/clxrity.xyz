@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { auth, signIn, signOut } from "@/lib/auth";
+import { auth, signIn } from "@/lib/auth";
 import { Button, Card, Badge, Grid, Skeleton, EmptyState } from "@/components/ui";
+import UserMenu from "@/components/dashboard/UserMenu";
 import { INVITE_URL } from "@/lib/config/urls";
 
 export const dynamic = 'force-dynamic';
@@ -28,6 +29,10 @@ export default async function Page() {
         scheduledAnnouncements: 0,
     } as const;
 
+    // Derive avatar (Discord CDN) fallback to first letter of name
+    const avatarUrl = (session.user as any)?.image || null;
+    const displayName = session.user?.name || "User";
+    // Client-side menu hydration wrapper
     return (
         <main className="stack-lg">
             <header className="row">
@@ -35,14 +40,8 @@ export default async function Page() {
                     <h1 className="m-0">Dashboard</h1>
                     <p className="muted m-0">Manage your servers, birthday announcements, and roles.</p>
                 </div>
-                <div className="row gap-2">
-                    <Link href={INVITE_URL} className="no-underline">
-                        <Button leftIcon={<span>➕</span>}>Invite Bot</Button>
-                    </Link>
-                    <form action={async () => { "use server"; await signOut(); }}>
-                        <Button variant="secondary">Sign out</Button>
-                    </form>
-                </div>
+                {/* Avatar menu (client) */}
+                <UserMenu inviteUrl={INVITE_URL} avatarUrl={avatarUrl} name={displayName} />
             </header>
 
             <section className="stack">
