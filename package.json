@@ -8,7 +8,7 @@
     "sync:cmds": "tsx scripts/sync-commands.ts",
     "db:check": "tsx scripts/db-healthcheck.ts",
     "build": "prisma generate && next build",
-    "start": "next start",
+    "start": "pnpm sync:cmds && next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
