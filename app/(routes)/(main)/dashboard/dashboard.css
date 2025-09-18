@@ -1,0 +1,118 @@
+.dashboard {
+    padding-top: 48px;
+    padding-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Page header: breadcrumb + spacing */
+.page-header {
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.breadcrumb .crumb.current {
+    color: var(--fg);
+}
+
+.breadcrumb .sep {
+    color: var(--muted);
+}
+
+/* Stat cards grid tweaks */
+/* Stat cards: TailAdmin-like */
+.stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .stats-grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+
+.stat-card .card-header {
+    margin-bottom: 6px;
+}
+
+.stat-card .card-body {
+    display: grid;
+    gap: 2px;
+}
+
+.icon-circle {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--accent) 18%, transparent);
+    color: var(--accent);
+}
+
+/* Guilds grid spacing */
+.guilds-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1024px) {
+    .guilds-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .guilds-grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+
+.guilds-grid .card-header {
+    margin-bottom: 8px;
+}
+
+.guilds-grid .card-footer {
+    margin-top: 10px;
+}
+
+.elevated {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .08), 0 2px 8px 0 rgba(0, 0, 0, .06);
+}
+
+.elevated:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .12), 0 8px 20px rgba(0, 0, 0, .10);
+}
+
+/* Ensure guild avatar never overflows container on small screens */
+.guilds-grid img,
+.guilds-grid .avatar,
+.guilds-grid .avatarImg {
+    max-width: 36px;
+    max-height: 36px;
+    width: 36px;
+    height: 36px;
+}
+
+/* Card padding scale-down on small screens */
+@media (max-width: 480px) {
+    .card-header {
+        margin-bottom: 10px;
+    }
+
+    .card-footer {
+        margin-top: 12px;
+    }
+}

@@ -16,6 +16,10 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         Discord({
             clientId: process.env.DISCORD_CLIENT_ID!,
             clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+            // Request guilds scope to list user guilds on dashboard
+            authorization: {
+                params: { scope: "identify guilds" },
+            },
         }),
     ],
     session: { strategy: "database" },

@@ -2,7 +2,6 @@
 import * as React from "react";
 import AvatarButton from "@/components/ui/Avatar";
 import DropdownMenu from "@/components/ui/DropdownMenu";
-import { Button } from "@/components/ui";
 import { signOutAction } from "./actions";
 
 export interface UserMenuProps {
@@ -25,14 +24,6 @@ export default function UserMenu({ inviteUrl, avatarUrl, name }: Readonly<UserMe
         <div className="user-menu-wrap">
             {/* Hidden form referencing server action so dropdown item can submit it */}
             <form id="signout-form" action={signOutAction} />
-            <Button
-                variant="secondary"
-                className="mobile-only"
-                onClick={() => { window.location.href = inviteUrl; }}
-                type="button"
-            >
-                Invite
-            </Button>
             <AvatarButton
                 ref={anchorRef}
                 src={avatarUrl || undefined}

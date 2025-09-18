@@ -32,7 +32,7 @@ export default function GuildCard({ id, name, iconUrl, status = "connected" }: R
                             <div className={styles.avatarPlaceholder} />
                         )}
                     </div>
-                    <strong>{name}</strong>
+                    <strong className={styles.name}>{name}</strong>
                 </div>
                 <Badge size="sm" variant={statusCfg.variant}>{statusCfg.label}</Badge>
             </div>
