@@ -34,6 +34,37 @@ const commands: RegisteredCommand[] = [
         schema: z.object({}),
         execute: ({ ctx }) => ({ embeds: [buildPingEmbed({ signatureTimestamp: ctx.discord?.signatureTimestamp })] })
     },
+    // General: sign (zodiac)
+    {
+        name: 'sign',
+        category: 'General',
+        description: 'Show your zodiac sign based on your saved birthday',
+        schema: z.object({ public: z.boolean().optional().describe('Respond publicly') }),
+        defer: false,
+        execute: async ({ ctx, args }) => {
+            const guildId = ctx.discord?.guildId;
+            const userId = ctx.discord?.userId;
+            if (!guildId || !userId) return { content: 'Must be used in a server.', ephemeral: true };
+            const [{ getBirthday }, { getZodiacSign }] = await Promise.all([
+                import('@/lib/db/birthday/birthdaysEdge'),
+                import('@/lib/astrology/zodiac')
+            ]);
+            const bday = await getBirthday(guildId, userId);
+            if (!bday) {
+                return { content: 'You haven\'t set your birthday yet. Use /birthday to set it!', ephemeral: true };
+            }
+            const z = getZodiacSign(bday.month, bday.day);
+            if (!z) return { content: 'Could not determine your zodiac sign.', ephemeral: true };
+            const embed = {
+                title: `${z.emoji} ${z.name}`,
+                description: `Based on your birthday (${bday.month}/${bday.day}).`,
+                color: z.color,
+                thumbnail: { url: z.thumbnail },
+            };
+            const isPublic = !!args.public;
+            return { embeds: [embed], ephemeral: !isPublic };
+        }
+    },
     // Utility: embed
     {
         name: 'embed',
