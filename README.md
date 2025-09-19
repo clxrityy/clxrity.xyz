@@ -26,6 +26,8 @@ A Discord bot for managing and celebrating user birthdays within a server, with 
 
 ## Features
 
+#### Core Features
+
 - **Birthday Management**: Users can set and manage their birthdays, and the bot will send birthday wishes in the server.
 - **Astrology**: Provides users with their astrological sign and related information.
 - **Holiday Information**: Shares information about upcoming holidays.
@@ -34,3 +36,21 @@ A Discord bot for managing and celebrating user birthdays within a server, with 
 - **Scalable Architecture**: Designed to handle multiple servers and users efficiently.
 - **User-Friendly Commands**: Easy-to-use slash commands for interacting with the bot.
 - **Responsive Design**: Built with modern web technologies for a seamless user experience.
+
+#### Web Features
+
+- **Dashboard**: A web dashboard for users to manage their settings and view information.
+- **Authentication**: Secure login using Discord OAuth2.
+- **Responsive UI**: Built with React and custom CSS for a clean and modern look.
+- **API Endpoints**: RESTful API endpoints for bot and web interactions.
+
+#### Handler Features
+
+- **Command Handling**: Efficiently processes and routes user commands to the appropriate handlers.
+- **Context Management**: Maintains context information (e.g., user, guild) throughout the command lifecycle.
+- **Error Handling**: Centralized error handling for all commands, with user-friendly feedback.
+- **Logging**: Comprehensive logging of command usage and errors for monitoring and debugging.
+- **Rate Limiting**: Prevents abuse by limiting the number of commands a user can issue in a given timeframe.
+- **Event Handling**: Listens for custom events and triggers appropriate actions.
+
+---
