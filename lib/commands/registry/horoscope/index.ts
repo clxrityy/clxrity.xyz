@@ -1,13 +1,27 @@
 import { z } from 'zod';
 import { getZodiacSign } from '@/lib/astrology/zodiac';
+import { buildHoroscopeMenu } from '@/lib/discord/horoscopeComponents';
+import { errorEmbedFromError } from '@/lib/discord/embed';
+import { CommandReply } from '../../types';
 
 export const horoscopeSchema = z.object({});
 
-export async function executeHoroscope({ ctx }: { ctx: any }) {
+export async function executeHoroscope({ ctx }: { ctx: any }): Promise<Extract<CommandReply, object>> {
     const userId = ctx.discord?.userId;
     const guildId = ctx.discord?.guildId;
     if (!userId || !guildId) {
-        return { content: 'This command can only be used in a server.', ephemeral: true };
+        return {
+            embeds: [
+                errorEmbedFromError({
+                    title: 'Invalid context',
+                    fields: [{
+                        name: "‎",
+                        value: "This command must be used in a server.",
+                    }],
+                }),
+            ],
+            ephemeral: true,
+        }
     }
 
     // Get birthday and zodiac
@@ -16,7 +30,18 @@ export async function executeHoroscope({ ctx }: { ctx: any }) {
     ]);
     const bday = await getBirthday(guildId, userId);
     if (!bday) {
-        return { content: "You haven't set your birthday yet. Use /birthday to set it!", ephemeral: true };
+        return {
+            embeds: [
+                errorEmbedFromError({
+                    title: 'Birthday not found',
+                    fields: [{
+                        name: "‎",
+                        value: "You haven't set your birthday yet. Use `/birthday` to set it!",
+                    }],
+                }),
+            ],
+            ephemeral: true,
+        }
     }
     const zodiac = getZodiacSign(bday.month, bday.day);
     if (!zodiac) {
@@ -29,9 +54,8 @@ export async function executeHoroscope({ ctx }: { ctx: any }) {
     // Build menu UI (to be implemented)
     // ...
 
-    return {
-        content: `Horoscope for ${zodiac.emoji} ${zodiac.name}`,
-        ephemeral: true,
-        // components: [...],
-    };
+    return buildHoroscopeMenu({
+        zodiac,
+        cooldowns: { daily: false, weekly: false, monthly: false } // Placeholder cooldowns
+    })
 }

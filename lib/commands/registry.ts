@@ -82,18 +82,20 @@ const commands: RegisteredCommand[] = [
         }
     },
     // General: horoscope (delegated module)
-    // {
-    //     name: 'horoscope',
-    //     category: 'General',
-    //     description: 'View your daily horoscope based on your saved birthday',
-    //     schema: z.object({}),
-    //     defer: true,
-    //     deferEphemeral: true,
-    //     execute: async ({ ctx }) => {
-    //         const { executeHoroscope } = await import('@/lib/commands/registry/horoscope');
-    //         return executeHoroscope({ ctx });
-    //     }
-    // },
+    {
+        name: 'horoscope',
+        category: 'General',
+        description: 'View your daily horoscope based on your saved birthday',
+        schema: z.object({
+            public: z.boolean().optional().describe('Respond publicly')
+        }),
+        defer: true,
+        deferEphemeral: true,
+        execute: async ({ ctx }) => {
+            const { executeHoroscope } = await import('@/lib/commands/registry/horoscope');
+            return executeHoroscope({ ctx });
+        }
+    },
     // General: help
     {
         name: 'help',
