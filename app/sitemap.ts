@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 
-export default async function generateSitemap(): Promise<MetadataRoute.Sitemap> {
+export default function generateSitemap(): MetadataRoute.Sitemap {
     return [
         {
             url: "https://clxrity.xyz",
