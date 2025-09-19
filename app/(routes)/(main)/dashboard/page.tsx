@@ -28,7 +28,7 @@ export default async function Page() {
         return (
             <main className="stack-lg">
                 <h1>Sign in required</h1>
-                <Link href={`/api/auth/signin?provider=discord&callbackUrl=${encodeURIComponent(getAuthUrlSync() + "/dashboard")}`} className="no-underline">
+                <Link href={`/api/auth/signin?provider=discord&callbackUrl=${encodeURIComponent(getAuthUrlSync())}`} className="no-underline">
                     <Button leftIcon={<span className="icon">🔐</span>}>Sign in with Discord</Button>
                 </Link>
             </main>
