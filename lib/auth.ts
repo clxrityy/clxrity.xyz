@@ -2,7 +2,7 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import Discord from "next-auth/providers/discord";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-// import { getAuthUrlSync } from "@/lib/env";
+import { getAuthUrlSync } from "@/lib/env";
 
 declare module "next-auth" {
     interface Session extends DefaultSession {
@@ -61,7 +61,7 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     trustHost: true,
     // basePath: deriveBasePath(),
     // Supply origin URL explicitly for server actions context
-    // //  @ts-expect-error: url is supported by Auth.js, types may lag
-    // url: getAuthUrlSync(),
+    //  @ts-expect-error: url is supported by Auth.js, types may lag
+    url: getAuthUrlSync(),
     secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
 });
