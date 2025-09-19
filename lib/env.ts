@@ -9,9 +9,9 @@ export function getNodeEnv() {
 }
 
 export async function getBaseUrl(opts: GetBaseUrlOptions = {}) {
-    // 1) Prefer explicit tunnel or configured public URL
+    // 1) Prefer configured public URL; allow CF_TUNNEL_URL only in development
     const cf = process.env.CF_TUNNEL_URL; // e.g., https://random-subdomain.trycloudflare.com
-    if (cf) return stripTrailingSlash(cf);
+    if (cf && getNodeEnv() !== "production") return stripTrailingSlash(cf);
 
     const authUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
     if (authUrl) return stripTrailingSlash(authUrl);
@@ -43,7 +43,8 @@ export async function getAuthUrl(opts: GetBaseUrlOptions = {}) {
 export function getAuthUrlSync(): string {
     // Priority: explicit tunnel/public URL -> auth URLs -> platform URL -> fallback
     const candidates = [
-        process.env.CF_TUNNEL_URL,
+        // Only consider CF tunnel in development so production URLs are first-party
+        getNodeEnv() !== "production" ? process.env.CF_TUNNEL_URL : undefined,
         process.env.AUTH_URL,
         process.env.NEXTAUTH_URL,
         process.env.NEXT_PUBLIC_APP_URL,
