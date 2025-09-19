@@ -97,6 +97,17 @@ export function buildConfigMenuResponse(cfg: GuildConfigRow): Extract<CommandRep
                     },
                 ],
             },
+            {
+                type: 1,
+                components: [
+                    {
+                        type: 2, // Confirm button
+                        style: 3, // success
+                        label: 'Confirm',
+                        custom_id: 'config:confirm',
+                    },
+                ],
+            },
         ],
     };
 }
