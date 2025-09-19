@@ -2,7 +2,7 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import Discord from "next-auth/providers/discord";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-import { getAuthUrlSync } from "@/lib/env";
+// import { getAuthUrlSync } from "@/lib/env";
 
 declare module "next-auth" {
     interface Session extends DefaultSession {
@@ -32,10 +32,10 @@ function sanitizeAuthEnv() {
 sanitizeAuthEnv();
 
 // Derive basePath from AUTH_URL/NEXTAUTH_URL if they include a path, to avoid mismatch warnings.
-function deriveBasePath(): string {
-    // Env URLs are sanitized to origin-only; use default basePath consistently.
-    return "/api/auth";
-}
+// function deriveBasePath(): string {
+//     // Env URLs are sanitized to origin-only; use default basePath consistently.
+//     return "/api/auth";
+// }
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
     adapter: PrismaAdapter(prisma),
@@ -59,9 +59,9 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     // When true, allows NEXTAUTH_URL/AUTH_URL to be omitted and inferred from request
     // We sanitize these envs to origin-only above to avoid path mismatches
     trustHost: true,
-    basePath: deriveBasePath(),
+    // basePath: deriveBasePath(),
     // Supply origin URL explicitly for server actions context
-    // @ts-expect-error: url is supported by Auth.js, types may lag
-    url: getAuthUrlSync(),
+    // //  @ts-expect-error: url is supported by Auth.js, types may lag
+    // url: getAuthUrlSync(),
     secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
 });
