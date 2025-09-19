@@ -34,6 +34,22 @@ const commands: RegisteredCommand[] = [
         schema: z.object({}),
         execute: ({ ctx }) => ({ embeds: [buildPingEmbed({ signatureTimestamp: ctx.discord?.signatureTimestamp })] })
     },
+    // Utility: embed
+    {
+        name: 'embed',
+        category: 'Utility',
+        description: 'Create a custom embed (admin only)',
+        schema: embedArgsSchema,
+        defer: true,
+        deferEphemeral: true,
+        authorize: ({ ctx }) => hasAdminPermission(ctx.discord?.permissions),
+        execute: async ({ args }) => {
+            const { buildEmbed } = await import('../discord/embedBuilder');
+            const embed = buildEmbed(args);
+            if (!Object.keys(embed).length) return { content: 'No fields provided', ephemeral: true };
+            return { embeds: [embed] };
+        }
+    },
     // General: sign (zodiac)
     {
         name: 'sign',
@@ -65,22 +81,19 @@ const commands: RegisteredCommand[] = [
             return { embeds: [embed], ephemeral: !isPublic };
         }
     },
-    // Utility: embed
-    {
-        name: 'embed',
-        category: 'Utility',
-        description: 'Create a custom embed (admin only)',
-        schema: embedArgsSchema,
-        defer: true,
-        deferEphemeral: true,
-        authorize: ({ ctx }) => hasAdminPermission(ctx.discord?.permissions),
-        execute: async ({ args }) => {
-            const { buildEmbed } = await import('../discord/embedBuilder');
-            const embed = buildEmbed(args);
-            if (!Object.keys(embed).length) return { content: 'No fields provided', ephemeral: true };
-            return { embeds: [embed] };
-        }
-    },
+    // General: horoscope (delegated module)
+    // {
+    //     name: 'horoscope',
+    //     category: 'General',
+    //     description: 'View your daily horoscope based on your saved birthday',
+    //     schema: z.object({}),
+    //     defer: true,
+    //     deferEphemeral: true,
+    //     execute: async ({ ctx }) => {
+    //         const { executeHoroscope } = await import('@/lib/commands/registry/horoscope');
+    //         return executeHoroscope({ ctx });
+    //     }
+    // },
     // General: help
     {
         name: 'help',
