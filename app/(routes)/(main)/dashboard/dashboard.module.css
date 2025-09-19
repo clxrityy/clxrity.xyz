@@ -1,0 +1,101 @@
+.dashboardContainer {
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: var(--dashboard-bg);
+    padding: 48px 0 64px 0;
+    box-sizing: border-box;
+}
+
+.dashboardInner {
+    width: 100%;
+    max-width: 1200px;
+    min-width: 0;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+.page-header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--dashboard-border);
+    padding-bottom: 1.5rem;
+}
+
+.breadcrumb {
+    font-size: 0.95rem;
+    color: var(--dashboard-muted);
+    margin-bottom: 0.5rem;
+}
+
+.breadcrumb .sep {
+    margin: 0 0.5rem;
+}
+
+.breadcrumb .current {
+    color: var(--dashboard-foreground);
+    font-weight: 600;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 640px) {
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+}
+
+.statCard {
+    background: var(--dashboard-surface);
+    border: 1px solid var(--dashboard-border);
+    border-radius: 1.25rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    padding: 2rem 1.5rem;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: pointer;
+    position: relative;
+    color: var(--dashboard-foreground);
+}
+
+.statCard:hover,
+.statCard:focus {
+    box-shadow: 0 6px 32px rgba(99, 102, 241, 0.13), 0 2px 12px rgba(0, 0, 0, 0.10);
+    transform: scale(1.025);
+    z-index: 2;
+}
+
+.icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--dashboard-bg);
+    color: var(--dashboard-foreground);
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+}
