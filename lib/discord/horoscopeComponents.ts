@@ -1,17 +1,27 @@
 // Discord component builder for /horoscope command menu
 import type { CommandReply } from '@/lib/commands/types';
 
-export function buildHoroscopeMenu({ zodiac, cooldowns, ephemeral }: {
+export function buildHoroscopeMenu({ zodiac, cooldowns, horoscopes, ephemeral }: {
     zodiac: { name: string; emoji: string; thumbnail: string };
     cooldowns: { daily: boolean; weekly: boolean; monthly: boolean };
+    horoscopes: { daily: any; weekly: any; monthly: any };
     ephemeral?: boolean;
 }): Extract<CommandReply, object> {
+    // Show the first available horoscope (not on cooldown), else just the menu
+    let description = 'Choose a period to view your horoscope.';
+    if (horoscopes.daily?.data?.horoscope_data) {
+        description = horoscopes.daily.data.horoscope_data;
+    } else if (horoscopes.weekly?.data?.horoscope_data) {
+        description = horoscopes.weekly.data.horoscope_data;
+    } else if (horoscopes.monthly?.data?.horoscope_data) {
+        description = horoscopes.monthly.data.horoscope_data;
+    }
     return {
         content: `Horoscope for ${zodiac.emoji} ${zodiac.name}`,
         embeds: [
             {
                 title: `${zodiac.emoji} ${zodiac.name}`,
-                description: 'Choose a period to view your horoscope.',
+                description,
                 thumbnail: { url: zodiac.thumbnail },
             },
         ],
