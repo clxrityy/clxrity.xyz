@@ -97,6 +97,9 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" suppressHydrationWarning>
+            <head>
+                <meta name="google-site-verification" content={process.env.GOOGLE_SITE_VERIFICATION} />
+            </head>
             <body className={`${quicksand.variable}`}>
                 <script
                     // Inline no-FOUC theme bootstrap
