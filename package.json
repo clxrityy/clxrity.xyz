@@ -20,7 +20,7 @@
     "@auth/prisma-adapter": "^2.10.0",
     "@neondatabase/serverless": "^1.0.1",
     "@prisma/adapter-neon": "^6.16.1",
-    "@prisma/client": "6.16.1",
+    "@prisma/client": "6.16.2",
     "next": "15.5.3",
     "next-auth": "5.0.0-beta.25",
     "react": "19.1.1",
@@ -35,7 +35,7 @@
     "dotenv": "^17.2.2",
     "eslint": "9.35.0",
     "eslint-config-next": "15.5.3",
-    "prisma": "6.16.1",
+    "prisma": "6.16.2",
     "tsx": "^4.20.5",
     "typescript": "5.9.2"
   },
