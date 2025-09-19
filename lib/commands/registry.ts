@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { buildPingEmbed } from './pingUtil';
 import { hasAdminPermission, hasRole } from '../discord/permissions';
 import { embedArgsSchema } from '../discord/embedBuilder';
+import { horoscopeSchema } from '@/lib/commands/registry/horoscope';
 // Heavy helpers (config DB, components, help builders, embed builder) will be lazy-loaded in execute paths
 
 // Inline, lightweight schema for hbd to avoid top-level dynamic imports
@@ -86,9 +87,7 @@ const commands: RegisteredCommand[] = [
         name: 'horoscope',
         category: 'General',
         description: 'View your daily horoscope based on your saved birthday',
-        schema: z.object({
-            public: z.boolean().optional().describe('Respond publicly')
-        }),
+        schema: horoscopeSchema,
         defer: true,
         deferEphemeral: true,
         execute: async ({ ctx }) => {
