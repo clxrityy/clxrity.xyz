@@ -13,8 +13,8 @@ export function buildConfigMenuResponse(cfg: GuildConfigRow): Extract<CommandRep
     const adminDefault = cfg.adminRoleId ? [{ id: cfg.adminRoleId, type: 'role' }] : [];
     const bdayRoleDefault = cfg.birthdayRoleId ? [{ id: cfg.birthdayRoleId, type: 'role' }] : [];
     const channelDefault = cfg.birthdayChannel ? [{ id: cfg.birthdayChannel, type: 'channel' }] : [];
-
-    return {
+    // Build the base reply (without components yet)
+    const reply = {
         content: 'Configure guild settings using the controls below.',
         embeds: [
             {
@@ -29,85 +29,88 @@ export function buildConfigMenuResponse(cfg: GuildConfigRow): Extract<CommandRep
                 ],
             },
         ],
-        components: [
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 6, // Role select (Admin Role)
-                        custom_id: 'config:admin_role',
-                        placeholder: 'Select admin role (optional)',
-                        min_values: 0,
-                        max_values: 1,
-                        default_values: adminDefault,
-                    },
-                ],
-            },
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 6, // Role select (Birthday Role)
-                        custom_id: 'config:birthday_role',
-                        placeholder: 'Select birthday role (optional)',
-                        min_values: 0,
-                        max_values: 1,
-                        default_values: bdayRoleDefault,
-                    },
-                ],
-            },
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 8, // Channel select (Birthday Channel)
-                        custom_id: 'config:birthday_channel',
-                        placeholder: 'Select birthday channel (optional)',
-                        min_values: 0,
-                        max_values: 1,
-                        default_values: channelDefault,
-                    },
-                ],
-            },
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 2, // Button toggle for changeable
-                        style: cfg.changeable ? 3 /* success */ : 2 /* secondary */,
-                        label: cfg.changeable ? 'Changeable: ON' : 'Changeable: OFF',
-                        custom_id: 'config:changeable_toggle',
-                    },
-                ],
-            },
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 2, // Button to edit message (opens modal)
-                        style: 1, // primary
-                        label: 'Edit Message',
-                        custom_id: 'config:message_edit',
-                    },
-                    {
-                        type: 2, // Button to reset message
-                        style: 4, // danger
-                        label: 'Reset Message',
-                        custom_id: 'config:message_reset',
-                    },
-                ],
-            },
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 2, // Confirm button
-                        style: 3, // success
-                        label: 'Confirm',
-                        custom_id: 'config:confirm',
-                    },
-                ],
-            },
-        ],
     };
+
+    // Build the action rows (max 5 rows allowed by Discord)
+    const rows = [
+        {
+            type: 1,
+            components: [
+                {
+                    type: 6,
+                    custom_id: 'config:admin_role',
+                    placeholder: 'Select admin role (optional)',
+                    min_values: 0,
+                    max_values: 1,
+                    default_values: adminDefault,
+                },
+            ],
+        },
+        {
+            type: 1,
+            components: [
+                {
+                    type: 6,
+                    custom_id: 'config:birthday_role',
+                    placeholder: 'Select birthday role (optional)',
+                    min_values: 0,
+                    max_values: 1,
+                    default_values: bdayRoleDefault,
+                },
+            ],
+        },
+        {
+            type: 1,
+            components: [
+                {
+                    type: 8,
+                    custom_id: 'config:birthday_channel',
+                    placeholder: 'Select birthday channel (optional)',
+                    min_values: 0,
+                    max_values: 1,
+                    default_values: channelDefault,
+                },
+            ],
+        },
+        {
+            type: 1,
+            components: [
+                {
+                    type: 2,
+                    style: cfg.changeable ? 3 : 2,
+                    label: cfg.changeable ? 'Changeable: ON' : 'Changeable: OFF',
+                    custom_id: 'config:changeable_toggle',
+                },
+            ],
+        },
+        {
+            type: 1,
+            components: [
+                {
+                    type: 2,
+                    style: 1,
+                    label: 'Edit Message',
+                    custom_id: 'config:message_edit',
+                },
+                {
+                    type: 2,
+                    style: 4,
+                    label: 'Reset Message',
+                    custom_id: 'config:message_reset',
+                },
+                {
+                    type: 2,
+                    style: 3,
+                    label: 'Confirm',
+                    custom_id: 'config:confirm',
+                },
+            ],
+        },
+    ];
+
+    if (rows.length > 5) {
+        try { console.warn('[components] clamping action rows to 5', { got: rows.length }); } catch { }
+    }
+
+    return { ...reply, components: rows.slice(0, 5) } as Extract<CommandReply, object>;
 }

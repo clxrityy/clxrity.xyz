@@ -44,6 +44,9 @@ async function handleCommand(req: Request, body: any, opts?: { background?: bool
     if (!name) throw new Error('Missing command name');
     const { registry } = await import('@/lib/commands/registry');
     const def: any = registry.get(name);
+    if (name === 'config') {
+        console.log('[config:debug] invoked', { opts, user: ctx.discord?.userId, guild: ctx.discord?.guildId });
+    }
     let shouldDefer = false;
     const deferDisabled = process.env.DISABLE_DEFER?.toLowerCase?.() === 'true';
     if (!deferDisabled && def?.defer) {
@@ -60,6 +63,9 @@ async function handleCommand(req: Request, body: any, opts?: { background?: bool
     if (!shouldDefer) {
         const t0 = Date.now();
         const result: unknown = await dispatch(registry, ctx, name, args);
+        if (name === 'config') {
+            console.log('[config:debug] immediate result', { result });
+        }
         const data = replyToInteractionData((result as any) ?? '✅ Command executed.');
         const ms = Date.now() - t0;
         try { console.log('[command] immediate', { name, ms, deferred: false }); } catch { }
@@ -85,8 +91,14 @@ async function handleCommand(req: Request, body: any, opts?: { background?: bool
         try {
             const t1 = Date.now();
             const result: any = await dispatch(registry, ctx, name, args);
+            if (name === 'config') {
+                console.log('[config:debug] background result', { result });
+            }
             const data = replyToInteractionData(result ?? '✅ Done');
-            await sendFollowupWithRetry(body, data);
+            if (name === 'config') {
+                console.log('[config:debug] followup payload', { data });
+            }
+            await sendFollowupWithRetry(body, data, 0, name === 'config');
             try { console.log('[command] followup', { name, msExec: Date.now() - t1, msTotal: Date.now() - ackTime }); } catch { }
             try {
                 await writeGuildLog({
@@ -102,6 +114,9 @@ async function handleCommand(req: Request, body: any, opts?: { background?: bool
                 });
             } catch { }
         } catch (err: any) {
+            if (name === 'config') {
+                console.error('[config:debug] followup error', err);
+            }
             const { errorEmbedFromError } = await import('@/lib/discord/embed');
             const embed = errorEmbedFromError(err, { title: 'Command Error', includeStack: false });
             await sendFollowupWithRetry(body, { embeds: [embed] }).catch(() => { });
@@ -180,25 +195,37 @@ async function sendFollowup(body: any, data: any) {
         // Add a safety timeout so we never hang the runtime on slow network
         const controller = new AbortController();
         const t = setTimeout(() => controller.abort(), 15000);
-        await fetch(url, {
+        const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
             signal: controller.signal,
         }).finally(() => clearTimeout(t));
+        // If Discord returns non-2xx, treat it as an error so callers can retry/log
+        if (!res.ok) {
+            const text = await res.text().catch(() => '<no-body>');
+            console.error('[followup:error] discord responded', { status: res.status, body: text.substring ? text.substring(0, 2000) : text });
+            throw new Error(`Discord followup failed: ${res.status}`);
+        }
     } catch (e) {
         console.error('[followup:error]', (e as any)?.message || e);
     }
 }
 
-async function sendFollowupWithRetry(body: any, data: any, attempts = 0): Promise<void> {
+async function sendFollowupWithRetry(body: any, data: any, attempts = 0, debugConfig = false): Promise<void> {
     try {
+        if (debugConfig) {
+            console.log('[config:debug] sendFollowupWithRetry', { attempts, bodyToken: body?.token, bodyAppId: body?.application_id });
+        }
         await sendFollowup(body, data);
     } catch (e) {
+        if (debugConfig) {
+            console.error('[config:debug] sendFollowupWithRetry error', (e as any)?.message || e);
+        }
         if (attempts >= 2) throw e;
         const backoff = 150 * Math.pow(2, attempts); // 150ms, 300ms
         await new Promise(r => setTimeout(r, backoff));
-        return sendFollowupWithRetry(body, data, attempts + 1);
+        return sendFollowupWithRetry(body, data, attempts + 1, debugConfig);
     }
 }
 
