@@ -1,0 +1,238 @@
+.commandsContainer {
+    width: 100vw;
+    min-width: 0;
+    max-width: 100vw;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: first baseline;
+    background: var(--background, #f9f9fb);
+    padding: 48px 0 64px 0;
+    box-sizing: border-box;
+}
+
+.commandsInner {
+    width: 100%;
+    max-width: 1200px;
+    min-width: 0;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    color: var(--foreground, #18181b);
+    background: var(--background, #f9f9fb);
+}
+
+.commandsTitle {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--foreground, #18181b);
+}
+
+.commandsDesc {
+    font-size: 1.125rem;
+    color: var(--muted-foreground, #6b7280);
+    margin-bottom: 2rem;
+}
+
+.commandsSearchBar {
+    width: 100%;
+    min-width: 0;
+    max-width: 400px;
+    margin: 0 auto 2rem auto;
+    display: block;
+    padding: 0.75rem 1.25rem;
+    font-size: 1.1rem;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 0.75rem;
+    background: var(--surface, #fff);
+    color: var(--foreground, #18181b);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    transition: border 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+    .commandsInner {
+        max-width: 100vw;
+        padding: 0 0.5rem;
+    }
+
+    .commandsSearchBar {
+        max-width: 100vw;
+        font-size: 1rem;
+        padding: 0.6rem 0.7rem;
+    }
+}
+
+.commandsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 640px) {
+    .commandsGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    .commandsGrid {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+.commandCard {
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 1.25rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: pointer;
+    position: relative;
+    color: var(--foreground, #18181b);
+}
+
+.commandCard:hover,
+.commandCard:focus {
+    box-shadow: 0 6px 32px rgba(99, 102, 241, 0.13), 0 2px 12px rgba(0, 0, 0, 0.10);
+    transform: scale(1.025);
+    z-index: 2;
+}
+
+.commandCardHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    padding-bottom: 0.75rem;
+}
+
+.commandCardTitle {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--foreground, #18181b);
+}
+
+.commandCardType {
+    background: var(--primary-surface, #eef2ff);
+    color: var(--primary, #6366f1);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.75rem;
+}
+
+.commandCardNoDM {
+    background: var(--destructive-surface, #fee2e2);
+    color: var(--destructive, #dc2626);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--destructive-border, #fecaca);
+}
+
+.commandCardDesc {
+    font-size: 1.1rem;
+    color: var(--muted-foreground, #6b7280);
+    margin-bottom: 0.5rem;
+}
+
+.commandCardOptions {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height 0.3s, opacity 0.3s, margin 0.3s;
+    margin-top: 0;
+    border-top: 1px solid var(--border, #e5e7eb);
+}
+
+.commandCard.showOptions .commandCardOptions {
+    max-height: 600px;
+    opacity: 1;
+    pointer-events: auto;
+    margin-top: 1.5rem;
+}
+
+.commandCardOptionsTitle {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--foreground, #18181b);
+}
+
+.commandCardOptionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.commandOptionItem {
+    background: var(--muted-surface, #f3f4f6);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: var(--foreground, #18181b);
+}
+
+.commandOptionHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.commandOptionType {
+    background: var(--primary-surface, #e0e7ff);
+    color: var(--primary-dark, #3730a3);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.15rem 0.6rem;
+}
+
+.commandOptionRequired {
+    background: var(--destructive-surface, #fee2e2);
+    color: var(--destructive, #dc2626);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.15rem 0.6rem;
+    border: 1px solid var(--destructive-border, #fecaca);
+}
+
+.commandOptionDesc {
+    color: var(--muted-foreground, #6b7280);
+    font-size: 1rem;
+}
+
+.commandOptionChoices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.commandOptionChoice {
+    background: var(--primary-surface, #e0e7ff);
+    color: var(--primary-dark, #3730a3);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 1rem;
+    padding: 0.15rem 0.9rem;
+    border: 1px solid var(--primary-border, #c7d2fe);
+}
