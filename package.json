@@ -17,10 +17,12 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.32",
     "@auth/prisma-adapter": "^2.10.0",
     "@neondatabase/serverless": "^1.0.1",
     "@prisma/adapter-neon": "^6.16.1",
     "@prisma/client": "6.16.2",
+    "ai": "^5.0.47",
     "next": "15.5.3",
     "next-auth": "5.0.0-beta.25",
     "react": "19.1.1",
