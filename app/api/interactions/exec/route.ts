@@ -246,6 +246,21 @@ async function handleConfigInteraction(customId: string, body: any, guildId: str
         return { type: 4, data: { embeds: [embed], flags: 64 } };
     }
 
+    // Confirm: show summary and clear components to "close" the menu
+    if (key === 'confirm') {
+        const summaryEmbed = {
+            title: 'Configuration Saved',
+            fields: [
+                { name: 'Admin Role', value: cfg?.adminRoleId ? `<@&${cfg.adminRoleId}>` : 'none', inline: true },
+                { name: 'Birthday Role', value: cfg?.birthdayRoleId ? `<@&${cfg.birthdayRoleId}>` : 'none', inline: true },
+                { name: 'Birthday Channel', value: cfg?.birthdayChannel ? `<#${cfg.birthdayChannel}>` : 'none', inline: true },
+                { name: 'Changeable', value: String(!!cfg?.changeable), inline: true },
+                { name: 'Message', value: cfg?.birthdayMessage || 'default', inline: false },
+            ],
+        };
+        return { type: 7, data: replyToInteractionData({ content: '✅ Settings confirmed.', embeds: [summaryEmbed], components: [] }) };
+    }
+
     if (key === 'message_edit') {
         // Open a modal to edit the message template
         const current = cfg?.birthdayMessage || '🎉 Happy Birthday {user}! Enjoy your day! {@}';
@@ -441,7 +456,7 @@ function unauthorized() {
 export async function POST(req: Request) {
     const secret = process.env.INTERNAL_INTERACTIONS_SECRET || '';
     const header = req.headers.get('x-internal-interactions') || '';
-    if (!secret || header !== secret) return Response.json(unauthorized());
+    if (!secret || header !== secret) return Response.json(unauthorized(), { status: 401 });
     const background = req.headers.get('x-background-dispatch') === '1';
 
     const body = await req.json().catch(() => null);
