@@ -38,6 +38,34 @@ export async function getAuthUrl(opts: GetBaseUrlOptions = {}) {
     return await getBaseUrl(opts);
 }
 
+// Synchronous variant used at module-evaluation time (e.g., NextAuth config).
+// Returns ORIGIN ONLY (no path), and normalizes envs like VERCEL_URL.
+export function getAuthUrlSync(): string {
+    // Priority: explicit tunnel/public URL -> auth URLs -> platform URL -> fallback
+    const candidates = [
+        process.env.CF_TUNNEL_URL,
+        process.env.AUTH_URL,
+        process.env.NEXTAUTH_URL,
+        process.env.NEXT_PUBLIC_APP_URL,
+        process.env.VERCEL_URL ? `https://${stripTrailingSlash(process.env.VERCEL_URL)}` : undefined,
+        process.env.RENDER_EXTERNAL_URL,
+    ].filter(Boolean) as string[];
+
+    let base = candidates[0] ?? (getNodeEnv() === "production" ? "https://localhost" : "http://localhost:3000");
+
+    // Ensure it has a scheme for URL parsing
+    if (!/^https?:\/\//i.test(base)) base = `https://${base}`;
+
+    try {
+        const u = new URL(base);
+        // Return origin only (strip any basePath like /api/auth)
+        return u.origin;
+    } catch {
+        // Last-resort fallback for malformed env
+        return getNodeEnv() === "production" ? "https://localhost" : "http://localhost:3000";
+    }
+}
+
 export async function absoluteUrl(path = "/", opts: GetBaseUrlOptions = {}) {
     const base = await getBaseUrl(opts);
     const p = path.startsWith("/") ? path : `/${path}`;

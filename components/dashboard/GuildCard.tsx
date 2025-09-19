@@ -10,6 +10,7 @@ export type GuildCardProps = {
     name: string;
     iconUrl?: string | null;
     status?: "connected" | "disconnected" | "partial";
+    stats?: { birthdayCount?: number; hasChannel?: boolean; hasRole?: boolean };
 };
 
 const statusMap: Record<NonNullable<GuildCardProps["status"]>, { label: string; variant: React.ComponentProps<typeof Badge>["variant"] }> = {
@@ -18,7 +19,7 @@ const statusMap: Record<NonNullable<GuildCardProps["status"]>, { label: string; 
     partial: { label: "Partial", variant: "warning" },
 };
 
-export default function GuildCard({ id, name, iconUrl, status = "connected" }: Readonly<GuildCardProps>) {
+export default function GuildCard({ id, name, iconUrl, status = "connected", stats }: Readonly<GuildCardProps>) {
     const statusCfg = statusMap[status];
     return (
         <Card clickable header={
@@ -44,7 +45,20 @@ export default function GuildCard({ id, name, iconUrl, status = "connected" }: R
                 </Link>
             </div>
         }>
-            {/* body could show counts or description later */}
+            <div className="stack">
+                <div className="row between">
+                    <span className="small muted">Birthdays</span>
+                    <strong>{stats?.birthdayCount ?? 0}</strong>
+                </div>
+                <div className="row" aria-label="Configuration checklist">
+                    <Badge size="sm" variant={stats?.hasChannel ? 'success' : 'warning'}>
+                        {stats?.hasChannel ? 'Channel set' : 'No channel'}
+                    </Badge>
+                    <Badge size="sm" variant={stats?.hasRole ? 'success' : 'neutral'}>
+                        {stats?.hasRole ? 'Role set' : 'Role optional'}
+                    </Badge>
+                </div>
+            </div>
         </Card>
     );
 }

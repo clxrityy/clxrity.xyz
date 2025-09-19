@@ -146,3 +146,22 @@ model BirthdayRunMarker {
     @@unique([guildId, runDate])
     @@map("BirthdayRunMarker")
 }
+
+// Per-user view of their Discord guild memberships
+model UserGuild {
+    id          String   @id @default(cuid())
+    userId      String // references User.id
+    guildId     String // Discord guild ID
+    name        String
+    icon        String? // Discord icon hash
+    owner       Boolean  @default(false)
+    // Raw Discord permissions integer for the current user in that guild
+    permissions BigInt   @db.BigInt
+    // Derived flags for convenience in UI and queries
+    adminPerm   Boolean  @default(false) // has ADMINISTRATOR bit in permissions
+    isAdmin     Boolean  @default(false) // adminPerm OR owner
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@unique([userId, guildId])
+}
