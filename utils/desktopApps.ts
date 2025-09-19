@@ -13,25 +13,29 @@ export const desktopApps: DesktopApp[] = [
         name: "wav",
         icon: "https://wav.clxrity.xyz/android-chrome-192x192.png",
         link: "https://wav.clxrity.xyz",
-        online: true
+        online: true,
+        description: "An audio sharing platform"
     },
     {
         name: "os",
         icon: "https://os.clxrity.xyz/android-chrome-192x192.png",
         link: "https://os.clxrity.xyz",
-        online: true
+        online: true,
+        description: "My custom operating system"
     },
     {
         name: "hbd",
         icon: "https://hbd.clxrity.xyz/android-chrome-192x192.png",
         link: "https://hbd.clxrity.xyz",
-        online: true
+        online: true,
+        description: "A Discord bot for managing birthdays"
     },
     {
         name: "mc",
         icon: "https://clxrity.xyz/android-chrome-192x192.png",
         link: "https://mc.clxrity.xyz",
-        online: false
+        online: false,
+        description: "My Minecraft server"
     }
     // Add more apps as needed
 ];
