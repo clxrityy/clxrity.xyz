@@ -1,5 +1,6 @@
 import Image from "next/image";
-import type { DesktopApp } from "./desktopApps";
+import type { DesktopApp } from "../utils/desktopApps";
+
 
 export function AppIcon({ app }: Readonly<{ app: DesktopApp }>) {
     let badge = null;
@@ -11,6 +12,7 @@ export function AppIcon({ app }: Readonly<{ app: DesktopApp }>) {
 
     return (
         <div className="icon-wrapper relative flex flex-col items-center">
+
             <div className="relative">
                 <Image src={app.icon} alt={app.name} width={64} height={64} />
                 {badge}

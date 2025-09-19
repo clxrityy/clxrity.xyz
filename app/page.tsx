@@ -1,5 +1,5 @@
 import "../styles/retro-desktop.css";
-import Desktop from "../components/Desktop";
+import { Desktop } from "../components/Desktop";
 
 export const dynamic = 'force-dynamic';
 
