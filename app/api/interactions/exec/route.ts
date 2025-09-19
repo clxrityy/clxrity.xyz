@@ -5,6 +5,7 @@ import { writeGuildLog } from '@/lib/db/logs';
 import { getGuildConfig, upsertGuildConfig } from '@/lib/db/config';
 import { errorEmbedFromError } from '@/lib/discord/embed';
 import { hasAdminPermission, hasRole } from '@/lib/discord/permissions';
+import { upsertUserGuildFromInteraction } from '@/lib/db/userGuilds';
 
 function buildCtx(req: Request, body: any): CommandContext {
     const resolvedUsers = body?.data?.resolved?.users || undefined;
@@ -32,6 +33,14 @@ async function handleCommand(req: Request, body: any, opts?: { background?: bool
     const options: Array<{ name: string; value: unknown }> = body?.data?.options ?? [];
     const args = Object.fromEntries(options.map((o: any) => [o.name, o.value]));
     const ctx = buildCtx(req, body);
+    // Persist user-guild relation opportunistically
+    try {
+        const d = ctx?.discord as any;
+        const uid: string | undefined = d?.userId || undefined;
+        const gid: string | undefined = d?.guildId || undefined;
+        const perms: string | undefined = d?.permissions || undefined;
+        if (uid && gid) await upsertUserGuildFromInteraction(uid, gid, perms);
+    } catch { /* non-blocking */ }
     if (!name) throw new Error('Missing command name');
     const { registry } = await import('@/lib/commands/registry');
     const def: any = registry.get(name);
@@ -374,6 +383,12 @@ async function handleBirthdayConfirmAction(customId: string, userId: string, gui
 async function handleComponent(body: any) {
     const customId: string | undefined = body?.data?.custom_id;
     const guildId: string | undefined = body?.guild_id;
+    // Persist user-guild relation from components as well
+    try {
+        const uid: string | undefined = body?.member?.user?.id || body?.user?.id;
+        const perms: string | undefined = body?.member?.permissions;
+        if (uid && guildId) await upsertUserGuildFromInteraction(uid, guildId, perms);
+    } catch { /* non-blocking */ }
     if (!customId || !guildId) return { type: 4, data: { content: 'Bad interaction', flags: 64 } };
     if (customId.startsWith('help:page:')) return handleHelpPageInteraction(customId);
     if (customId.startsWith('config:')) {
