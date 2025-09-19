@@ -14,13 +14,30 @@ async function verifyDiscordRequest(req: Request) {
     const signature = req.headers.get('x-signature-ed25519');
     const timestamp = req.headers.get('x-signature-timestamp');
     const publicKey = process.env.DISCORD_PUBLIC_KEY;
-    if (!signature || !timestamp || !publicKey) return false;
+    if (!signature || !timestamp || !publicKey) {
+        try {
+            console.warn('[interactions:verify] missing', {
+                hasSignature: !!signature,
+                hasTimestamp: !!timestamp,
+                hasPublicKey: !!publicKey,
+            });
+        } catch { }
+        return false;
+    }
 
     const body = await req.text();
     const message = new TextEncoder().encode(timestamp + body);
     const sig = hexToUint8Array(signature);
     const key = hexToUint8Array(publicKey);
     const ok = nacl.sign.detached.verify(message, sig, key);
+    if (!ok) {
+        try {
+            console.warn('[interactions:verify] signature invalid', {
+                len: body?.length ?? 0,
+                ts: timestamp,
+            });
+        } catch { }
+    }
     return ok ? body : false;
 }
 
@@ -109,6 +126,19 @@ export async function POST(req: Request) {
     const elapsed = Date.now() - t0;
     try { recordLatency(elapsed, body?.data?.name); } catch { }
     return res || Response.json({ type: 4, data: { content: 'Unhandled', flags: 64 } }, { status: 400 });
+}
+
+// Handle CORS preflight cleanly to reduce noisy 401/405 logs from non-Discord tools
+export async function OPTIONS() {
+    return new Response(null, {
+        status: 204,
+        headers: {
+            'Access-Control-Allow-Origin': 'https://hbd.clxrity.xyz',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'x-signature-ed25519, x-signature-timestamp, content-type',
+            'Access-Control-Max-Age': '86400',
+        },
+    });
 }
 
 // --- Lightweight in-memory latency tracking (per Edge isolate instance) ---
