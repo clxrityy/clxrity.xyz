@@ -4,7 +4,9 @@ import { buildHoroscopeMenu } from '@/lib/discord/horoscopeComponents';
 import { errorEmbedFromError } from '@/lib/discord/embed';
 import { CommandReply } from '../../types';
 
-export const horoscopeSchema = z.object({});
+export const horoscopeSchema = z.object({
+    public: z.boolean().optional().describe('Respond publicly')
+});
 
 export async function executeHoroscope({ ctx }: { ctx: any }): Promise<Extract<CommandReply, object>> {
     const userId = ctx.discord?.userId;
@@ -78,40 +80,35 @@ export async function executeHoroscope({ ctx }: { ctx: any }): Promise<Extract<C
         weekly: false,
         monthly: false,
     };
-    for (const { key, duration } of periods) {
+    for (const { key } of periods) {
         const cd = cooldownsRaw.find(c => c.period === key);
-        if (cd) {
-            // If expiresAt is in the future, still on cooldown
-            if (cd.expiresAt > now) {
-                cooldowns[key] = true;
-            }
-        } else {
-            // No cooldown exists, create one starting now
-            const [{ parseCooldownPeriod }] = await Promise.all([
-                import('@/lib/commands/parseCooldownPeriod'),
-            ]);
-            const ms = parseCooldownPeriod(duration);
-            if (ms) {
-                await prisma.commandCooldown.create({
-                    data: {
-                        userId,
-                        command: 'horoscope',
-                        period: key,
-                        lastUsed: now,
-                        expiresAt: new Date(now.getTime() + ms),
-                    },
-                });
-                cooldowns[key] = true;
+        if (cd && cd.expiresAt > now) {
+            cooldowns[key] = true;
+        }
+    }
+
+    // Fetch horoscope data for each period (if not on cooldown, else null)
+    const horoscopes: Record<PeriodKey, any> = {
+        daily: null,
+        weekly: null,
+        monthly: null,
+    };
+    for (const { key } of periods) {
+        if (!cooldowns[key]) {
+            try {
+                const { fetchHoroscope } = await import('@/lib/astrology/horoscope');
+                horoscopes[key] = await fetchHoroscope(zodiac.key, key);
+            } catch (e) {
+                horoscopes[key] = null;
+                console.error('Error fetching horoscope:', e);
             }
         }
     }
 
-    // Build menu UI (to be implemented)
-    // ...
-
     return buildHoroscopeMenu({
         zodiac,
-        cooldowns: { daily: false, weekly: false, monthly: false }, // Placeholder cooldowns
+        cooldowns,
+        horoscopes,
         ephemeral: ctx.ephemeral
     });
 }
