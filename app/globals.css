@@ -750,6 +750,12 @@ a {
     display: block;
 }
 
+svg {
+    display: inline-flex;
+    align-self: baseline;
+    flex-shrink: 0;
+}
+
 .flame {
     position: absolute;
     top: 8px;
