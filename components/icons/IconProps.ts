@@ -7,5 +7,9 @@ export interface IconProps extends Omit<React.SVGProps<SVGSVGElement>, 'width' |
 export function applyIconSize(props: IconProps, defaultSize: number = 20) {
     const { size, ...rest } = props;
     const resolved = size ?? defaultSize;
-    return { width: resolved, height: resolved, ...rest } as const;
+    return {
+        width: resolved, height: resolved, style: {
+            marginTop: "2.75px"
+        }, ...rest
+    } as const;
 }
