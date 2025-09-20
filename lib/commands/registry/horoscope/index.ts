@@ -3,7 +3,7 @@ import { getZodiacSign } from '@/lib/astrology/zodiac';
 import { buildHoroscopeMenu } from '@/lib/discord/horoscopeComponents';
 import { errorEmbedFromError } from '@/lib/discord/embed';
 import { CommandReply } from '../../types';
-import { boolish } from '../../registry';
+import { boolish } from '../../util/boolish';
 
 export const horoscopeSchema = z.object({
     public: boolish.optional().describe('Respond publicly')

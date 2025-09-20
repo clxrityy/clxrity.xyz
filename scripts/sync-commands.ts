@@ -8,7 +8,7 @@
 //   Env required to sync:
 //   DISCORD_APP_ID, DISCORD_BOT_TOKEN
 
-import { registry } from '../lib/commands/registry';
+import { registry } from '../lib/commands';
 import { z } from 'zod';
 import fs from 'node:fs';
 import path from 'node:path';

@@ -4,19 +4,10 @@ import { buildPingEmbed } from './pingUtil';
 import { hasAdminPermission, hasRole } from '../discord/permissions';
 import { embedArgsSchema } from '../discord/embedBuilder';
 import { horoscopeSchema } from '@/lib/commands/registry/horoscope';
+import { boolish } from './util/boolish';
 // Heavy helpers (config DB, components, help builders, embed builder) will be lazy-loaded in execute paths
 
 // Inline, lightweight schema for hbd to avoid top-level dynamic imports
-export const boolish = z.preprocess((v) => {
-    if (typeof v === 'boolean') return v;
-    if (typeof v === 'string') {
-        const s = v.toLowerCase();
-        if (s === 'true' || s === '1' || s === 'yes' || s === 'on') return true;
-        if (s === 'false' || s === '0' || s === 'no' || s === 'off') return false;
-    }
-    if (typeof v === 'number') return v !== 0;
-    return v;
-}, z.boolean());
 const hbdSchema = z.object({
     force: boolish.optional().describe('Force re-run even if already sent (admin only)')
 });
