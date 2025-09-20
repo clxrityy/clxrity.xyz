@@ -8,8 +8,11 @@ export function applyIconSize(props: IconProps, defaultSize: number = 20) {
     const { size, ...rest } = props;
     const resolved = size ?? defaultSize;
     return {
-        width: resolved, height: resolved, style: {
-            marginTop: "2.75px"
-        }, ...rest
+        width: resolved,
+        height: "100%",
+        display: "flex",
+        alignSelf: "center",
+        justifyContent: "center",
+        ...rest
     } as const;
 }
