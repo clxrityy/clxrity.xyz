@@ -42,7 +42,7 @@ async function handleCommand(req: Request, body: any, opts?: { background?: bool
         if (uid && gid) await upsertUserGuildFromInteraction(uid, gid, perms);
     } catch { /* non-blocking */ }
     if (!name) throw new Error('Missing command name');
-    const { registry } = await import('@/lib/commands/registry');
+    const { registry } = await import('@/lib/commands');
     const def: any = registry.get(name);
     if (name === 'config') {
         console.log('[config:debug] invoked', { opts, user: ctx.discord?.userId, guild: ctx.discord?.guildId });
@@ -237,7 +237,7 @@ async function handleHelpPageInteraction(customId: string) {
     }
     const page = Math.max(1, parseInt(pageStr, 10) || 1);
     const [{ registry }, { buildHelpPageResponse }] = await Promise.all([
-        import('@/lib/commands/registry'),
+        import('@/lib/commands'),
         import('@/lib/commands/helpEmbed')
     ]);
     const commands = registry.list();
