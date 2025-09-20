@@ -7,6 +7,7 @@ import UserMenu from "@/components/dashboard/UserMenu";
 import { INVITE_URL } from "@/lib/config/urls";
 import IconCake from "@/components/icons/IconCake";
 import IconDashboard from "@/components/icons/IconDashboard";
+import IconDiscord from "@/components/icons/IconDiscord";
 import "./dashboard.css";
 import styles from "./dashboard.module.css";
 
@@ -20,10 +21,10 @@ export default async function Page() {
     if (!session?.user) {
         return (
             <main className={styles.dashboardContainer}>
-                <div className={styles.dashboardInner}>
+                <div className={`${styles.dashboardInner} ${styles.signedOut}`}>
                     <h1>Sign in required</h1>
                     <Link href={`/api/auth/signin?provider=discord&callbackUrl=${encodeURIComponent(getAuthUrlSync())}`} className="no-underline">
-                        <Button leftIcon={<span className="icon">🔐</span>}>Sign in with Discord</Button>
+                        <Button leftIcon={<span className="icon"><IconDiscord size={24} /></span>}>Sign in with Discord</Button>
                     </Link>
                 </div>
             </main>
@@ -74,15 +75,15 @@ export default async function Page() {
                         <p className="muted m-0">Manage your servers, birthday announcements, and roles.</p>
                     </div>
                     {/* Right side: quick action + avatar menu */}
-                    <div className="row">
+                    <div className="user-section">
                         <Link href={INVITE_URL} className="no-underline">
                             <Button variant="primary" size="sm" leftIcon={<span>➕</span>}>Invite Bot</Button>
                         </Link>
                         <UserMenu inviteUrl={INVITE_URL} avatarUrl={avatarUrl} name={displayName} />
                     </div>
                 </header>
-                <section className="stack">
-                    <Card header={<h2 className="m-0">Overview</h2>}>
+                <section className="stack stats-grid">
+                    <Card>
                         <div className="dashboard-overview-grid">
                             <Card className={`${styles.statCard} elevated`} size="sm" variant="soft" header={<div className="row center"><span className="icon-circle"><IconDashboard size={16} /></span><strong className="ml-2">Guilds</strong></div>}>
                                 <div className="text-3xl font-bold">{stats.totalGuilds}</div>

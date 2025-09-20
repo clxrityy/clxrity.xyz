@@ -8,7 +8,7 @@
 
 [data-theme="dark"] {
     --dashboard-bg: var(--background, #171718);
-    --dashboard-surface: var(--surface, #45454cdf);
+    --dashboard-surface: var(--surface, #161616d8);
     --dashboard-border: var(--border, #323236);
     --dashboard-foreground: var(--foreground, #f3f4f6);
     --dashboard-muted: var(--muted-foreground, #a1a1aa);
@@ -25,6 +25,7 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+    width: 100%;
 }
 
 /* Page header: breadcrumb + spacing */
@@ -50,10 +51,15 @@
 /* Stat cards grid tweaks */
 /* Stat cards: TailAdmin-like */
 .stats-grid {
+    display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem 1rem;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1440px) {
     .stats-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -61,7 +67,7 @@
 
 @media (max-width: 520px) {
     .stats-grid {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
+        grid-template-columns: 1fr;
     }
 }
 
@@ -129,13 +135,7 @@
     }
 }
 
-.dashboard-overview-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-}
-
-@media (min-width: 640px) {
+/* @media (min-width: 640px) {
     .dashboard-overview-grid {
         grid-template-columns: 1fr 1fr;
     }
@@ -164,4 +164,13 @@
     .dashboard-overview-grid {
         grid-template-columns: 1fr;
     }
+} */
+
+.user-section {
+    padding-left: 14px;
+    width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 12px;
+    align-items: flex-end;
 }
