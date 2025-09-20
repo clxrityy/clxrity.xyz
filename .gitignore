@@ -5,6 +5,7 @@ dist
 .DS_Store
 .env
 .env.local
+.env.production
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
