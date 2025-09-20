@@ -3,9 +3,10 @@ import { getZodiacSign } from '@/lib/astrology/zodiac';
 import { buildHoroscopeMenu } from '@/lib/discord/horoscopeComponents';
 import { errorEmbedFromError } from '@/lib/discord/embed';
 import { CommandReply } from '../../types';
+import { boolish } from '../../registry';
 
 export const horoscopeSchema = z.object({
-    public: z.boolean().optional().describe('Respond publicly')
+    public: boolish.optional().describe('Respond publicly')
 });
 
 export async function executeHoroscope({ ctx }: { ctx: any }): Promise<Extract<CommandReply, object>> {

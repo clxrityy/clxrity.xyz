@@ -5,7 +5,7 @@ export function buildHoroscopeMenu({ zodiac, cooldowns, horoscopes, ephemeral }:
     zodiac: { name: string; emoji: string; thumbnail: string };
     cooldowns: { daily: boolean; weekly: boolean; monthly: boolean };
     horoscopes: { daily: any; weekly: any; monthly: any };
-    ephemeral?: boolean;
+    ephemeral?: any;
 }): Extract<CommandReply, object> {
     // Show the first available horoscope (not on cooldown), else just the menu
     let description = 'Choose a period to view your horoscope.';
