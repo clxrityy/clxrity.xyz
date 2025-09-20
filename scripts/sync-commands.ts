@@ -17,9 +17,7 @@ import dotenv from 'dotenv';
 function loadEnv() {
     const cwd = process.cwd();
     const candidates = [
-        path.join(cwd, '.env.local'),
-        path.join(cwd, `.env.${process.env.NODE_ENV || 'development'}`),
-        path.join(cwd, '.env'),
+        path.join(cwd, '.env.production'),
     ];
     for (const p of candidates) {
         if (fs.existsSync(p)) dotenv.config({ path: p });
