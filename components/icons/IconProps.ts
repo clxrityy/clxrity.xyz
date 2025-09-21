@@ -9,10 +9,7 @@ export function applyIconSize(props: IconProps, defaultSize: number = 20) {
     const resolved = size ?? defaultSize;
     return {
         width: resolved,
-        height: "100%",
-        display: "flex",
-        alignSelf: "center",
-        justifyContent: "center",
+        height: resolved,
         ...rest
     } as const;
 }

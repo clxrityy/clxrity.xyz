@@ -82,8 +82,8 @@ export default function HomePage() {
             <section className="hero container">
                 <div className="row gap-24">
                     <div className="stack-lg">
-                        <h1>hbd — Celebrate birthdays on Discord</h1>
-                        <p>Automated birthday roles, announcements, and more.</p>
+                        <h1>hbd</h1>
+                        <p>i just want to wish you a happy birthday</p>
                         <div className="row kpis gap-24">
                             {DASHBOARD_URL.startsWith("/") ? (
                                 <Link className="btn secondary" href={DASHBOARD_URL}><IconDashboard /> Dashboard</Link>

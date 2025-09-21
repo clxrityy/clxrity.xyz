@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useState, useRef } from "react";
-import { IconMenu } from "../icons";
-import DesktopNav from "./header/DesktopNav";
-import ThemeToggle from "./header/ThemeToggle";
-import MobileMenu from "./header/MobileMenu";
+import { IconMenu } from "../../icons";
+import DesktopNav from "./DesktopNav";
+import ThemeToggle from "./ThemeToggle";
+import MobileMenu from "./MobileMenu";
 import { INVITE_URL, DASHBOARD_URL } from "@/lib/config/urls";
 
 export default function Header() {
