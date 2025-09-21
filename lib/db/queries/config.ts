@@ -1,4 +1,4 @@
-import { getEdgeDb } from '../neon';
+import { getEdgeDb } from '@/lib/db/neon';
 
 export type GuildConfigRow = {
   id: string;

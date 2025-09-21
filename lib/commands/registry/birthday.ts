@@ -12,7 +12,7 @@ export async function executeBirthdayRoot({ ctx }: { ctx: CommandContext }): Pro
     const cfg = await getGuildConfig(guildId);
     const existing = await getBirthday(guildId, userId);
     const changeable = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
-    const { buildBirthdayRootEmbed, buildBirthdayRootComponents } = await import('@/lib/discord/birthdayComponents');
+    const { buildBirthdayRootEmbed, buildBirthdayRootComponents } = await import('@/lib/discord/components/birthday');
     const embed = buildBirthdayRootEmbed({ hasBirthday: !!existing, changeable, existing });
     const components = buildBirthdayRootComponents({ hasBirthday: !!existing, changeable });
     return { embeds: [embed], components, ephemeral: true };

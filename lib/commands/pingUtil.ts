@@ -1,4 +1,4 @@
-import { latencyColor } from '../discord/embed';
+import { latencyColor } from '../discord/embed/embed';
 
 export interface PingEmbedOptions {
     signatureTimestamp?: string | null;

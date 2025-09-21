@@ -1,7 +1,7 @@
 export const runtime = 'edge';
 
 import { z } from 'zod';
-import { getEdgeDb } from '@/lib/neon';
+import { getEdgeDb } from '@/lib/db/neon';
 
 const CommandSchema = z.object({
   name: z.string().min(1),

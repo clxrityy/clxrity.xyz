@@ -2,7 +2,7 @@ import { createRegistry, type RegisteredCommand } from './types';
 import { z } from 'zod';
 import { buildPingEmbed } from './pingUtil';
 import { hasAdminPermission, hasRole } from '../discord/permissions';
-import { embedArgsSchema } from '../discord/embedBuilder';
+import { embedArgsSchema } from '../discord/embed/embedBuilder';
 import { horoscopeSchema } from '@/lib/commands/registry/horoscope';
 import { boolish } from './util/boolish';
 // Heavy helpers (config DB, components, help builders, embed builder) will be lazy-loaded in execute paths
@@ -36,7 +36,7 @@ const commands: RegisteredCommand[] = [
         deferEphemeral: true,
         authorize: ({ ctx }) => hasAdminPermission(ctx.discord?.permissions),
         execute: async ({ args }) => {
-            const { buildEmbed } = await import('../discord/embedBuilder');
+            const { buildEmbed } = await import('../discord/embed/embedBuilder');
             const embed = buildEmbed(args);
             if (!Object.keys(embed).length) return { content: 'No fields provided', ephemeral: true };
             return { embeds: [embed] };
@@ -54,7 +54,7 @@ const commands: RegisteredCommand[] = [
             const userId = ctx.discord?.userId;
             if (!guildId || !userId) return { content: 'Must be used in a server.', ephemeral: true };
             const [{ getBirthday }, { getZodiacSign }] = await Promise.all([
-                import('@/lib/db/birthday/birthdaysEdge'),
+                import('@/lib/db/queries/birthday/birthdaysEdge'),
                 import('@/lib/astrology/zodiac')
             ]);
             const bday = await getBirthday(guildId, userId);
@@ -115,7 +115,7 @@ const commands: RegisteredCommand[] = [
             if (!guildId) return false;
             const perms = ctx.discord?.permissions;
             const roles = ctx.discord?.memberRoleIds || [];
-            const { getGuildConfig } = await import('../db/config');
+            const { getGuildConfig } = await import('@/lib/db/queries/config');
             const cfg = await getGuildConfig(guildId);
             if (hasAdminPermission(perms)) return true;
             if (hasRole(roles, cfg?.adminRoleId)) return true;
@@ -125,8 +125,8 @@ const commands: RegisteredCommand[] = [
             const guildId = ctx.discord?.guildId;
             if (!guildId) return { content: 'This can only be used in a server.', ephemeral: true };
             const [{ getGuildConfig }, { buildConfigMenuResponse }] = await Promise.all([
-                import('../db/config'),
-                import('../discord/components')
+                import('@/lib/db/queries/config'),
+                import('@/lib/discord/components/config')
             ]);
             const cfg = (await getGuildConfig(guildId)) || { adminRoleId: null, birthdayRoleId: null, birthdayChannel: null, birthdayMessage: null, changeable: false };
             const base = buildConfigMenuResponse(cfg);

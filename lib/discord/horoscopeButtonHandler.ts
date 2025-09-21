@@ -1,8 +1,8 @@
 // Handler for horoscope button interactions: applies cooldown and returns horoscope
 import { fetchHoroscope, HoroscopeResponse } from '@/lib/astrology/horoscope';
 import { parseCooldownPeriod } from '@/lib/commands/parseCooldownPeriod';
-import { prisma } from '@/lib/prisma';
-import { buildHoroscopeMenu } from './horoscopeComponents';
+import { prisma } from '@/lib/db/prisma';
+import { buildHoroscopeMenu } from './components/horoscope';
 
 export async function handleHoroscopeButton({ userId, guildId, period, zodiacKey, ephemeral = true }: {
     userId: string;

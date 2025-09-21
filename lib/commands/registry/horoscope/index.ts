@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { getZodiacSign } from '@/lib/astrology/zodiac';
-import { buildHoroscopeMenu } from '@/lib/discord/horoscopeComponents';
-import { errorEmbedFromError } from '@/lib/discord/embed';
+import { buildHoroscopeMenu } from '@/lib/discord/components/horoscope';
+import { errorEmbedFromError } from '@/lib/discord/embed/embed';
 import { CommandReply } from '../../types';
 import { boolish } from '../../util/boolish';
 
@@ -54,7 +54,7 @@ export async function executeHoroscope({ ctx }: { ctx: any }): Promise<Extract<C
     // Cooldown check (to be implemented)
     // Cooldown check (CommandCooldown model, with period parsing)
     const [{ prisma }] = await Promise.all([
-        import('@/lib/prisma'),
+        import('@/lib/db/prisma'),
     ]);
     const periods = [
         { key: 'daily', duration: '1d' },

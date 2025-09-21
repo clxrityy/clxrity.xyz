@@ -3,7 +3,7 @@ export const runtime = 'nodejs';
 import { dispatch, type CommandContext, replyToInteractionData } from '@/lib/commands/types';
 import { writeGuildLog } from '@/lib/db/logs';
 import { getGuildConfig, upsertGuildConfig } from '@/lib/db/config';
-import { errorEmbedFromError } from '@/lib/discord/embed';
+import { errorEmbedFromError } from '@/lib/discord/embed/embed';
 import { hasAdminPermission, hasRole } from '@/lib/discord/permissions';
 import { upsertUserGuildFromInteraction } from '@/lib/db/userGuilds';
 
@@ -117,7 +117,7 @@ async function handleCommand(req: Request, body: any, opts?: { background?: bool
             if (name === 'config') {
                 console.error('[config:debug] followup error', err);
             }
-            const { errorEmbedFromError } = await import('@/lib/discord/embed');
+            const { errorEmbedFromError } = await import('@/lib/discord/embed/embed');
             const embed = errorEmbedFromError(err, { title: 'Command Error', includeStack: false });
             await sendFollowupWithRetry(body, { embeds: [embed] }).catch(() => { });
             console.error('[command:error]', name, err?.message || err);
@@ -160,7 +160,7 @@ async function handleCommand(req: Request, body: any, opts?: { background?: bool
                     });
                 } catch { }
             } catch (err: any) {
-                const { errorEmbedFromError } = await import('@/lib/discord/embed');
+                const { errorEmbedFromError } = await import('@/lib/discord/embed/embed');
                 const embed = errorEmbedFromError(err, { title: 'Command Error', includeStack: false });
                 await sendFollowupWithRetry(body, { embeds: [embed] });
                 console.error('[command:error]', name, err?.message || err);
@@ -319,14 +319,14 @@ async function handleConfigInteraction(customId: string, body: any, guildId: str
     }
     if (key === 'message_reset') {
         const updated = await upsertGuildConfig({ guildId, birthdayMessage: null });
-        const { buildConfigMenuResponse } = await import('@/lib/discord/components');
+        const { buildConfigMenuResponse } = await import('@/lib/discord/components/config');
         const reply = buildConfigMenuResponse(updated);
         return { type: 7, data: replyToInteractionData(reply) };
     }
 
     const patch = buildConfigPatch(key, body, cfg);
     const updated = await upsertGuildConfig({ guildId, ...patch });
-    const { buildConfigMenuResponse } = await import('@/lib/discord/components');
+    const { buildConfigMenuResponse } = await import('@/lib/discord/components/config');
     const reply = buildConfigMenuResponse(updated);
     return { type: 7, data: replyToInteractionData(reply) };
 }
@@ -338,7 +338,7 @@ async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any
     if (existing && !changeAllowed) {
         return { type: 4, data: { content: 'You cannot change your birthday.', flags: 64 } };
     }
-    const { buildSetFlowEmbeds, buildMonthSelect } = await import('@/lib/discord/birthdayComponents');
+    const { buildSetFlowEmbeds, buildMonthSelect } = await import('@/lib/discord/components/birthday');
     const embeds = buildSetFlowEmbeds();
     return { type: 4, data: replyToInteractionData({ embeds, components: [buildMonthSelect()], ephemeral: true }) };
 }
@@ -346,7 +346,7 @@ async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any
 async function handleBirthdayViewAction(userId: string, guildId: string) {
     const { getBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
     const existing = await getBirthday(guildId, userId);
-    const { buildViewEmbed } = await import('@/lib/discord/birthdayComponents');
+    const { buildViewEmbed } = await import('@/lib/discord/components/birthday');
     return { type: 4, data: replyToInteractionData({ embeds: [buildViewEmbed(existing ? { month: existing.month, day: existing.day } : null, userId)], ephemeral: true }) };
 }
 
@@ -374,7 +374,7 @@ async function handleBirthdayCancelAction(userId: string, guildId: string) {
     const existing = await getBirthday(guildId, userId);
     const cfg = await getGuildConfig(guildId);
     const changeable = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
-    const { buildBirthdayRootEmbed, buildBirthdayRootComponents } = await import('@/lib/discord/birthdayComponents');
+    const { buildBirthdayRootEmbed, buildBirthdayRootComponents } = await import('@/lib/discord/components/birthday');
     const embed = buildBirthdayRootEmbed({ hasBirthday: !!existing, changeable, existing: existing ? { month: existing.month, day: existing.day } : null });
     const components = buildBirthdayRootComponents({ hasBirthday: !!existing, changeable });
     return { type: 7, data: replyToInteractionData({ embeds: [embed], components }) };
@@ -386,7 +386,7 @@ async function handleBirthdayMonthAction(body: any) {
     if (!raw) return { type: 4, data: { content: 'No month selected.', flags: 64 } };
     const month = parseInt(raw, 10);
     if (!Number.isInteger(month) || month < 1 || month > 12) return { type: 4, data: { content: 'Invalid month selection.', flags: 64 } };
-    const { buildSetFlowEmbeds, buildDaySelectRows, buildMonthSelect } = await import('@/lib/discord/birthdayComponents');
+    const { buildSetFlowEmbeds, buildDaySelectRows, buildMonthSelect } = await import('@/lib/discord/components/birthday');
     const embeds = buildSetFlowEmbeds(month);
     const dayRows = buildDaySelectRows(month);
     return { type: 4, data: replyToInteractionData({ embeds, components: [buildMonthSelect(month), ...dayRows], ephemeral: true }) };
@@ -402,7 +402,7 @@ async function handleBirthdayDayAction(body: any) {
     if (!month) return { type: 4, data: { content: 'Month missing, restart flow.', flags: 64 } };
     if (!Number.isInteger(day) || day < 1 || day > 31) return { type: 4, data: { content: 'Invalid day.', flags: 64 } };
     const { isValidMonthDay } = await import('@/lib/db/birthday/birthdayUtils');
-    const { buildSetFlowEmbeds, buildDaySelectRows, buildMonthSelect, buildConfirmRow } = await import('@/lib/discord/birthdayComponents');
+    const { buildSetFlowEmbeds, buildDaySelectRows, buildMonthSelect, buildConfirmRow } = await import('@/lib/discord/components/birthday');
     const embeds = buildSetFlowEmbeds(month, day);
     const rows: any[] = [buildMonthSelect(month), ...buildDaySelectRows(month, day)];
     if (isValidMonthDay(month, day)) rows.push(buildConfirmRow(month, day));
@@ -439,7 +439,7 @@ async function handleComponent(body: any) {
             const val = body?.data?.components?.[0]?.components?.[0]?.value;
             const newTemplate = (typeof val === 'string' ? val : '').slice(0, 500);
             const updated = await upsertGuildConfig({ guildId, birthdayMessage: newTemplate });
-            const { buildConfigMenuResponse } = await import('@/lib/discord/components');
+            const { buildConfigMenuResponse } = await import('@/lib/discord/components/config');
             const reply = buildConfigMenuResponse(updated);
             return { type: 4, data: replyToInteractionData({ ...reply, ephemeral: true }) };
         }

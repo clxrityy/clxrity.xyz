@@ -1,6 +1,6 @@
 export const runtime = 'nodejs';
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db/prisma';
 
 export async function GET() {
     try {

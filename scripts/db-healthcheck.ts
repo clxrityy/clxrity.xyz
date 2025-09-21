@@ -2,7 +2,7 @@ import 'dotenv/config';
 import * as fs from 'fs';
 import * as path from 'path';
 import { config as loadEnv } from 'dotenv';
-import { getEdgeDb } from '../lib/neon';
+import { getEdgeDb } from '../lib/db/neon';
 
 // Load .env.local first if present, then fallback to .env
 const cwd = process.cwd();
