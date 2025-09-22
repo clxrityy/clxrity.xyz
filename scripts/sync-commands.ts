@@ -14,13 +14,24 @@ import fs from 'node:fs';
 import path from 'node:path';
 import dotenv from 'dotenv';
 
+
 function loadEnv() {
     const cwd = process.cwd();
-    const candidates = [
-        path.join(cwd, '.env.production'),
-    ];
+    const args = new Set(process.argv.slice(2));
+    let candidates: string[];
+    if (args.has('--prod')) {
+        candidates = [path.join(cwd, '.env.production')];
+    } else {
+        candidates = [
+            path.join(cwd, '.env.local'),
+            path.join(cwd, '.env'),
+        ];
+    }
     for (const p of candidates) {
-        if (fs.existsSync(p)) dotenv.config({ path: p });
+        if (fs.existsSync(p)) {
+            dotenv.config({ path: p });
+            break;
+        }
     }
 }
 
