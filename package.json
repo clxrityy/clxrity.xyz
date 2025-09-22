@@ -15,7 +15,7 @@
     "prisma:migrate": "prisma migrate dev",
     "typecheck": "tsc --noEmit",
     "postinstall": "prisma generate",
-    "deploy:prod": "pnpm sync:cmds --prod && prisma generate && prisma migrate deploy && vercel build && vercel deploy && vercel --prod"
+    "deploy:prod": "pnpm sync:cmds --prod && prisma migrate deploy && vercel deploy && vercel --prod"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.32",
