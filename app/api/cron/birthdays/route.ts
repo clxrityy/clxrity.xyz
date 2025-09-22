@@ -1,10 +1,10 @@
 export const runtime = 'nodejs';
 
 import { buildAnnouncements, formatBirthdayMessage, postDiscordMessage } from '@/lib/discord/announce';
-import { listGuildsWithBirthdayRole } from '@/lib/db/config';
-import { listGuildBirthdays, listTodayBirthdays } from '@/lib/db/birthday/birthdaysEdge';
+import { listGuildsWithBirthdayRole } from '@/lib/db/queries/config';
+import { listGuildBirthdays, listTodayBirthdays } from '@/lib/db/queries/birthday/birthdaysEdge';
 import { addRole, removeRole } from '@/lib/discord/roles';
-import { ensureRunMarkerTable, markGuildRunIfAbsent, hasGuildRun } from '@/lib/db/runMarkers';
+import { ensureRunMarkerTable, markGuildRunIfAbsent, hasGuildRun } from '@/lib/db/queries/runMarkers';
 
 function authOk(req: Request) {
     // Accept either our custom secret header OR Vercel's scheduled function header
