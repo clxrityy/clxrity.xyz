@@ -29,7 +29,7 @@ export async function executeHoroscope({ ctx }: { ctx: any }): Promise<Extract<C
 
     // Get birthday and zodiac
     const [{ getBirthday }] = await Promise.all([
-        import('@/lib/db/birthday/birthdaysEdge'),
+        import('@/lib/db/queries/birthday/birthdaysEdge'),
     ]);
     const bday = await getBirthday(guildId, userId);
     if (!bday) {

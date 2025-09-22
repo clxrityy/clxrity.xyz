@@ -29,7 +29,7 @@ export async function executeHbd({ ctx, args }: { ctx: CommandContext; args: z.i
 
     const [{ buildSingleGuildAnnouncement, formatBirthdayMessage, postDiscordMessage }, { hasGuildRun, markGuildRunIfAbsent, ensureRunMarkerTable }] = await Promise.all([
         import('@/lib/discord/announce'),
-        import('@/lib/db/runMarkers')
+        import('@/lib/db/queries/runMarkers')
     ]);
     await ensureRunMarkerTable();
 
@@ -41,7 +41,7 @@ export async function executeHbd({ ctx, args }: { ctx: CommandContext; args: z.i
     if (force && alreadyRan) {
         const perms = ctx.discord?.permissions;
         const roles = ctx.discord?.memberRoleIds || [];
-        const { getGuildConfig } = await import('@/lib/db/config');
+        const { getGuildConfig } = await import('@/lib/db/queries/config');
         const cfg = await getGuildConfig(guildId);
         const isAdmin = hasAdminPermission(perms) || (cfg?.adminRoleId && hasRole(roles, cfg.adminRoleId));
         if (!isAdmin) return { content: 'You are not allowed to force a re-run.', ephemeral: true };
@@ -64,7 +64,7 @@ export async function executeHbd({ ctx, args }: { ctx: CommandContext; args: z.i
     if (ann.roleId) {
         try {
             const [{ listGuildBirthdays }, { addRole, removeRole }] = await Promise.all([
-                import('@/lib/db/birthday/birthdaysEdge'),
+                import('@/lib/db/queries/birthday/birthdaysEdge'),
                 import('@/lib/discord/roles')
             ]);
             const all = await listGuildBirthdays(guildId);

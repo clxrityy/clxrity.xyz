@@ -1,11 +1,11 @@
 export const runtime = 'nodejs';
 
 import { dispatch, type CommandContext, replyToInteractionData } from '@/lib/commands/types';
-import { writeGuildLog } from '@/lib/db/logs';
-import { getGuildConfig, upsertGuildConfig } from '@/lib/db/config';
+import { writeGuildLog } from '@/lib/db/queries/logs';
+import { getGuildConfig, upsertGuildConfig } from '@/lib/db/queries/config';
 import { errorEmbedFromError } from '@/lib/discord/embed/embed';
 import { hasAdminPermission, hasRole } from '@/lib/discord/permissions';
-import { upsertUserGuildFromInteraction } from '@/lib/db/userGuilds';
+import { upsertUserGuildFromInteraction } from '@/lib/db/queries/userGuilds';
 
 function buildCtx(req: Request, body: any): CommandContext {
     const resolvedUsers = body?.data?.resolved?.users || undefined;
@@ -332,7 +332,7 @@ async function handleConfigInteraction(customId: string, body: any, guildId: str
 }
 
 async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any) {
-    const { getBirthday, canChangeBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
+    const { getBirthday, canChangeBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
     const existing = await getBirthday(guildId, userId);
     const changeAllowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
     if (existing && !changeAllowed) {
@@ -344,15 +344,15 @@ async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any
 }
 
 async function handleBirthdayViewAction(userId: string, guildId: string) {
-    const { getBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
+    const { getBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
     const existing = await getBirthday(guildId, userId);
     const { buildViewEmbed } = await import('@/lib/discord/components/birthday');
     return { type: 4, data: replyToInteractionData({ embeds: [buildViewEmbed(existing ? { month: existing.month, day: existing.day } : null, userId)], ephemeral: true }) };
 }
 
 async function handleBirthdayCountdownAction(userId: string, guildId: string) {
-    const { getBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
-    const { daysUntil } = await import('@/lib/db/birthday/birthdayUtils');
+    const { getBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
+    const { daysUntil } = await import('@/lib/db/queries/birthday/birthdayUtils');
     const existing = await getBirthday(guildId, userId);
     if (!existing) return { type: 4, data: { content: 'No birthday set.', flags: 64 } };
     const until = daysUntil(existing.month, existing.day);
@@ -362,7 +362,7 @@ async function handleBirthdayCountdownAction(userId: string, guildId: string) {
 }
 
 async function handleBirthdayTodayAction(guildId: string) {
-    const { listTodayBirthdays } = await import('@/lib/db/birthday/birthdaysEdge');
+    const { listTodayBirthdays } = await import('@/lib/db/queries/birthday/birthdaysEdge');
     const todays = await listTodayBirthdays(guildId, new Date());
     if (!todays.length) return { type: 4, data: { content: 'No birthdays today.', flags: 64 } };
     const list = todays.map(b => `<@${b.userId}>`).join(', ');
@@ -370,7 +370,7 @@ async function handleBirthdayTodayAction(guildId: string) {
 }
 
 async function handleBirthdayCancelAction(userId: string, guildId: string) {
-    const { getBirthday, canChangeBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
+    const { getBirthday, canChangeBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
     const existing = await getBirthday(guildId, userId);
     const cfg = await getGuildConfig(guildId);
     const changeable = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
@@ -401,7 +401,7 @@ async function handleBirthdayDayAction(body: any) {
     const month = prevMonth ? parseInt(prevMonth, 10) : undefined;
     if (!month) return { type: 4, data: { content: 'Month missing, restart flow.', flags: 64 } };
     if (!Number.isInteger(day) || day < 1 || day > 31) return { type: 4, data: { content: 'Invalid day.', flags: 64 } };
-    const { isValidMonthDay } = await import('@/lib/db/birthday/birthdayUtils');
+    const { isValidMonthDay } = await import('@/lib/db/queries/birthday/birthdayUtils');
     const { buildSetFlowEmbeds, buildDaySelectRows, buildMonthSelect, buildConfirmRow } = await import('@/lib/discord/components/birthday');
     const embeds = buildSetFlowEmbeds(month, day);
     const rows: any[] = [buildMonthSelect(month), ...buildDaySelectRows(month, day)];
@@ -413,8 +413,8 @@ async function handleBirthdayConfirmAction(customId: string, userId: string, gui
     const parts = customId.split(':');
     const month = parseInt(parts[2], 10);
     const day = parseInt(parts[3], 10);
-    const { isValidMonthDay } = await import('@/lib/db/birthday/birthdayUtils');
-    const { canChangeBirthday, setBirthday } = await import('@/lib/db/birthday/birthdaysEdge');
+    const { isValidMonthDay } = await import('@/lib/db/queries/birthday/birthdayUtils');
+    const { canChangeBirthday, setBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
     if (!isValidMonthDay(month, day)) return { type: 4, data: { content: 'Invalid date.', flags: 64 } };
     const allowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
     if (!allowed) return { type: 4, data: { content: 'You cannot change your birthday.', flags: 64 } };
@@ -433,6 +433,28 @@ async function handleComponent(body: any) {
     } catch { /* non-blocking */ }
     if (!customId || !guildId) return { type: 4, data: { content: 'Bad interaction', flags: 64 } };
     if (customId.startsWith('help:page:')) return handleHelpPageInteraction(customId);
+    // Horoscope button handler
+    if (customId.startsWith('horoscope:')) {
+        // customId: 'horoscope:daily', 'horoscope:weekly', 'horoscope:monthly'
+        const period = customId.split(':')[1];
+        const userId = body?.member?.user?.id || body?.user?.id;
+        // Try to get zodiacKey from message embed title or from message state (if available)
+        let zodiacKey = undefined;
+        // Try to extract from message embed title (e.g., '♈ Aries')
+        const embedTitle = body?.message?.embeds?.[0]?.title;
+        if (embedTitle) {
+            // Try to match the name after the emoji
+            const match = embedTitle.match(/\s([A-Za-z]+)$/);
+            if (match) zodiacKey = match[1].toLowerCase();
+        }
+        // Fallback: try to get from message state or custom_id (if you encode it)
+        if (!userId || !zodiacKey) {
+            return { type: 4, data: { content: 'Could not determine user or zodiac sign.', flags: 64 } };
+        }
+        const { handleHoroscopeButton } = await import('@/lib/discord/horoscopeButtonHandler');
+        const result = await handleHoroscopeButton({ userId, guildId, period: period as 'daily' | 'weekly' | 'monthly', zodiacKey, ephemeral: true });
+        return { type: 7, data: replyToInteractionData(result) };
+    }
     if (customId.startsWith('config:')) {
         // Modal submit comes through as type 5 with a different structure; handle save
         if (customId === 'config:message_modal' && body?.type === 5) {
