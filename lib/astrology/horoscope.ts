@@ -70,15 +70,27 @@ export async function fetchHoroscope(sign: ZodiacSignKey, timePeriod: "daily" | 
      * ```
      */
 
-    const url = `${API_URL}get-horoscope/${timePeriod}?sign=${sign}${timePeriod === "daily" ? "&day=TODAY" : ""}`;
+
+    // Map sign to API-expected value
+
+    function mapSignForApi(sign: ZodiacSignKey): string {
+        // Defensive: ensure sign is a string (not object)
+        if (typeof sign === 'string') return sign.toLowerCase();
+        if (sign && typeof (sign as any).key === 'string') return (sign as any).key.toLowerCase();
+        throw new TypeError('Invalid zodiac sign value: ' + JSON.stringify(sign));
+    }
+
+    const apiSign = mapSignForApi(sign);
+    console.log(`[fetchHoroscope] Requesting sign=${apiSign} period=${timePeriod}`);
+    const url = `${API_URL}get-horoscope/${timePeriod}?sign=${apiSign}${timePeriod === "daily" ? "&day=TODAY" : ""}`;
 
     const res = await fetch(url, { method: 'GET', headers: { 'accept': 'application/json' } });
 
     if (!res.ok) {
+        console.error('Horoscope API error:', res.status, res.statusText, JSON.stringify({ response: await res.text().catch(() => '') }).slice(0, 500));
         throw new Error(`Horoscope API error: ${res.status} ${res.statusText}`);
     }
 
     const json = await res.json().then(j => j as HoroscopeResponse<typeof timePeriod>);
-
     return json;
 }
