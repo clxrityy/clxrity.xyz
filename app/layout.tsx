@@ -41,60 +41,18 @@ export const metadata: Metadata = {
         description: SITE_TAGLINE,
         card: "summary",
         creator: SITE_TWITTER,
-        images: [
-            {
-                url: "https://hbd.clxrity.xyz/android-chrome-192x192.png",
-                width: 192,
-                height: 192,
-                alt: "hbd logo",
-            },
-            { url: "https://hbd.clxrity.xyz/android-chrome-512x512.png", width: 512, height: 512, alt: "hbd logo" },
-            {
-                url: "https://hbd.clxrity.xyz/favicon-32x32.png",
-                width: 32,
-                height: 32,
-                alt: "hbd logo",
-            },
-            {
-                url: "https://hbd.clxrity.xyz/favicon-16x16.png",
-                width: 16,
-                height: 16,
-                alt: "hbd logo",
-            }
-        ]
     },
     openGraph: {
         title: SITE_NAME,
         description: SITE_TAGLINE,
         url: new URL("https://hbd.clxrity.xyz"),
         siteName: SITE_NAME,
-        images: [
-            {
-                url: "https://hbd.clxrity.xyz/android-chrome-192x192.png",
-                width: 192,
-                height: 192,
-                alt: "hbd logo",
-            },
-            { url: "https://hbd.clxrity.xyz/android-chrome-512x512.png", width: 512, height: 512, alt: "hbd logo" },
-            {
-                url: "https://hbd.clxrity.xyz/favicon-32x32.png",
-                width: 32,
-                height: 32,
-                alt: "hbd logo",
-            },
-            {
-                url: "https://hbd.clxrity.xyz/favicon-16x16.png",
-                width: 16,
-                height: 16,
-                alt: "hbd logo",
-            }
-        ],
         locale: "en-US",
         type: "website",
     },
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
