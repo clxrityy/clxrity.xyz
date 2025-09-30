@@ -18,28 +18,28 @@
     "deploy:prod": "pnpm sync:cmds --prod && prisma migrate deploy && vercel deploy && vercel --prod"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.32",
+    "@ai-sdk/openai": "^2.0.41",
     "@auth/prisma-adapter": "^2.10.0",
     "@neondatabase/serverless": "^1.0.1",
-    "@prisma/adapter-neon": "^6.16.1",
+    "@prisma/adapter-neon": "^6.16.2",
     "@prisma/client": "6.16.2",
-    "ai": "^5.0.47",
-    "next": "15.5.3",
+    "ai": "^5.0.59",
+    "next": "15.5.4",
     "next-auth": "5.0.0-beta.25",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "tweetnacl": "^1.0.3",
-    "zod": "^4.1.8"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@types/node": "24.3.3",
-    "@types/react": "19.1.13",
+    "@types/node": "24.6.0",
+    "@types/react": "19.1.15",
     "@types/react-dom": "19.1.9",
-    "dotenv": "^17.2.2",
-    "eslint": "9.35.0",
-    "eslint-config-next": "15.5.3",
+    "dotenv": "^17.2.3",
+    "eslint": "9.36.0",
+    "eslint-config-next": "15.5.4",
     "prisma": "6.16.2",
-    "tsx": "^4.20.5",
+    "tsx": "^4.20.6",
     "typescript": "5.9.2"
   },
   "packageManager": "pnpm@10.17.1"
