@@ -1,6 +1,6 @@
-import { createRegistry, type RegisteredCommand } from './types';
+import { createRegistry, type RegisteredCommand } from './util/types';
 import { z } from 'zod';
-import { buildPingEmbed } from './pingUtil';
+import { buildPingEmbed } from './util/pingUtil';
 import { hasAdminPermission, hasRole } from '../discord/permissions';
 import { embedArgsSchema } from '../discord/embed/embedBuilder';
 import { horoscopeSchema } from '@/lib/commands/registry/horoscope';
@@ -93,7 +93,7 @@ const commands: RegisteredCommand[] = [
         description: 'List commands or get help for one',
         schema: z.object({ command: z.string().optional().describe('Specific command name') }),
         execute: async ({ args }) => {
-            const { buildHelpDetailEmbed, buildHelpPageResponse } = await import('./helpEmbed');
+            const { buildHelpDetailEmbed, buildHelpPageResponse } = await import('./util/helpEmbed');
             if (args.command) {
                 const cmd = commands.find(c => c.name === args.command);
                 if (!cmd) return { content: `Command not found: ${args.command}`, ephemeral: true };

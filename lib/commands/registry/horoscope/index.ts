@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { getZodiacSign } from '@/lib/astrology/zodiac';
 import { buildHoroscopeMenu } from '@/lib/discord/components/horoscope';
 import { errorEmbedFromError } from '@/lib/discord/embed/embed';
-import { CommandReply } from '../../types';
+import { CommandReply } from '../../util/types';
 import { boolish } from '../../util/boolish';
 
 export const horoscopeSchema = z.object({

@@ -1,7 +1,7 @@
 export const runtime = 'edge';
 
 import nacl from 'tweetnacl';
-import { buildPingEmbed } from '@/lib/commands/pingUtil';
+import { buildPingEmbed } from '@/lib/commands/util/pingUtil';
 function hexToUint8Array(hex: string) {
     if (!/^([0-9a-f]{2})+$/i.test(hex)) throw new Error('Invalid hex');
     const len = hex.length / 2;

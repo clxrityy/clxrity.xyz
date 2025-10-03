@@ -1,6 +1,6 @@
 export const runtime = 'nodejs';
 
-import { dispatch, type CommandContext, replyToInteractionData } from '@/lib/commands/types';
+import { dispatch, type CommandContext, replyToInteractionData } from '@/lib/commands/util/types';
 import { writeGuildLog } from '@/lib/db/queries/logs';
 import { getGuildConfig, upsertGuildConfig } from '@/lib/db/queries/config';
 import { errorEmbedFromError } from '@/lib/discord/embed/embed';
@@ -250,7 +250,7 @@ async function handleHelpPageInteraction(customId: string) {
     const page = Math.max(1, parseInt(pageStr, 10) || 1);
     const [{ registry }, { buildHelpPageResponse }] = await Promise.all([
         import('@/lib/commands'),
-        import('@/lib/commands/helpEmbed')
+        import('@/lib/commands/util/helpEmbed')
     ]);
     const commands = registry.list();
     const reply = buildHelpPageResponse(commands, page);

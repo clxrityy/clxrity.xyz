@@ -1,5 +1,5 @@
 // Discord component builder for /horoscope command menu
-import type { CommandReply } from '@/lib/commands/types';
+import type { CommandReply } from '@/lib/commands/util/types';
 
 export function buildHoroscopeMenu({ zodiac, cooldowns, horoscopes, ephemeral }: {
     zodiac: { name: string; emoji: string; thumbnail: string };

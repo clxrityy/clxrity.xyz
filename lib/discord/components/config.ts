@@ -1,5 +1,5 @@
 // Helpers for building Discord component-based UIs
-import type { CommandReply } from '@/lib/commands/types';
+import type { CommandReply } from '@/lib/commands/util/types';
 
 export type GuildConfigRow = {
     adminRoleId?: string | null;

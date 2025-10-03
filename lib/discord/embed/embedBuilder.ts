@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Embed } from '@/lib/commands/types';
+import type { Embed } from '@/lib/commands/util/types';
 
 const urlField = z.string().trim().refine(v => {
     if (!v) return false;

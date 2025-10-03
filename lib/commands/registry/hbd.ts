@@ -1,4 +1,4 @@
-import type { CommandContext, CommandReply } from '@/lib/commands/types';
+import type { CommandContext, CommandReply } from '@/lib/commands/util/types';
 import { z } from 'zod';
 import { hasAdminPermission, hasRole } from '@/lib/discord/permissions';
 

@@ -1,5 +1,5 @@
 import { getZodiacSign } from '@/lib/astrology/zodiac';
-import type { CommandContext, CommandReply, Embed } from '@/lib/commands/types';
+import type { CommandContext, CommandReply, Embed } from '@/lib/commands/util/types';
 import { errorEmbedFromError } from '@/lib/discord/embed/embed';
 
 // export async function executeBirthdayRoot({ ctx }: { ctx: CommandContext }): Promise<CommandReply> {

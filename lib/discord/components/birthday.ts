@@ -1,4 +1,4 @@
-import type { Component, Embed } from '@/lib/commands/types';
+import type { Component, Embed } from '@/lib/commands/util/types';
 import { daysUntil } from '@/lib/db/queries/birthday/birthdayUtils';
 import { MONTH_NAMES } from '@/lib/constants/dates';
 
