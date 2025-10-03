@@ -6,6 +6,7 @@
     "dev": "next dev",
     "dev:tunnel": "node scripts/dev-with-tunnel.js",
     "sync:cmds": "tsx scripts/sync-commands.ts",
+    "sync:cmds:guild": "tsx scripts/sync-commands.ts --guild 1133792848085532712",
     "db:check": "tsx scripts/db-healthcheck.ts",
     "migrate:deploy": "prisma migrate deploy",
     "build": "pnpm sync:cmds && prisma generate && prisma migrate deploy && next build",

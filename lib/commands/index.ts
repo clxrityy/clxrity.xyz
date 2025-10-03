@@ -133,17 +133,48 @@ const commands: RegisteredCommand[] = [
             return { content: base.content, embeds: base.embeds, components: base.components, ephemeral: true };
         }
     },
-    // General: birthday manager (delegated module)
+    // General: birthday subcommands
     {
-        name: 'birthday',
+        name: 'birthday-set',
         category: 'General',
-        description: 'Manage or view birthdays',
-        schema: z.object({}),
+        description: 'Set your birthday',
+        schema: z.object({
+            month: z.coerce.number().int().min(1).max(12).describe('Birth month (1-12)'),
+            day: z.coerce.number().int().min(1).max(31).describe('Birth day (1-31)')
+        }),
         defer: true,
         deferEphemeral: true,
-        execute: async ({ ctx }) => {
-            const { executeBirthdayRoot } = await import('@/lib/commands/registry/birthday');
-            return executeBirthdayRoot({ ctx });
+        execute: async ({ ctx, args }) => {
+            const { executeBirthdaySet } = await import('@/lib/commands/registry/birthday');
+            return executeBirthdaySet({ ctx, args });
+        }
+    },
+    {
+        name: 'birthday-view',
+        category: 'General',
+        description: 'View your saved birthday',
+        schema: z.object({
+            user: z.string().optional().describe('User to view birthday for (optional)')
+        }),
+        defer: true,
+        deferEphemeral: true,
+        execute: async ({ ctx, args }) => {
+            const { executeBirthdayView } = await import('@/lib/commands/registry/birthday');
+            return executeBirthdayView({ ctx, args });
+        }
+    },
+    {
+        name: 'birthday-countdown',
+        category: 'General',
+        description: 'Show countdown to your next birthday',
+        schema: z.object({
+            user: z.string().optional().describe('User to show countdown for (optional)')
+        }),
+        defer: true,
+        deferEphemeral: true,
+        execute: async ({ ctx, args }) => {
+            const { executeBirthdayCountdown } = await import('@/lib/commands/registry/birthday');
+            return executeBirthdayCountdown({ ctx, args });
         }
     },
     // General: manual birthday announcement (/hbd) delegated

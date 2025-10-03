@@ -2,32 +2,32 @@ import type { Component, Embed } from '@/lib/commands/types';
 import { daysUntil } from '@/lib/db/queries/birthday/birthdayUtils';
 import { MONTH_NAMES } from '@/lib/constants/dates';
 
-export function buildBirthdayRootEmbed(opts: { hasBirthday: boolean; changeable: boolean; existing?: { month: number; day: number } | null }): Embed {
-    let desc: string;
-    const existingPart = opts.existing ? `: **${opts.existing.month}/${opts.existing.day}**` : '';
-    if (!opts.hasBirthday) {
-        desc = 'You have not set a birthday yet.';
-    } else if (opts.changeable) {
-        desc = `You have a birthday set${existingPart}. You may update it.`;
-    } else {
-        desc = `Your birthday is set${existingPart}. Changes are disabled.`;
-    }
-    return { title: 'Birthday Manager', description: desc };
-}
+// export function buildBirthdayRootEmbed(opts: { hasBirthday: boolean; changeable: boolean; existing?: { month: number; day: number } | null }): Embed {
+//     let desc: string;
+//     const existingPart = opts.existing ? `: **${opts.existing.month}/${opts.existing.day}**` : '';
+//     if (!opts.hasBirthday) {
+//         desc = 'You have not set a birthday yet.';
+//     } else if (opts.changeable) {
+//         desc = `You have a birthday set${existingPart}. You may update it.`;
+//     } else {
+//         desc = `Your birthday is set${existingPart}. Changes are disabled.`;
+//     }
+//     return { title: 'Birthday Manager', description: desc };
+// }
 
-export function buildBirthdayRootComponents(opts: { hasBirthday: boolean; changeable: boolean }): Component[] {
-    return [
-        {
-            type: 1,
-            components: [
-                { type: 2, style: 1, label: 'Set Birthday', custom_id: 'bday:set', disabled: opts.hasBirthday && !opts.changeable },
-                { type: 2, style: 2, label: 'View', custom_id: 'bday:view' },
-                { type: 2, style: 2, label: 'Countdown', custom_id: 'bday:countdown' },
-                { type: 2, style: 2, label: 'Today', custom_id: 'bday:today' }
-            ]
-        }
-    ];
-}
+// export function buildBirthdayRootComponents(opts: { hasBirthday: boolean; changeable: boolean }): Component[] {
+//     return [
+//         {
+//             type: 1,
+//             components: [
+//                 { type: 2, style: 1, label: 'Set Birthday', custom_id: 'bday:set', disabled: opts.hasBirthday && !opts.changeable },
+//                 { type: 2, style: 2, label: 'View', custom_id: 'bday:view' },
+//                 { type: 2, style: 2, label: 'Countdown', custom_id: 'bday:countdown' },
+//                 { type: 2, style: 2, label: 'Today', custom_id: 'bday:today' }
+//             ]
+//         }
+//     ];
+// }
 
 export function buildMonthSelect(selected?: number): Component {
     return {

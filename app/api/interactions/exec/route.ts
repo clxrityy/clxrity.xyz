@@ -29,8 +29,20 @@ function buildCtx(req: Request, body: any): CommandContext {
 }
 
 async function handleCommand(req: Request, body: any, opts?: { background?: boolean }) {
-    const name: string | undefined = body?.data?.name;
-    const options: Array<{ name: string; value: unknown }> = body?.data?.options ?? [];
+    const baseName: string | undefined = body?.data?.name;
+    const baseOptions: Array<{ name: string; value: unknown; type?: number; options?: any[] }> = body?.data?.options ?? [];
+
+    // Handle subcommands: if the first option is type 1 (SUB_COMMAND), use it as the actual command
+    let name: string | undefined = baseName;
+    let options: Array<{ name: string; value: unknown }> = baseOptions;
+
+    if (baseOptions.length === 1 && baseOptions[0].type === 1) {
+        // This is a subcommand structure
+        const subcommand = baseOptions[0];
+        name = `${baseName}-${subcommand.name}`;
+        options = subcommand.options || [];
+    }
+
     const args = Object.fromEntries(options.map((o: any) => [o.name, o.value]));
     const ctx = buildCtx(req, body);
     // Persist user-guild relation opportunistically
@@ -331,54 +343,54 @@ async function handleConfigInteraction(customId: string, body: any, guildId: str
     return { type: 7, data: replyToInteractionData(reply) };
 }
 
-async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any) {
-    const { getBirthday, canChangeBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
-    const existing = await getBirthday(guildId, userId);
-    const changeAllowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
-    if (existing && !changeAllowed) {
-        return { type: 4, data: { content: 'You cannot change your birthday.', flags: 64 } };
-    }
-    const { buildSetFlowEmbeds, buildMonthSelect } = await import('@/lib/discord/components/birthday');
-    const embeds = buildSetFlowEmbeds();
-    return { type: 4, data: replyToInteractionData({ embeds, components: [buildMonthSelect()], ephemeral: true }) };
-}
+// async function handleBirthdaySetAction(userId: string, guildId: string, cfg: any) {
+//     const { getBirthday, canChangeBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
+//     const existing = await getBirthday(guildId, userId);
+//     const changeAllowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
+//     if (existing && !changeAllowed) {
+//         return { type: 4, data: { content: 'You cannot change your birthday.', flags: 64 } };
+//     }
+//     const { buildSetFlowEmbeds, buildMonthSelect } = await import('@/lib/discord/components/birthday');
+//     const embeds = buildSetFlowEmbeds();
+//     return { type: 4, data: replyToInteractionData({ embeds, components: [buildMonthSelect()], ephemeral: true }) };
+// }
 
-async function handleBirthdayViewAction(userId: string, guildId: string) {
-    const { getBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
-    const existing = await getBirthday(guildId, userId);
-    const { buildViewEmbed } = await import('@/lib/discord/components/birthday');
-    return { type: 4, data: replyToInteractionData({ embeds: [buildViewEmbed(existing ? { month: existing.month, day: existing.day } : null, userId)], ephemeral: true }) };
-}
+// async function handleBirthdayViewAction(userId: string, guildId: string) {
+//     const { getBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
+//     const existing = await getBirthday(guildId, userId);
+//     const { buildViewEmbed } = await import('@/lib/discord/components/birthday');
+//     return { type: 4, data: replyToInteractionData({ embeds: [buildViewEmbed(existing ? { month: existing.month, day: existing.day } : null, userId)], ephemeral: true }) };
+// }
 
-async function handleBirthdayCountdownAction(userId: string, guildId: string) {
-    const { getBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
-    const { daysUntil } = await import('@/lib/db/queries/birthday/birthdayUtils');
-    const existing = await getBirthday(guildId, userId);
-    if (!existing) return { type: 4, data: { content: 'No birthday set.', flags: 64 } };
-    const until = daysUntil(existing.month, existing.day);
-    let msg: string;
-    if (until === 0) msg = 'Happy Birthday! 🎉'; else msg = `${until} day${until === 1 ? '' : 's'} until your birthday.`;
-    return { type: 4, data: { content: msg, flags: 64 } };
-}
+// async function handleBirthdayCountdownAction(userId: string, guildId: string) {
+//     const { getBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
+//     const { daysUntil } = await import('@/lib/db/queries/birthday/birthdayUtils');
+//     const existing = await getBirthday(guildId, userId);
+//     if (!existing) return { type: 4, data: { content: 'No birthday set.', flags: 64 } };
+//     const until = daysUntil(existing.month, existing.day);
+//     let msg: string;
+//     if (until === 0) msg = 'Happy Birthday! 🎉'; else msg = `${until} day${until === 1 ? '' : 's'} until your birthday.`;
+//     return { type: 4, data: { content: msg, flags: 64 } };
+// }
 
-async function handleBirthdayTodayAction(guildId: string) {
-    const { listTodayBirthdays } = await import('@/lib/db/queries/birthday/birthdaysEdge');
-    const todays = await listTodayBirthdays(guildId, new Date());
-    if (!todays.length) return { type: 4, data: { content: 'No birthdays today.', flags: 64 } };
-    const list = todays.map(b => `<@${b.userId}>`).join(', ');
-    return { type: 4, data: { content: `🎂 Today: ${list}`, flags: 64 } };
-}
+// async function handleBirthdayTodayAction(guildId: string) {
+//     const { listTodayBirthdays } = await import('@/lib/db/queries/birthday/birthdaysEdge');
+//     const todays = await listTodayBirthdays(guildId, new Date());
+//     if (!todays.length) return { type: 4, data: { content: 'No birthdays today.', flags: 64 } };
+//     const list = todays.map(b => `<@${b.userId}>`).join(', ');
+//     return { type: 4, data: { content: `🎂 Today: ${list}`, flags: 64 } };
+// }
 
-async function handleBirthdayCancelAction(userId: string, guildId: string) {
-    const { getBirthday, canChangeBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
-    const existing = await getBirthday(guildId, userId);
-    const cfg = await getGuildConfig(guildId);
-    const changeable = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
-    const { buildBirthdayRootEmbed, buildBirthdayRootComponents } = await import('@/lib/discord/components/birthday');
-    const embed = buildBirthdayRootEmbed({ hasBirthday: !!existing, changeable, existing: existing ? { month: existing.month, day: existing.day } : null });
-    const components = buildBirthdayRootComponents({ hasBirthday: !!existing, changeable });
-    return { type: 7, data: replyToInteractionData({ embeds: [embed], components }) };
-}
+// async function handleBirthdayCancelAction(userId: string, guildId: string) {
+//     const { getBirthday, canChangeBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
+//     const existing = await getBirthday(guildId, userId);
+//     const cfg = await getGuildConfig(guildId);
+//     const changeable = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
+//     const { buildBirthdayRootEmbed, buildBirthdayRootComponents } = await import('@/lib/discord/components/birthday');
+//     const embed = buildBirthdayRootEmbed({ hasBirthday: !!existing, changeable, existing: existing ? { month: existing.month, day: existing.day } : null });
+//     const components = buildBirthdayRootComponents({ hasBirthday: !!existing, changeable });
+//     return { type: 7, data: replyToInteractionData({ embeds: [embed], components }) };
+// }
 
 async function handleBirthdayMonthAction(body: any) {
     const values: string[] = body?.data?.values || [];
@@ -409,18 +421,18 @@ async function handleBirthdayDayAction(body: any) {
     return { type: 4, data: replyToInteractionData({ embeds, components: rows, ephemeral: true }) };
 }
 
-async function handleBirthdayConfirmAction(customId: string, userId: string, guildId: string, cfg: any) {
-    const parts = customId.split(':');
-    const month = parseInt(parts[2], 10);
-    const day = parseInt(parts[3], 10);
-    const { isValidMonthDay } = await import('@/lib/db/queries/birthday/birthdayUtils');
-    const { canChangeBirthday, setBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
-    if (!isValidMonthDay(month, day)) return { type: 4, data: { content: 'Invalid date.', flags: 64 } };
-    const allowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
-    if (!allowed) return { type: 4, data: { content: 'You cannot change your birthday.', flags: 64 } };
-    await setBirthday(guildId, userId, month, day);
-    return { type: 4, data: { content: `Birthday saved: ${month}/${day}`, flags: 64 } };
-}
+// async function handleBirthdayConfirmAction(customId: string, userId: string, guildId: string, cfg: any) {
+//     const parts = customId.split(':');
+//     const month = parseInt(parts[2], 10);
+//     const day = parseInt(parts[3], 10);
+//     const { isValidMonthDay } = await import('@/lib/db/queries/birthday/birthdayUtils');
+//     const { canChangeBirthday, setBirthday } = await import('@/lib/db/queries/birthday/birthdaysEdge');
+//     if (!isValidMonthDay(month, day)) return { type: 4, data: { content: 'Invalid date.', flags: 64 } };
+//     const allowed = await canChangeBirthday(guildId, userId, !!cfg?.changeable);
+//     if (!allowed) return { type: 4, data: { content: 'You cannot change your birthday.', flags: 64 } };
+//     await setBirthday(guildId, userId, month, day);
+//     return { type: 4, data: { content: `Birthday saved: ${month}/${day}`, flags: 64 } };
+// }
 
 async function handleComponent(body: any) {
     const customId: string | undefined = body?.data?.custom_id;
@@ -469,33 +481,33 @@ async function handleComponent(body: any) {
         try { await writeGuildLog({ guildId, level: 'INFO', category: 'INTERACTION', summary: `config interaction ${customId}`, action: 'update', success: true }); } catch { }
         return res;
     }
-    if (customId.startsWith('bday')) {
-        try {
-            const res = await handleBirthdayInteraction(customId, body, guildId);
-            try { await writeGuildLog({ guildId, level: 'INFO', category: 'INTERACTION', summary: `bday interaction ${customId}`, action: 'update', success: true }); } catch { }
-            return res;
-        } catch (err: any) {
-            try { await writeGuildLog({ guildId, level: 'ERROR', category: 'INTERACTION', summary: `bday interaction error`, action: 'update', success: false, details: { customId, message: err?.message || String(err) } }); } catch { }
-            throw err;
-        }
-    }
+    // if (customId.startsWith('bday')) {
+    //     try {
+    //         const res = await handleBirthdayInteraction(customId, body, guildId);
+    //         try { await writeGuildLog({ guildId, level: 'INFO', category: 'INTERACTION', summary: `bday interaction ${customId}`, action: 'update', success: true }); } catch { }
+    //         return res;
+    //     } catch (err: any) {
+    //         try { await writeGuildLog({ guildId, level: 'ERROR', category: 'INTERACTION', summary: `bday interaction error`, action: 'update', success: false, details: { customId, message: err?.message || String(err) } }); } catch { }
+    //         throw err;
+    //     }
+    // }
     return { type: 4, data: { content: 'Unhandled component', flags: 64 } };
 }
 
-async function handleBirthdayInteraction(customId: string, body: any, guildId: string) {
-    const userId: string | undefined = body?.member?.user?.id || body?.user?.id;
-    if (!userId) return { type: 4, data: { content: 'No user', flags: 64 } };
-    const cfg = await getGuildConfig(guildId);
-    if (customId === 'bday:set') return handleBirthdaySetAction(userId, guildId, cfg);
-    if (customId === 'bday:view') return handleBirthdayViewAction(userId, guildId);
-    if (customId === 'bday:countdown') return handleBirthdayCountdownAction(userId, guildId);
-    if (customId === 'bday:today') return handleBirthdayTodayAction(guildId);
-    if (customId === 'bday:cancel') return handleBirthdayCancelAction(userId, guildId);
-    if (customId === 'bday:month') return handleBirthdayMonthAction(body);
-    if (customId === 'bday:day' || customId === 'bday:day1' || customId === 'bday:day2') return handleBirthdayDayAction(body);
-    if (customId.startsWith('bday:confirm:')) return handleBirthdayConfirmAction(customId, userId, guildId, cfg);
-    return { type: 4, data: { content: 'Unhandled birthday action', flags: 64 } };
-}
+// async function handleBirthdayInteraction(customId: string, body: any, guildId: string) {
+//     const userId: string | undefined = body?.member?.user?.id || body?.user?.id;
+//     if (!userId) return { type: 4, data: { content: 'No user', flags: 64 } };
+//     const cfg = await getGuildConfig(guildId);
+//     if (customId === 'bday:set') return handleBirthdaySetAction(userId, guildId, cfg);
+//     if (customId === 'bday:view') return handleBirthdayViewAction(userId, guildId);
+//     if (customId === 'bday:countdown') return handleBirthdayCountdownAction(userId, guildId);
+//     if (customId === 'bday:today') return handleBirthdayTodayAction(guildId);
+//     if (customId === 'bday:cancel') return handleBirthdayCancelAction(userId, guildId);
+//     if (customId === 'bday:month') return handleBirthdayMonthAction(body);
+//     if (customId === 'bday:day' || customId === 'bday:day1' || customId === 'bday:day2') return handleBirthdayDayAction(body);
+//     if (customId.startsWith('bday:confirm:')) return handleBirthdayConfirmAction(customId, userId, guildId, cfg);
+//     return { type: 4, data: { content: 'Unhandled birthday action', flags: 64 } };
+// }
 
 function unauthorized() {
     const embed = errorEmbedFromError(new Error('Unauthorized'), { title: 'Access Denied' });
