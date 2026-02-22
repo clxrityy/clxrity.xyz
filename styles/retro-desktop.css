@@ -26,7 +26,7 @@
     --icon-margin: 12px;
     --icon-border-radius: 8px;
     --icon-border: 2px dashed rgba(255, 255, 255, 0.6);
-    --icon-hover-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+    --icon-hover-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.15) 100%);
     --icon-active-scale: 0.96;
     --icon-transition: transform 0.1s;
     --font-family: 'VT323', 'Fira Mono', 'Menlo', monospace;
@@ -108,6 +108,7 @@
     background: var(--icon-hover-bg);
     border-color: rgba(255, 255, 255, 0.9);
     transform: scale(1.25);
+		cursor: pointer;
 }
 
 .desktop-icon img {
