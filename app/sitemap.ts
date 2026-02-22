@@ -39,6 +39,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
             images: [
                 "https://hbd.clxrity.xyz/android-chrome-192x192.png"
             ]
-        }
+        },
     ]
 }
