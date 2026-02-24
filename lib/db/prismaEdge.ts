@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaNeonHTTP } from '@prisma/adapter-neon';
+import { PrismaNeonHttp } from '@prisma/adapter-neon';
 
 // Edge-friendly instantiation: avoid global reuse that can leak across requests
 // and disable certain features not supported in edge runtimes if needed.
@@ -8,6 +8,6 @@ import { PrismaNeonHTTP } from '@prisma/adapter-neon';
 export function getPrismaEdge() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error('DATABASE_URL not set');
-  const adapterFactory = new PrismaNeonHTTP(connectionString, {});
+  const adapterFactory = new PrismaNeonHttp(connectionString, {});
   return new PrismaClient({ adapter: adapterFactory });
 }
