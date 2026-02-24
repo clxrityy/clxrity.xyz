@@ -15,3 +15,4 @@ prisma/dev.db-journal
 prisma/migrations
 lib/commands/manifest.json
 .idea
+.env*.local
