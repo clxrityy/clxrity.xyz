@@ -8,8 +8,8 @@ export type BirthdayRow = {
     guildId: string;
     month: number;
     day: number;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
 };
 
 // date helpers provided by ./birthdayUtils
