@@ -4,6 +4,7 @@ import Link from "next/link";
 import { INVITE_URL, DASHBOARD_URL } from "@/lib/config/urls";
 import Image from "next/image";
 import { IconDashboard, IconInvite } from "@/components/icons";
+import { Skeleton } from "@/components/ui";
 
 type Status = { online: boolean; guilds: number; startedAt?: number; uptimeMs?: number };
 
@@ -102,11 +103,24 @@ export default function HomePage() {
             <section className="container kpis kpis-centered">
                 <div className="card">
                     <div className="small muted">Status</div>
-                    <div className="bold">{status?.online ? 'Online' : 'Offline'}</div>
+                    {/* <div className="bold">{status?.online !== undefined ? (status.online ? 'Online' : 'Offline') : 'Online'}</div> */}
+										{
+											status?.online !== undefined ? (
+												<div className="bold">{status.online ? 'Online' : 'Offline'}</div>
+											) : (
+												<Skeleton className="h-6 w-12" />
+											)
+										}
                 </div>
                 <div className="card">
                     <div className="small muted">Guilds</div>
-                    <div className="bold">{status?.guilds ?? '—'}</div>
+										{
+											status?.guilds !== undefined ? (
+												<div className="bold">{status.guilds}</div>
+											) : (
+												<Skeleton className="h-6 w-12" />
+											)
+										}
                 </div>
             </section>
         </main>
