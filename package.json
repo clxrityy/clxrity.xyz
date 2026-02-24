@@ -41,7 +41,8 @@
     "eslint-config-next": "16.1.6",
     "prisma": "7.4.1",
     "tsx": "^4.21.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vercel": "^50.23.1"
   },
   "packageManager": "pnpm@10.17.1"
 }
