@@ -1,7 +1,7 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 import Discord from "next-auth/providers/discord";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/db/prisma";
+import { getPrismaEdge } from "@/lib/db/prismaEdge";
 import { getAuthUrlSync } from "@/lib/env";
 
 declare module "next-auth" {
@@ -38,7 +38,7 @@ sanitizeAuthEnv();
 // }
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
-    adapter: PrismaAdapter(prisma),
+    adapter: PrismaAdapter(getPrismaEdge()),
     providers: [
         Discord({
             clientId: process.env.DISCORD_CLIENT_ID!,
