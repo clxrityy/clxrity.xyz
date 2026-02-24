@@ -8,8 +8,8 @@ export type GuildConfigRow = {
   birthdayChannel: string | null;
   birthdayMessage: string | null;
   changeable: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export async function getGuildConfig(guildId: string): Promise<GuildConfigRow | null> {
