@@ -16,3 +16,4 @@ prisma/migrations
 lib/commands/manifest.json
 .idea
 .env*.local
+*lock.yaml
