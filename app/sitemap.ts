@@ -11,6 +11,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
                 "https://clxrity.xyz/android-chrome-192x192.png"
             ]
         },
+				{
+					url: "https://clxrity.xyz/@me",
+					lastModified: new Date(),
+					priority: 0.9,
+					images: [
+						"https://clxrity.xyz/android-chrome-192x192.png"
+					]
+				},
         {
             url: "https://clxrity.xyz/wav",
             lastModified: new Date(),
