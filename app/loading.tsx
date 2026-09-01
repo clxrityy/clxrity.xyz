@@ -21,7 +21,7 @@ export default function Loading() {
                             <div className="relative">
                                 <div className="skeleton-icon shimmer mb-2" />
                             </div>
-                            <span className="icon-label skeleton-label shimmer mt-2 text-xs bg-opacity-60 px-2 py-1 rounded w-full bg-gradient-to-b from-white/85 to-white/25 text-black" />
+                            <span className="icon-label skeleton-label shimmer mt-2 text-xs bg-opacity-60 px-2 py-1 rounded w-full bg-linear-to-b from-white/85 to-white/25 text-black" />
                         </div>
                     );
                 })}
