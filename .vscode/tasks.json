@@ -1,0 +1,89 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "clxrity-img: link global executable",
+            "type": "shell",
+            "command": "pnpm build && npm prefix -g && npm link --ignore-scripts && zsh -lic 'rehash; command -v clxrity-img && clxrity-img --version && clxrity-img --help'",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "clxrity-img: verify global command",
+            "type": "shell",
+            "command": "zsh -lic 'cd /tmp && rehash && command -v clxrity-img && clxrity-img --version && clxrity-img --help'",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "clxrity-img: diagnose global command",
+            "type": "shell",
+            "command": "printf '\\nCurrent shell:\\n'; command -v node; command -v pnpm; command -v clxrity-img || true; printf '\\nGlobal bin directory:\\n'; pnpm bin -g; printf '\\nInstalled global packages:\\n'; pnpm list -g --depth 0; printf '\\nFresh interactive zsh:\\n'; zsh -lic 'command -v pnpm; command -v clxrity-img || true; printf \"PNPM_HOME=%s\\n\" \"$PNPM_HOME\"; pnpm bin -g'",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "clxrity-img: install",
+            "type": "shell",
+            "command": "node --version && pnpm --version && pnpm install",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "clxrity-img: check",
+            "type": "shell",
+            "command": "pnpm check",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "clxrity-img: verify package",
+            "type": "shell",
+            "command": "pnpm install && pnpm verify:package --install",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "clxrity-img: audit (no pager)",
+            "type": "shell",
+            "command": "git --no-pager -c core.excludesFile=/dev/null status --short --branch && git --no-pager -c core.excludesFile=/dev/null diff --check && git --no-pager -c core.excludesFile=/dev/null check-ignore .env .env.example pnpm-lock.yaml",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "GIT_CONFIG_GLOBAL": "/dev/null",
+                    "GIT_CONFIG_SYSTEM": "/dev/null",
+                    "GIT_PAGER": "cat",
+                    "PAGER": "cat"
+                }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "clxrity-img: check Node 24",
+            "type": "shell",
+            "command": "pnpm check && pnpm --package=node@24 dlx node --version && pnpm --package=node@24 dlx node node_modules/vitest/vitest.mjs run",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
