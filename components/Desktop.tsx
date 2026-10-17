@@ -14,7 +14,7 @@ export function Desktop() {
                     </Suspense>
                 ))}
             </div>
-						<Footer />
+            <Footer />
         </div>
     );
 }

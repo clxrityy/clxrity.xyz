@@ -35,7 +35,13 @@ export const desktopApps: DesktopApp[] = [
         icon: "https://clxrity.xyz/android-chrome-192x192.png",
         link: "https://mc.clxrity.xyz",
         online: false,
-        description: "My Minecraft server"
+        description: "A Minecraft server"
+    },
+    {
+        name: "img",
+        icon: "https://img.clxrity.xyz/clxrity.png",
+        link: "https://img.clxrity.xyz/clxrity.png",
+        online: true,
+        description: "My CLI image sharing platform"
     }
-    // Add more apps as needed
 ];

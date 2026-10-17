@@ -14,7 +14,7 @@ export function AppIcon({ app }: Readonly<{ app: DesktopApp }>) {
         <div className="icon-wrapper relative flex flex-col items-center">
 
             <div className="relative">
-                <Image src={app.icon} alt={app.name} width={64} height={64} />
+                <Image src={app.icon} alt={app.name} width={64} height={64} loading="eager" />
                 {badge}
             </div>
             <span className="icon-label mt-2 text-xs bg-opacity-60 px-2 py-1 rounded w-full bg-gradient-to-b from-white/85 to-white/25 text-black">
