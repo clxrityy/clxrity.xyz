@@ -4,7 +4,27 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "*clxrity.xyz",
+        hostname: "clxrity.xyz",
+      },
+      {
+        protocol: "https",
+        hostname: "img.clxrity.xyz",
+      },
+      {
+        protocol: "https",
+        hostname: "wav.clxrity.xyz",
+      },
+      {
+        protocol: "https",
+        hostname: "os.clxrity.xyz",
+      },
+      {
+        protocol: "https",
+        hostname: "hbd.clxrity.xyz",
+      },
+      {
+        protocol: "https",
+        hostname: "mc.clxrity.xyz",
       },
     ],
   },
