@@ -35,11 +35,17 @@ export class NotFoundError extends CliError {
     }
 }
 
+export class UploadOutcomeUnknownError extends CliError {
+    constructor(readonly key: string) {
+        super(`Upload outcome could not be confirmed for ${key}. Check list before retrying; the upload may still finish.`);
+    }
+}
+
 export class AmbiguousMatchError extends CliError {
     readonly matches: string[];
 
     constructor(identifier: string, matches: string[]) {
-        super(`Identifier \"${identifier}\" matches multiple images: ${matches.join(', ')}`, 5);
+        super(`Identifier \"${identifier}\" matches multiple media objects: ${matches.join(', ')}`, 5);
         this.matches = matches;
     }
 }

@@ -33,7 +33,7 @@ try {
             PATH: `${bin}${delimiter}${process.env.PATH ?? ''}`,
         };
         for (const key of Object.keys(env)) {
-            if (/^(R2_|AWS_|NODE_OPTIONS$|PUBLIC_BASE_URL$)/.test(key)) delete env[key];
+            if (/^(R2_|AWS_|EMBED_|NODE_OPTIONS$|PUBLIC_BASE_URL$)/.test(key)) delete env[key];
         }
         // This exercises a real global bin install, isolated from the user's
         // actual global packages and shell configuration. No bucket is contacted.

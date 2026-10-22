@@ -3,9 +3,10 @@ import type { HeadObjectCommandOutput, ListObjectsV2CommandOutput } from '@aws-s
 import { afterAll, afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import type { AppConfig } from '../src/config.js';
+import { encodeEmbedMetadata } from '../src/embeds.js';
 import { CliError, NotFoundError, UploadConflictError } from '../src/errors.js';
 import type { ListedObject } from '../src/storage.js';
-import { R2Storage, sortListedObjects } from '../src/storage.js';
+import { ownedPosterKey, R2Storage, sortListedObjects } from '../src/storage.js';
 
 const config: AppConfig = {
     r2Endpoint: 'https://storage.example.test',
@@ -51,7 +52,7 @@ describe('R2Storage with intercepted SDK sends', () => {
     });
 
     it.each([
-        ['photo.jpg', 'image/jpeg'], ['photo.png', 'image/png'], ['photo.gif', 'image/gif'],
+        ['photo.jpg', 'image/jpeg'], ['photo.png', 'image/png'], ['photo.gif', 'image/gif'], ['clip.mp4', 'video/mp4'],
     ])('conditionally creates %s with correct public-serving headers', async (key, contentType) => {
         send.mockResolvedValueOnce({});
         const data = Buffer.from('synthetic');
@@ -182,6 +183,63 @@ describe('R2Storage with intercepted SDK sends', () => {
         send.mockResolvedValueOnce({});
         await expect(storage.listStemMatches('photo')).resolves.toEqual([]);
         expect((send.mock.calls[0]?.[0] as ListObjectsV2Command).input.Prefix).toBe('photo.');
+    });
+
+    const owner = '01234567-89ab-cdef-0123-456789abcdef';
+    const posterKey = `_previews/${owner}.jpg`;
+    const videoMetadata = (): Record<string, string> => ({
+        ...encodeEmbedMetadata({ version: 1, kind: 'video', color: null, title: 'こんにちは', description: '', width: 8, height: 6, duration: 1, posterKey }),
+        'upload-id': owner,
+    });
+
+    it('stores ASCII-safe embed metadata together with the reserved upload owner', async () => {
+        const { 'upload-id': _owner, ...metadata } = videoMetadata();
+        send.mockResolvedValueOnce({});
+        await storage.uploadObject({ key: 'clip.mp4', data: Buffer.from('video'), contentType: 'video/mp4', force: false, metadata, uploadId: owner });
+        expect((send.mock.calls[0]![0] as PutObjectCommand).input.Metadata).toEqual(videoMetadata());
+        expect(metadata.embed).toMatch(/^[A-Za-z0-9_-]+$/);
+    });
+
+    it('rejects ownership spoofing, unsafe keys and excessive metadata before any request', async () => {
+        const input = { key: 'clip.mp4', data: Buffer.from('video'), contentType: 'video/mp4', force: false };
+        await expect(storage.uploadObject({ ...input, metadata: { 'UPLOAD-ID': 'spoof' } })).rejects.toThrow(/reserved/i);
+        await expect(storage.uploadObject({ ...input, metadata: { oversized: 'x'.repeat(2048) } })).rejects.toThrow(/metadata exceeds/i);
+        await expect(storage.uploadObject({ ...input, key: '../clip.mp4' })).rejects.toThrow(/key/i);
+        expect(send).not.toHaveBeenCalled();
+    });
+
+    it('lists videos but hides internal thumbnails without extra HEAD requests', async () => {
+        send.mockResolvedValueOnce({
+            Contents: [
+                { Key: 'clip.mp4', Size: 20, LastModified: new Date(0) },
+                { Key: posterKey, Size: 10, LastModified: new Date(0) },
+            ]
+        });
+        expect((await storage.listObjects()).map(({ key }) => key)).toEqual(['clip.mp4']);
+        expect(send).toHaveBeenCalledTimes(1);
+    });
+
+    it('deletes media before its verified generation-owned poster', async () => {
+        send.mockResolvedValueOnce({ Metadata: videoMetadata() }).mockResolvedValueOnce({})
+            .mockResolvedValueOnce({ Metadata: { 'upload-id': owner } }).mockResolvedValueOnce({});
+        await storage.deleteObject('clip.mp4');
+        expect(send.mock.calls.map(([command]) => [command.constructor.name, 'Key' in command.input ? command.input.Key : undefined])).toEqual([
+            ['HeadObjectCommand', 'clip.mp4'], ['DeleteObjectCommand', 'clip.mp4'],
+            ['HeadObjectCommand', posterKey], ['DeleteObjectCommand', posterKey],
+        ]);
+    });
+
+    it('refuses to delete a poster whose upload owner does not match its key', async () => {
+        send.mockResolvedValueOnce({ Metadata: { 'upload-id': 'someone-else' } });
+        await expect(storage.deletePoster(posterKey)).rejects.toThrow(/ownership/i);
+        expect(send).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not authorize poster cleanup from malformed or cross-owned metadata', () => {
+        const object = { key: 'clip.mp4', url: '', size: 1, lastModified: new Date(0) };
+        expect(ownedPosterKey({ ...object, customMetadata: videoMetadata() })).toBe(posterKey);
+        expect(ownedPosterKey({ ...object, customMetadata: { ...videoMetadata(), 'upload-id': 'another-owner' } })).toBeUndefined();
+        expect(ownedPosterKey({ ...object, customMetadata: { embed: 'broken' } })).toBeUndefined();
     });
 });
 

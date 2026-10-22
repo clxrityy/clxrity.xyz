@@ -1,4 +1,4 @@
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 
 import sharp from 'sharp';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+
+import { decodeEmbedMetadata } from '../src/embeds.js';
 
 const cliPath = fileURLToPath(new URL('../dist/cli.js', import.meta.url));
 const publicBaseUrl = 'https://img.example.test'; // Output assertion only; never requested.
@@ -20,6 +22,7 @@ interface StoredObject {
     contentDisposition: string;
     uploadId: string;
     lastModified: string;
+    customMetadata: Record<string, string>;
 }
 
 interface CliResult {
@@ -39,9 +42,11 @@ describe('compiled CLI against loopback S3', () => {
     const objects = new Map<string, StoredObject>();
     const requests: Array<{ method: string; key: string; ifNoneMatch: string | undefined }> = [];
     const fixtureErrors: string[] = [];
+    const explicitEmbedDefaults = Object.freeze({ color: 'rebeccapurple', title: 'saved title', description: 'saved description' });
     let root: string;
     let cwd: string;
     let configPath: string;
+    let defaultsConfigPath: string;
     let scratch: string;
     let env: NodeJS.ProcessEnv;
     let clock = 0;
@@ -89,6 +94,11 @@ describe('compiled CLI against loopback S3', () => {
                 }
                 chunks.push(bytes);
             }
+            const customMetadata = Object.fromEntries(
+                Object.entries(request.headers)
+                    .filter(([name]) => name.startsWith('x-amz-meta-'))
+                    .map(([name, value]) => [name.slice('x-amz-meta-'.length), String(Array.isArray(value) ? value[0] ?? '' : value ?? '')]),
+            );
             // Check and commit synchronously after consuming the body, so competing
             // conditional writes cannot both succeed. A rejected PUT changes nothing.
             if (request.headers['if-none-match'] === '*' && objects.has(key)) {
@@ -100,9 +110,10 @@ describe('compiled CLI against loopback S3', () => {
                 contentType: String(request.headers['content-type'] ?? ''),
                 cacheControl: String(request.headers['cache-control'] ?? ''),
                 contentDisposition: String(request.headers['content-disposition'] ?? ''),
-                uploadId: String(request.headers['x-amz-meta-upload-id'] ?? ''),
+                uploadId: String(customMetadata['upload-id'] ?? request.headers['x-amz-meta-upload-id'] ?? ''),
                 // Deterministic whole seconds also survive HEAD's HTTP date precision.
                 lastModified: new Date(Date.UTC(2026, 0, 1, 0, 0, ++clock)).toISOString(),
+                customMetadata,
             });
             response.writeHead(200, { etag: '"fixture-etag"' });
             response.end();
@@ -115,13 +126,19 @@ describe('compiled CLI against loopback S3', () => {
                 s3Error(response, 404, 'NoSuchKey');
                 return;
             }
+            const metadataHeaders = Object.fromEntries(
+                Object.entries(object.customMetadata).map(([name, value]) => [`x-amz-meta-${name}`, value]),
+            );
+            if (!Object.hasOwn(object.customMetadata, 'upload-id')) {
+                metadataHeaders['x-amz-meta-upload-id'] = object.uploadId;
+            }
             response.writeHead(200, {
                 'content-length': object.body.length,
                 'content-type': object.contentType,
                 'cache-control': object.cacheControl,
                 'content-disposition': object.contentDisposition,
                 'last-modified': new Date(object.lastModified).toUTCString(),
-                'x-amz-meta-upload-id': object.uploadId,
+                ...metadataHeaders,
             });
             response.end();
             return;
@@ -150,16 +167,20 @@ describe('compiled CLI against loopback S3', () => {
 
     // Resolve failures too: assertions retain both streams rather than losing them
     // in an execFile rejection. SIGKILL bounds hung network/auth/child operations.
-    function cli(...args: string[]): Promise<CliResult> {
+    function cliWithTimeout(timeoutMs: number, ...args: string[]): Promise<CliResult> {
         return new Promise((resolve) => {
             const child = execFile(process.execPath, [cliPath, ...args], {
                 cwd, env, encoding: 'utf8', maxBuffer: 1024 * 1024,
-                timeout: 8_000, killSignal: 'SIGKILL',
+                timeout: timeoutMs, killSignal: 'SIGKILL',
             }, (error, stdout, stderr) => {
                 resolve({ code: error ? error.code ?? null : 0, signal: error?.signal ?? null, stdout, stderr });
             });
             child.stdin?.end();
         });
+    }
+
+    function cli(...args: string[]): Promise<CliResult> {
+        return cliWithTimeout(8_000, ...args);
     }
 
     function success(result: CliResult): void {
@@ -175,17 +196,44 @@ describe('compiled CLI against loopback S3', () => {
         expect(result.stderr).not.toMatch(/fake-access-key|fake-secret-key|CALLER_ENV_POISON/);
     }
 
-    async function upload(file: string, ...args: string[]): Promise<string> {
-        const result = await cli('--config', configPath, 'upload', file, ...args);
+    function parseUploadOutput(output: string): { shareUrl: string; rawUrl: string; key: string } {
+        const lines = output.trimEnd().split('\n');
+        expect(lines).toHaveLength(2);
+        expect(lines[0]).toMatch(/^Share: https:\/\/img\.example\.test\/s\/.+/);
+        expect(lines[1]).toMatch(/^Raw: https:\/\/img\.example\.test\/.+/);
+        const shareUrl = lines[0]!.replace(/^Share: /, '');
+        const rawUrl = lines[1]!.replace(/^Raw: /, '');
+        const sharePath = new URL(shareUrl).pathname;
+        const rawPath = new URL(rawUrl).pathname;
+        expect(sharePath.startsWith('/s/')).toBe(true);
+        const shareKey = decodeURIComponent(sharePath.slice('/s/'.length));
+        const rawKey = decodeURIComponent(rawPath.replace(/^\//, ''));
+        expect(shareKey).toBe(rawKey);
+        return { shareUrl, rawUrl, key: rawKey };
+    }
+
+    async function uploadViaConfig(config: string, file: string, args: string[] = [], timeoutMs = 8_000): Promise<{ shareUrl: string; rawUrl: string; key: string }> {
+        const result = await cliWithTimeout(timeoutMs, '--config', config, 'upload', file, ...args);
         success(result);
-        expect(result.stdout).toMatch(/^https:\/\/img\.example\.test\/[A-Za-z0-9_-]+\.(png|jpg|gif)\n$/);
-        return result.stdout.trim();
+        return parseUploadOutput(result.stdout);
+    }
+
+    async function upload(file: string, ...args: string[]): Promise<string> {
+        const parsed = await uploadViaConfig(configPath, file, args);
+        return parsed.rawUrl;
     }
 
     function expectedListing(keys: string[]): unknown[] {
         return keys.map((key) => {
             const object = objects.get(key)!;
-            return { id: key, key, url: `${publicBaseUrl}/${key}`, size: object.body.length, uploadedAt: object.lastModified };
+            return {
+                id: key,
+                key,
+                url: `${publicBaseUrl}/${key}`,
+                shareUrl: `${publicBaseUrl}/s/${key}`,
+                size: object.body.length,
+                uploadedAt: object.lastModified,
+            };
         });
     }
 
@@ -193,6 +241,81 @@ describe('compiled CLI against loopback S3', () => {
         const result = await cli('--config', configPath, 'list', '--json', ...args);
         success(result);
         expect(JSON.parse(result.stdout)).toEqual(expectedListing(keys));
+    }
+
+    async function runExternal(command: string, args: readonly string[], timeoutMs: number): Promise<{ stdout: string; stderr: string }> {
+        return new Promise((resolve, reject) => {
+            const child = spawn(command, [...args], { shell: false, stdio: ['ignore', 'pipe', 'pipe'] });
+            let stdout = '';
+            let stderr = '';
+            let timedOut = false;
+
+            const timeout = setTimeout(() => {
+                timedOut = true;
+                child.kill('SIGKILL');
+            }, timeoutMs);
+            timeout.unref();
+
+            child.stdout.on('data', (chunk) => {
+                stdout += chunk.toString('utf8');
+            });
+            child.stderr.on('data', (chunk) => {
+                stderr += chunk.toString('utf8');
+            });
+
+            child.once('error', (error) => {
+                clearTimeout(timeout);
+                if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+                    reject(new Error(`Missing required executable: ${command}. Install ffmpeg and ffprobe to run video integration tests.`));
+                    return;
+                }
+                reject(error);
+            });
+
+            child.once('close', (code, signal) => {
+                clearTimeout(timeout);
+                if (timedOut) {
+                    reject(new Error(`${command} timed out after ${timeoutMs}ms while preparing video fixtures.`));
+                    return;
+                }
+                if (code !== 0) {
+                    reject(new Error(`${command} exited with code ${String(code)}${signal ? ` (${signal})` : ''}: ${stderr || stdout}`));
+                    return;
+                }
+                resolve({ stdout, stderr });
+            });
+        });
+    }
+
+    async function ensureVideoTooling(): Promise<void> {
+        for (const command of ['ffmpeg', 'ffprobe']) {
+            try {
+                await runExternal(command, ['-version'], 10_000);
+            } catch (error) {
+                throw new Error(`Video integration requires ${command} on PATH. ${(error as Error).message}`);
+            }
+        }
+    }
+
+    async function createTinyVideoFixture(path: string, color: string, marker: string): Promise<void> {
+        await runExternal('ffmpeg', [
+            '-hide_banner',
+            '-loglevel', 'error',
+            '-y',
+            '-f', 'lavfi',
+            '-i', `color=c=${color}:s=320x180:r=24`,
+            '-t', '1',
+            '-map', '0:v:0',
+            '-an',
+            '-c:v', 'libx264',
+            '-pix_fmt', 'yuv420p',
+            '-movflags', '+faststart',
+            '-metadata', `title=${marker}`,
+            '-metadata', `artist=${marker}`,
+            '-metadata', `comment=${marker}`,
+            '-metadata:s:v:0', `handler_name=${marker}`,
+            path,
+        ], 30_000);
     }
 
     beforeAll(async () => {
@@ -228,6 +351,15 @@ describe('compiled CLI against loopback S3', () => {
             r2AccessKeyId: 'fake-access-key', r2SecretAccessKey: 'fake-secret-key',
             r2Bucket: bucket, publicBaseUrl,
         }), { mode: 0o600 });
+        defaultsConfigPath = join(root, 'fake-config-with-defaults.json');
+        await writeFile(defaultsConfigPath, JSON.stringify({
+            r2Endpoint: `http://127.0.0.1:${address.port}`,
+            r2AccessKeyId: 'fake-access-key',
+            r2SecretAccessKey: 'fake-secret-key',
+            r2Bucket: bucket,
+            publicBaseUrl,
+            embedDefaults: explicitEmbedDefaults,
+        }), { mode: 0o600 });
         // If the CLI mistakenly loads the caller's .env, config validation must
         // fail locally rather than sending even fake credentials off-loopback.
         await writeFile(join(cwd, '.env'), 'R2_ENDPOINT=INVALID_CALLER_ENDPOINT\nR2_ACCESS_KEY_ID=CALLER_ENV_POISON\nR2_SECRET_ACCESS_KEY=CALLER_ENV_POISON\nPUBLIC_BASE_URL=INVALID_CALLER_URL\n');
@@ -239,6 +371,8 @@ describe('compiled CLI against loopback S3', () => {
             .png().toFile(join(cwd, 'replacement.png'));
         await sharp(originalPng).withExif({ IFD0: { Artist: privateMarker } })
             .jpeg().toFile(join(cwd, 'source.jpg'));
+        await sharp({ create: { width: 8, height: 6, channels: 4, background: '#00ff0080' } })
+            .gif().toFile(join(cwd, 'source.gif'));
     });
 
     beforeEach(() => {
@@ -285,9 +419,10 @@ describe('compiled CLI against loopback S3', () => {
             { args: ['list', '--all', '--limit', '1'], message: /either --all or --limit/i },
             { args: ['remove', 'Ab12Cd34'], message: /--yes.*non-interactive/i },
             { args: ['upload', 'source image.png', '--force'], message: /--force requires a custom name/i },
-            { args: ['upload', 'source image.png', '../escape.png'], message: /image names/i },
-            { args: ['upload', 'source image.png', 'bad name'], message: /image names/i },
-            { args: ['remove', '../escape.png', '--yes'], message: /image identifiers/i },
+            { args: ['upload', 'source image.png', '../escape.png'], message: /media names/i },
+            { args: ['upload', 'source image.png', 'bad name'], message: /media names/i },
+            { args: ['remove', '../escape.png', '--yes'], message: /media IDs|media identifiers/i },
+            { args: ['upload', 'source image.png', '--color', 'url(evil)'], message: /color must/i },
         ];
         for (const testCase of cases) {
             const result = await cli('--config', missingConfig, ...testCase.args);
@@ -346,14 +481,16 @@ describe('compiled CLI against loopback S3', () => {
             expect(removed.stdout).toBe(`Removed ${key}\n`);
         }
         await expectList([]);
-        failure(await cli('--config', configPath, 'remove', generatedKey, '--yes'), /no uploaded image|not found/i);
-        failure(await cli('--config', configPath, 'remove', generatedKey.slice(0, 8), '--yes'), /no uploaded image|not found/i);
+        failure(await cli('--config', configPath, 'remove', generatedKey, '--yes'), /no uploaded media|not found/i);
+        failure(await cli('--config', configPath, 'remove', generatedKey.slice(0, 8), '--yes'), /no uploaded media|not found/i);
 
         await upload('source image.png', 'ambiguous');
         await upload('source.jpg', 'ambiguous');
         const jpeg = objects.get('ambiguous.jpg')!;
         expect(jpeg.contentType).toBe('image/jpeg');
-        expect((await sharp(jpeg.body).metadata()).exif).toBeUndefined();
+        expect((await sharp(jpeg.body).metadata()).exif).toBeInstanceOf(Buffer);
+        expect(jpeg.body.includes(Buffer.from('clxrity-img'))).toBe(true);
+        expect(jpeg.body.includes(Buffer.from(privateMarker))).toBe(false);
         const beforeAmbiguous = [...objects.entries()];
         const deleteCount = requests.filter((request) => request.method === 'DELETE').length;
         const ambiguous = await cli('--config', configPath, 'remove', 'ambiguous', '--yes');
@@ -369,4 +506,63 @@ describe('compiled CLI against loopback S3', () => {
         await expectList([]);
         expect(objects.size).toBe(0);
     }, 60_000);
+
+    it('implements upload-only defaults, optional values and explicit empty values in the compiled CLI', async () => {
+        const before = await readFile(defaultsConfigPath);
+        const inherited = await uploadViaConfig(defaultsConfigPath, 'source image.png', ['inherited']);
+        expect(decodeEmbedMetadata(objects.get(inherited.key)!.customMetadata)).toMatchObject({
+            color: '#663399', title: 'saved title', description: 'saved description',
+        });
+        const overrides = await uploadViaConfig(defaultsConfigPath, 'source image.png', [
+            'overrides', '--color', 'coral', '--title', 'coral', '--description',
+        ]);
+        expect(decodeEmbedMetadata(objects.get(overrides.key)!.customMetadata)).toMatchObject({ color: '#FF7F50', title: 'coral', description: '' });
+        const cleared = await uploadViaConfig(defaultsConfigPath, 'source image.png', [
+            'cleared', '--color', '--title', '', '--description', '',
+        ]);
+        expect(decodeEmbedMetadata(objects.get(cleared.key)!.customMetadata)).toMatchObject({ color: null, title: '', description: '' });
+        const builtins = await uploadViaConfig(configPath, 'source image.png', ['builtins']);
+        expect(decodeEmbedMetadata(objects.get(builtins.key)!.customMetadata)).toMatchObject({ color: '#5865F2', title: '', description: '' });
+        expect(await readFile(defaultsConfigPath)).toEqual(before);
+    }, 60_000);
+
+    it('uploads normalized videos, hides posters, replaces safely and removes complete media', async () => {
+        await ensureVideoTooling();
+        const sourcePath = join(cwd, 'private-source.mov');
+        const replacementPath = join(cwd, 'video-replacement.mp4');
+        const marker = 'CLI_PRIVATE_VIDEO_METADATA';
+        await createTinyVideoFixture(sourcePath, 'red', marker);
+        await createTinyVideoFixture(replacementPath, 'blue', marker);
+        const original = await readFile(sourcePath);
+        const result = await uploadViaConfig(configPath, sourcePath, ['clip.MOV', '--color'], 30_000);
+        expect(result).toEqual({ key: 'clip.mp4', shareUrl: `${publicBaseUrl}/s/clip.mp4`, rawUrl: `${publicBaseUrl}/clip.mp4` });
+        const video = objects.get('clip.mp4')!;
+        expect(video.contentType).toBe('video/mp4');
+        expect(video.body.includes(Buffer.from(marker))).toBe(false);
+        expect(video.body.includes(Buffer.from('clxrity-img'))).toBe(true);
+        const record = decodeEmbedMetadata(video.customMetadata)!;
+        const poster = record.posterKey!;
+        expect(record).toMatchObject({ kind: 'video', color: null, title: '', description: '', width: 320, height: 180 });
+        expect(poster).toBe(`_previews/${video.uploadId}.jpg`);
+        expect(objects.get(poster)).toMatchObject({ contentType: 'image/jpeg', uploadId: video.uploadId });
+        expect(await readFile(sourcePath)).toEqual(original);
+        await expectList(['clip.mp4']);
+        expect(requests.filter(({ method }) => method === 'PUT').slice(0, 2).map(({ key }) => key)).toEqual([poster, 'clip.mp4']);
+
+        await upload('source image.png', 'clip');
+        failure(await cli('--config', configPath, 'remove', 'clip', '--yes'), /multiple/i);
+        expect(objects.has(poster)).toBe(true);
+        const forced = await uploadViaConfig(configPath, replacementPath, ['clip', '--force'], 30_000);
+        expect(forced.key).toBe('clip.mp4');
+        const replacement = objects.get('clip.mp4')!;
+        const newPoster = decodeEmbedMetadata(replacement.customMetadata)!.posterKey!;
+        expect(newPoster).not.toBe(poster);
+        expect(objects.has(poster)).toBe(false);
+        expect(objects.has(newPoster)).toBe(true);
+        expect(replacement.body).not.toEqual(video.body);
+        success(await cli('--config', configPath, 'remove', 'clip.mp4', '--yes'));
+        expect(objects.has('clip.mp4')).toBe(false);
+        expect(objects.has(newPoster)).toBe(false);
+        await expectList(['clip.png']);
+    }, 120_000);
 });

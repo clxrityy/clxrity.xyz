@@ -2,6 +2,7 @@ import type { Command } from 'commander';
 
 import { loadConfig } from '../config.js';
 import { UsageError } from '../errors.js';
+import { buildShareUrl } from '../names.js';
 import { R2Storage } from '../storage.js';
 
 export interface ListCommandOptions {
@@ -34,6 +35,7 @@ export async function runListCommand(command: Command, options: ListCommandOptio
                         id: item.key,
                         key: item.key,
                         url: item.url,
+                        shareUrl: buildShareUrl(config.publicBaseUrl, item.key),
                         size: item.size,
                         uploadedAt: item.lastModified.toISOString(),
                     })),
@@ -45,7 +47,7 @@ export async function runListCommand(command: Command, options: ListCommandOptio
         }
 
         if (selected.length === 0) {
-            process.stdout.write('No uploaded images found.\n');
+            process.stdout.write('No uploaded media found.\n');
             return;
         }
 
@@ -61,7 +63,8 @@ export async function runListCommand(command: Command, options: ListCommandOptio
             process.stdout.write(`${item.key}\n`);
             process.stdout.write(`  uploaded: ${formatter.format(item.lastModified)}\n`);
             process.stdout.write(`  size: ${formatBytes(item.size)}\n`);
-            process.stdout.write(`  url: ${item.url}\n\n`);
+            process.stdout.write(`  share: ${buildShareUrl(config.publicBaseUrl, item.key)}\n`);
+            process.stdout.write(`  raw: ${item.url}\n\n`);
         }
     } finally {
         storage.destroy();

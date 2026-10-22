@@ -1,4 +1,4 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
 # Explicitly permit only the native build scripts this CLI needs.
-onlyBuiltDependencies:
-  - esbuild
-  - sharp

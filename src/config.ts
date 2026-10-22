@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url';
 
 import { parse } from 'dotenv';
 
-import { ConfigError } from './errors.js';
+import { DEFAULT_EMBED_STYLE, resolveEmbedStyle, type EmbedStyle } from './embeds.js';
+import { ConfigError, UsageError } from './errors.js';
+import { DEFAULT_VIDEO_LIMITS, type VideoLimits } from './media-types.js';
 
 export interface AppConfig {
     readonly r2AccountId?: string;
@@ -14,6 +16,8 @@ export interface AppConfig {
     readonly r2SecretAccessKey: string;
     readonly r2Bucket: string;
     readonly publicBaseUrl: string;
+    readonly embedDefaults?: EmbedStyle;
+    readonly videoLimits?: VideoLimits;
 }
 
 interface ConfigFileValues {
@@ -23,6 +27,8 @@ interface ConfigFileValues {
     readonly r2SecretAccessKey?: string | undefined;
     readonly r2Bucket?: string | undefined;
     readonly publicBaseUrl?: string | undefined;
+    readonly embedDefaults?: Partial<EmbedStyle> | undefined;
+    readonly videoLimits?: Partial<VideoLimits> | undefined;
 }
 
 const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -43,6 +49,8 @@ export async function loadConfig(options: { configPath?: string | undefined } = 
     const r2SecretAccessKey = readFirstDefined(process.env.R2_SECRET_ACCESS_KEY, fileValues?.r2SecretAccessKey, development.R2_SECRET_ACCESS_KEY);
     const r2Bucket = readFirstDefined(process.env.R2_BUCKET, fileValues?.r2Bucket, development.R2_BUCKET);
     const publicBaseUrl = normalizeUrl(readFirstDefined(process.env.PUBLIC_BASE_URL, fileValues?.publicBaseUrl, development.PUBLIC_BASE_URL) ?? DEFAULT_PUBLIC_BASE_URL, 'PUBLIC_BASE_URL');
+    const embedDefaults = resolveEmbedDefaults(fileValues?.embedDefaults, development);
+    const videoLimits = { ...DEFAULT_VIDEO_LIMITS, ...fileValues?.videoLimits };
 
     if (!r2Endpoint) {
         throw new ConfigError('Missing R2 endpoint configuration. Set R2_ACCOUNT_ID or R2_ENDPOINT.');
@@ -71,6 +79,8 @@ export async function loadConfig(options: { configPath?: string | undefined } = 
         r2SecretAccessKey,
         r2Bucket,
         publicBaseUrl,
+        embedDefaults,
+        videoLimits,
     };
 }
 
@@ -145,7 +155,57 @@ async function readConfigFile(configPath: string, required: boolean): Promise<Co
         r2SecretAccessKey: readString(object.r2SecretAccessKey ?? object.R2_SECRET_ACCESS_KEY),
         r2Bucket: readString(object.r2Bucket ?? object.R2_BUCKET),
         publicBaseUrl: readString(object.publicBaseUrl ?? object.PUBLIC_BASE_URL),
+        embedDefaults: readEmbedDefaults(object.embedDefaults),
+        videoLimits: readVideoLimits(object.videoLimits),
     };
+}
+
+function resolveEmbedDefaults(file: Partial<EmbedStyle> | undefined, development: Readonly<Record<string, string>>): EmbedStyle {
+    // Empty text and null/empty color are meaningful, unlike empty credentials.
+    const color = process.env.EMBED_COLOR !== undefined ? process.env.EMBED_COLOR
+        : file?.color !== undefined ? file.color : development.EMBED_COLOR ?? DEFAULT_EMBED_STYLE.color;
+    try {
+        return resolveEmbedStyle({
+            color,
+            title: process.env.EMBED_TITLE ?? file?.title ?? development.EMBED_TITLE ?? '',
+            description: process.env.EMBED_DESCRIPTION ?? file?.description ?? development.EMBED_DESCRIPTION ?? '',
+        });
+    } catch (error) {
+        if (error instanceof UsageError) throw new ConfigError(`Invalid embed defaults. ${error.message}`);
+        throw error;
+    }
+}
+
+function readEmbedDefaults(value: unknown): Partial<EmbedStyle> | undefined {
+    if (value === undefined) return undefined;
+    const object = readNestedObject(value, 'embedDefaults');
+    const { color, title, description } = object;
+    if (color !== undefined && color !== null && typeof color !== 'string') throw new ConfigError('embedDefaults.color must be a string or null.');
+    if (title !== undefined && typeof title !== 'string') throw new ConfigError('embedDefaults.title must be a string.');
+    if (description !== undefined && typeof description !== 'string') throw new ConfigError('embedDefaults.description must be a string.');
+    return {
+        ...(color !== undefined ? { color } : {}),
+        ...(title !== undefined ? { title } : {}),
+        ...(description !== undefined ? { description } : {}),
+    };
+}
+
+function readVideoLimits(value: unknown): Partial<VideoLimits> | undefined {
+    if (value === undefined) return undefined;
+    const object = readNestedObject(value, 'videoLimits');
+    const result: { maxBytes?: number; maxDurationSeconds?: number; timeoutSeconds?: number } = {};
+    for (const field of ['maxBytes', 'maxDurationSeconds', 'timeoutSeconds'] as const) {
+        const entry = object[field];
+        if (entry === undefined) continue;
+        if (typeof entry !== 'number' || !Number.isSafeInteger(entry) || entry <= 0) throw new ConfigError(`videoLimits.${field} must be a positive integer.`);
+        result[field] = entry;
+    }
+    return result;
+}
+
+function readNestedObject(value: unknown, field: string): Record<string, unknown> {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) throw new ConfigError(`${field} must be a JSON object.`);
+    return value as Record<string, unknown>;
 }
 
 async function fileExists(filePath: string): Promise<boolean> {

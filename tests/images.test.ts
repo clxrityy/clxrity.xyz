@@ -2,11 +2,13 @@ import { mkdtemp, readFile, realpath, rm, stat, symlink, writeFile } from 'node:
 import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
 
-import sharp from 'sharp';
+import sharp, { type Sharp } from 'sharp';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { UnsupportedImageError, UsageError } from '../src/errors.js';
 import { type ImageLimits, type ProcessedImage, processImage, resolveInputPath } from '../src/images.js';
+
+const SOFTWARE_MARKER = 'clxrity-img';
 
 const fixtures = vi.hoisted(() => ({ home: '', outputs: [] as string[] }));
 vi.mock('node:os', async (importOriginal) => {
@@ -47,7 +49,7 @@ afterEach(async () => {
     }
 });
 
-function image(): sharp.Sharp {
+function image(): Sharp {
     return sharp({ create: { width: 12, height: 8, channels: 4, background: { r: 240, g: 20, b: 80, alpha: 0.5 } } });
 }
 
@@ -73,7 +75,7 @@ async function withProcessed(
     }
 }
 
-function animation(): sharp.Sharp {
+function animation(): Sharp {
     // Three 4x4 frames, the first two identical: frame dropping would be observable.
     const pixels = Buffer.alloc(4 * 4 * 3 * 3);
     for (let pixel = 0; pixel < 4 * 4 * 3; pixel += 1) {
@@ -125,6 +127,7 @@ describe('processImage', () => {
             expect(processed).toMatchObject({ extension: 'png', contentType: 'image/png', width: 12, height: 8, frameCount: 1, warnings: [] });
             expect(await sharp(processed.outputPath).metadata()).toMatchObject({ hasAlpha: true, space: 'srgb' });
             expect(await sharp(processed.outputPath).raw().toBuffer()).toEqual(originalPixels);
+            expect((await readFile(processed.outputPath)).includes(Buffer.from(SOFTWARE_MARKER))).toBe(true);
         });
     });
 
@@ -134,6 +137,7 @@ describe('processImage', () => {
         await withProcessed(path, async (processed) => {
             expect(processed).toMatchObject({ extension: 'jpg', contentType: 'image/jpeg', width: 12, height: 8, warnings: [] });
             expect(await sharp(processed.outputPath).metadata()).toMatchObject({ format: 'jpeg', chromaSubsampling: '4:4:4', isProgressive: true });
+            expect((await readFile(processed.outputPath)).includes(Buffer.from(SOFTWARE_MARKER))).toBe(true);
         });
     });
 
@@ -151,8 +155,13 @@ describe('processImage', () => {
             const metadata = await sharp(processed.outputPath).metadata();
             expect(processed).toMatchObject({ width: 8, height: 12 });
             expect(metadata).toMatchObject({ width: 8, height: 12, space: 'srgb' });
-            for (const field of ['exif', 'xmp', 'iptc', 'icc', 'orientation'] as const) expect(metadata[field]).toBeUndefined();
-            expect((await readFile(processed.outputPath)).includes(Buffer.from('synthetic-private-marker'))).toBe(false);
+            for (const field of ['xmp', 'iptc', 'icc'] as const) expect(metadata[field]).toBeUndefined();
+            // Fresh EXIF can include normal orientation after pixels are rotated.
+            expect([undefined, 1]).toContain(metadata.orientation);
+            const output = await readFile(processed.outputPath);
+            expect(output.includes(Buffer.from('synthetic-private-marker'))).toBe(false);
+            expect(output.includes(Buffer.from('Synthetic Artist'))).toBe(false);
+            expect(output.includes(Buffer.from(SOFTWARE_MARKER))).toBe(true);
         });
     });
 
@@ -295,7 +304,7 @@ describe('processImage', () => {
     it('forwards the timeout budget to Sharp rather than relying on wall-clock timing', async () => {
         const path = join(directory, 'timeout.png');
         await image().png().toFile(path);
-        const prototype = Object.getPrototypeOf(sharp()) as sharp.Sharp;
+        const prototype = Object.getPrototypeOf(sharp()) as Sharp;
         const timeout = vi.spyOn(prototype, 'timeout');
         await withProcessed(path, () => { expect(timeout).toHaveBeenCalledWith({ seconds: 1 }); }, { timeoutSeconds: 1 });
     });
@@ -304,7 +313,7 @@ describe('processImage', () => {
         const path = join(directory, 'failed.png');
         await image().png().toFile(path);
         const original = await readFile(path);
-        const prototype = Object.getPrototypeOf(sharp()) as sharp.Sharp;
+        const prototype = Object.getPrototypeOf(sharp()) as Sharp;
         vi.spyOn(prototype, 'toFile').mockRejectedValueOnce(new Error('synthetic processing timeout'));
         await expect(processImage(path, { timeoutSeconds: 1 })).rejects.toBeInstanceOf(UnsupportedImageError);
         expect(fixtures.outputs).toHaveLength(1);

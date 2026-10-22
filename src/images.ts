@@ -1,8 +1,8 @@
-import { chmod, mkdtemp, open, realpath, rm, stat } from 'node:fs/promises';
+import { chmod, mkdtemp, open, readFile, realpath, rm, stat, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { homedir, tmpdir } from 'node:os';
 
-import sharp from 'sharp';
+import sharp, { type Metadata, type Sharp } from 'sharp';
 
 import { CliError, UnsupportedImageError, UsageError } from './errors.js';
 import { MIME_TYPES, type OutputExtension, normalizeOutputExtension } from './names.js';
@@ -25,6 +25,7 @@ const MAX_INPUT_PIXELS = 100_000_000;
 const MAX_FRAMES = 512;
 const PROCESS_TIMEOUT_SECONDS = 60;
 const SUPPORTED_INPUT_FORMATS = new Set(['jpeg', 'png', 'gif', 'webp', 'avif', 'heif', 'svg', 'tiff']);
+const SOFTWARE_MARKER = 'clxrity-img';
 
 export interface ImageLimits {
     readonly maxBytes: number;
@@ -107,8 +108,14 @@ export async function processImage(inputValue: string, overrides: Partial<ImageL
         temporaryDirectory = await mkdtemp(join(tmpdir(), 'clxrity-img-'));
         const outputPath = join(temporaryDirectory, `image.${extension}`);
         const info = await pipeline.toFile(outputPath);
+
+        if (extension === 'png') {
+            await addPngSoftwareMarker(outputPath);
+        }
+
         await chmod(outputPath, 0o600);
-        if (info.size > limits.maxBytes) {
+        const outputStat = await stat(outputPath);
+        if (outputStat.size > limits.maxBytes) {
             throw new UsageError(`Processed output exceeds the upload limit (${limits.maxBytes} bytes; default 100 MiB).`);
         }
 
@@ -125,7 +132,7 @@ export async function processImage(inputValue: string, overrides: Partial<ImageL
             width: info.width,
             height: info.pageHeight ?? info.height,
             frameCount: info.pages ?? frameCount,
-            size: info.size,
+            size: outputStat.size,
         };
     } catch (error) {
         if (temporaryDirectory) await rm(temporaryDirectory, { recursive: true, force: true });
@@ -203,9 +210,10 @@ function determineOutputFormat(format: string, frameCount: number): { extension:
     }
 }
 
-function applyOutputFormat(pipeline: sharp.Sharp, extension: OutputExtension, metadata: sharp.Metadata): void {
+function applyOutputFormat(pipeline: Sharp, extension: OutputExtension, metadata: Metadata): void {
     switch (extension) {
         case 'jpg':
+            pipeline.withExif({ IFD0: { Software: SOFTWARE_MARKER } });
             pipeline.jpeg({ quality: 95, chromaSubsampling: '4:4:4', progressive: true });
             return;
         case 'png':
@@ -241,4 +249,41 @@ async function rejectAnimatedPng(path: string, size: number): Promise<void> {
     } finally {
         await file.close();
     }
+}
+
+async function addPngSoftwareMarker(path: string): Promise<void> {
+    const input = await readFile(path);
+    const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+    if (!input.subarray(0, 8).equals(pngSignature)) {
+        throw new UnsupportedImageError('Invalid PNG container.');
+    }
+
+    const ihdrLength = input.readUInt32BE(8);
+    const ihdrType = input.toString('ascii', 12, 16);
+    if (ihdrType !== 'IHDR') {
+        throw new UnsupportedImageError('Invalid PNG container.');
+    }
+
+    const insertAt = 8 + 12 + ihdrLength;
+    const textData = Buffer.from(`Software\0${SOFTWARE_MARKER}`, 'latin1');
+    const type = Buffer.from('tEXt', 'ascii');
+    const length = Buffer.alloc(4);
+    length.writeUInt32BE(textData.length, 0);
+    const crc = Buffer.alloc(4);
+    crc.writeUInt32BE(crc32(Buffer.concat([type, textData])), 0);
+
+    const chunk = Buffer.concat([length, type, textData, crc]);
+    await writeFile(path, Buffer.concat([input.subarray(0, insertAt), chunk, input.subarray(insertAt)]));
+}
+
+function crc32(value: Buffer): number {
+    let crc = 0xffffffff;
+    for (const byte of value) {
+        crc ^= byte;
+        for (let index = 0; index < 8; index += 1) {
+            crc = (crc >>> 1) ^ ((crc & 1) === 1 ? 0xedb88320 : 0);
+        }
+    }
+
+    return (crc ^ 0xffffffff) >>> 0;
 }

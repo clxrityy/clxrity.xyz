@@ -1,8 +1,8 @@
 {
     "name": "img.clxrity.xyz",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "private": true,
-    "description": "Personal image upload CLI for img.clxrity.xyz backed by Cloudflare R2.",
+    "description": "Private-metadata image/video upload CLI with rich previews, backed by Cloudflare R2.",
     "type": "module",
     "bin": {
         "clxrity-img": "./dist/cli.js"
@@ -14,29 +14,33 @@
     "engines": {
         "node": ">=24.0.0"
     },
-    "packageManager": "pnpm@10.17.1",
+    "packageManager": "pnpm@12.14.0",
     "scripts": {
         "build": "tsc -p tsconfig.build.json && node -e \"require('node:fs').chmodSync('dist/cli.js', 0o755)\"",
-        "typecheck": "tsc --noEmit",
-        "test": "pnpm build && vitest run",
+        "typecheck": "tsc --noEmit && pnpm worker:typecheck",
+        "test": "pnpm build && vitest run && pnpm worker:test",
         "test:watch": "vitest",
         "check": "pnpm typecheck && pnpm test",
         "verify:package": "pnpm build && node scripts/verify-package.mjs",
+        "worker:typecheck": "tsc --noEmit -p worker/tsconfig.json",
+        "worker:test": "vitest run --config worker/vitest.config.ts",
+        "worker:dev": "pnpm dlx wrangler@4.151.3 dev --config worker/wrangler.jsonc",
+        "worker:deploy": "pnpm dlx wrangler@4.151.3 deploy --config worker/wrangler.jsonc",
         "img": "tsx src/cli.ts",
         "upload": "tsx src/cli.ts upload",
         "list": "tsx src/cli.ts list",
         "remove": "tsx src/cli.ts remove"
     },
     "dependencies": {
-        "@aws-sdk/client-s3": "3.1152.0",
-        "commander": "14.0.3",
-        "dotenv": "17.4.2",
-        "sharp": "0.34.5"
+        "@aws-sdk/client-s3": "3.1154.0",
+        "commander": "15.0.0",
+        "dotenv": "18.0.8",
+        "sharp": "0.35.5"
     },
     "devDependencies": {
-        "@types/node": "24.19.2",
+        "@types/node": "26.6.5",
         "tsx": "4.23.15",
-        "typescript": "5.9.3",
-        "vitest": "3.2.7"
+        "typescript": "7.0.2",
+        "vitest": "5.0.5"
     }
 }

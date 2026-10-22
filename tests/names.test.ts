@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { UsageError } from '../src/errors.js';
+import { isMediaKey, isPosterKey } from '../src/media-types.js';
 import {
     buildPublicUrl,
+    buildShareUrl,
     createGeneratedKey,
     createRandomId,
     isImageKey,
@@ -14,6 +16,26 @@ import {
 } from '../src/names.js';
 
 describe('name helpers', () => {
+    it('normalizes MOV/MP4 custom names to MP4 without treating MOV as a stored output', () => {
+        expect(normalizeRequestedName('clip.MOV', 'mp4')).toBe('clip.mp4');
+        expect(normalizeRequestedName('clip.mp4', 'mp4')).toBe('clip.mp4');
+        expect(normalizeExistingKey('clip.MP4')).toBe('clip.mp4');
+        expect(() => normalizeExistingKey('clip.mov')).toThrow(UsageError);
+        expect(() => normalizeOutputExtension('mp4')).toThrow(UsageError);
+        expect(createGeneratedKey('mp4')).toMatch(/^[A-Za-z0-9]{8}\.mp4$/);
+        expect(resolveIdentifierFromKeys('clip', ['clip.jpg', 'clip.mp4', 'clip.mov', 'clip2.mp4'])).toEqual(['clip.jpg', 'clip.mp4']);
+    });
+
+    it('separates canonical media keys, owned thumbnails, and share URLs', () => {
+        const poster = '_previews/01234567-89ab-cdef-0123-456789abcdef.jpg';
+        expect(isMediaKey('clip.mp4')).toBe(true);
+        expect(isMediaKey(poster)).toBe(false);
+        expect(isPosterKey(poster)).toBe(true);
+        expect(isPosterKey('_previews/../clip.jpg')).toBe(false);
+        expect(isPosterKey('_previews/custom.jpg')).toBe(false);
+        expect(buildPublicUrl('https://images.example.test', poster)).toBe(`https://images.example.test/${poster}`);
+        expect(buildShareUrl('https://images.example.test/', 'clip.mp4')).toBe('https://images.example.test/s/clip.mp4');
+    });
     it('normalizes custom names to the final extension', () => {
         expect(normalizeRequestedName('sunset.jpeg', 'png')).toBe('sunset.png');
         expect(normalizeRequestedName('sunset', 'jpg')).toBe('sunset.jpg');

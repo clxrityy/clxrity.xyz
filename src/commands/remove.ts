@@ -11,7 +11,7 @@ import { R2Storage } from '../storage.js';
 export async function runRemoveCommand(identifier: string, command: Command, options: { yes?: boolean }): Promise<void> {
     validateIdentifier(identifier);
     if (!options.yes && (!process.stdin.isTTY || !process.stdout.isTTY)) {
-        throw new UsageError('Use --yes when removing images from a non-interactive shell.');
+        throw new UsageError('Use --yes when removing media from a non-interactive shell.');
     }
     const config = await loadConfig({ configPath: command.optsWithGlobals<{ config?: string }>().config });
     const storage = new R2Storage(config);
@@ -39,7 +39,7 @@ async function resolveTargetKey(storage: R2Storage, identifier: string): Promise
         const exactKey = normalizeExistingKey(identifier);
         const existing = await storage.getObject(exactKey);
         if (!existing) {
-            throw new NotFoundError(`No uploaded image exists at ${exactKey}.`);
+            throw new NotFoundError(`No uploaded media exists at ${exactKey}.`);
         }
 
         return existing.key;
@@ -49,7 +49,7 @@ async function resolveTargetKey(storage: R2Storage, identifier: string): Promise
     const matchingKeys = resolveIdentifierFromKeys(identifier, matches.map((item) => item.key));
 
     if (matchingKeys.length === 0) {
-        throw new NotFoundError(`No uploaded image matches the ID ${identifier}.`);
+        throw new NotFoundError(`No uploaded media matches the ID ${identifier}.`);
     }
 
     if (matchingKeys.length > 1) {

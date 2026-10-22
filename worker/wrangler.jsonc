@@ -1,0 +1,23 @@
+{
+    // Optional dev/deploy commands use pinned Wrangler via pnpm dlx.
+    // Replace only the bucket name; do not add R2 API keys to this file.
+    "name": "img-clxrity-preview",
+    "main": "src/index.ts",
+    "compatibility_date": "2026-10-19",
+    "workers_dev": false,
+    "routes": [
+        {
+            "pattern": "img.clxrity.xyz/s/*",
+            "zone_name": "clxrity.xyz"
+        }
+    ],
+    "r2_buckets": [
+        {
+            "binding": "MEDIA_BUCKET",
+            "bucket_name": "img-clxrity"
+        }
+    ],
+    "vars": {
+        "PUBLIC_BASE_URL": "https://img.clxrity.xyz"
+    }
+}

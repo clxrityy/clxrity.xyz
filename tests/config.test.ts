@@ -5,11 +5,18 @@ import { dirname, join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { deriveEndpoint, getUserConfigPath, loadConfig } from '../src/config.js';
+import { DEFAULT_EMBED_STYLE } from '../src/embeds.js';
 import { ConfigError } from '../src/errors.js';
+import { DEFAULT_VIDEO_LIMITS } from '../src/media-types.js';
 
-const isolation = vi.hoisted(() => ({ root: '', denied: '', readDenied: '' }));
+const isolation = vi.hoisted(() => ({
+    root: '',
+    denied: '',
+    readDenied: '',
+    parse: vi.fn(() => ({})),
+}));
 
-vi.mock('dotenv', () => ({ parse: vi.fn(() => ({})) }));
+vi.mock('dotenv', () => ({ parse: isolation.parse }));
 vi.mock('node:fs/promises', async (importOriginal) => {
     const actual = await importOriginal<typeof import('node:fs/promises')>();
     return {
@@ -42,7 +49,10 @@ const valid = {
     r2Bucket: 'test-images',
     publicBaseUrl: 'https://images.example.test/',
 };
-const variables = ['R2_ACCOUNT_ID', 'R2_ENDPOINT', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET', 'PUBLIC_BASE_URL'] as const;
+const variables = [
+    'R2_ACCOUNT_ID', 'R2_ENDPOINT', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET', 'PUBLIC_BASE_URL',
+    'EMBED_COLOR', 'EMBED_TITLE', 'EMBED_DESCRIPTION',
+] as const;
 
 async function configFile(value: unknown, name = 'explicit.json', mode = 0o600): Promise<string> {
     const path = join(isolation.root, name);
@@ -56,6 +66,8 @@ beforeEach(async () => {
     isolation.root = await mkdtemp(join(tmpdir(), 'regression-config-'));
     isolation.denied = '';
     isolation.readDenied = '';
+    isolation.parse.mockReset();
+    isolation.parse.mockReturnValue({});
     vi.stubEnv('XDG_CONFIG_HOME', isolation.root);
     for (const variable of variables) vi.stubEnv(variable, undefined);
 });
@@ -74,6 +86,102 @@ describe('loadConfig isolated from developer secrets', () => {
             ...valid,
             r2Endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
             publicBaseUrl: 'https://images.example.test',
+            embedDefaults: DEFAULT_EMBED_STYLE,
+            videoLimits: DEFAULT_VIDEO_LIMITS,
+        });
+    });
+
+    it('resolves embed defaults per field with precedence env > selected JSON > development .env > built-ins', async () => {
+        isolation.parse.mockReturnValue({
+            EMBED_COLOR: 'coral',
+            EMBED_TITLE: 'development-title',
+            EMBED_DESCRIPTION: 'development-description',
+        });
+        const configPath = await configFile({
+            ...valid,
+            embedDefaults: {
+                color: null,
+                title: 'file-title',
+                description: 'file-description',
+            },
+        });
+
+        vi.stubEnv('EMBED_COLOR', ' transparent ');
+        vi.stubEnv('EMBED_TITLE', '');
+        vi.stubEnv('EMBED_DESCRIPTION', '');
+
+        await expect(loadConfig({ configPath })).resolves.toMatchObject({
+            embedDefaults: { color: null, title: '', description: '' },
+        });
+    });
+
+    it('uses selected JSON embed defaults before development values and preserves null/empty entries', async () => {
+        isolation.parse.mockReturnValue({
+            EMBED_COLOR: 'coral',
+            EMBED_TITLE: 'development-title',
+            EMBED_DESCRIPTION: 'development-description',
+        });
+        const configPath = await configFile({
+            ...valid,
+            embedDefaults: { color: null, title: '', description: '' },
+        });
+
+        await expect(loadConfig({ configPath })).resolves.toMatchObject({
+            embedDefaults: { color: null, title: '', description: '' },
+        });
+    });
+
+    it('uses development .env embed defaults before built-ins when file and process env omit them', async () => {
+        isolation.parse.mockReturnValue({
+            EMBED_COLOR: 'coral',
+            EMBED_TITLE: 'development-title',
+            EMBED_DESCRIPTION: 'development-description',
+        });
+        const configPath = await configFile(valid);
+
+        await expect(loadConfig({ configPath })).resolves.toMatchObject({
+            embedDefaults: {
+                color: '#FF7F50',
+                title: 'development-title',
+                description: 'development-description',
+            },
+        });
+    });
+
+    it('keeps embed titles that start with "your-" because placeholder filtering applies to credentials only', async () => {
+        isolation.parse.mockReturnValue({ EMBED_TITLE: 'your-custom-title' });
+        const configPath = await configFile(valid);
+        vi.stubEnv('EMBED_TITLE', 'your-env-title');
+
+        await expect(loadConfig({ configPath })).resolves.toMatchObject({
+            embedDefaults: {
+                color: '#5865F2',
+                title: 'your-env-title',
+                description: '',
+            },
+        });
+    });
+
+    it('supports a null embed color in config JSON', async () => {
+        const configPath = await configFile({
+            ...valid,
+            embedDefaults: { color: null, title: 't', description: 'd' },
+        });
+        await expect(loadConfig({ configPath })).resolves.toMatchObject({
+            embedDefaults: { color: null, title: 't', description: 'd' },
+        });
+    });
+
+    it('merges partial video limits with defaults (100 MiB, 600s)', async () => {
+        const configPath = await configFile({
+            ...valid,
+            videoLimits: { maxBytes: 1024 },
+        });
+        await expect(loadConfig({ configPath })).resolves.toMatchObject({
+            videoLimits: {
+                ...DEFAULT_VIDEO_LIMITS,
+                maxBytes: 1024,
+            },
         });
     });
 
@@ -96,6 +204,18 @@ describe('loadConfig isolated from developer secrets', () => {
         await configFile(valid, 'clxrity-img/config.json');
         const configPath = await configFile({ r2AccountId: accountId });
         await expect(loadConfig({ configPath })).rejects.toThrow(/access key ID/i);
+    });
+
+    it('does not merge per-user embed defaults when an explicit config path is provided', async () => {
+        await configFile({
+            ...valid,
+            embedDefaults: { color: 'coral', title: 'user-title', description: 'user-description' },
+        }, 'clxrity-img/config.json');
+        const configPath = await configFile(valid);
+
+        await expect(loadConfig({ configPath })).resolves.toMatchObject({
+            embedDefaults: DEFAULT_EMBED_STYLE,
+        });
     });
 
     it('loads uppercase JSON aliases and the default public origin', async () => {
@@ -187,6 +307,56 @@ describe('loadConfig isolated from developer secrets', () => {
 
     it.each(['r2AccountId', 'r2Endpoint', 'r2AccessKeyId', 'r2SecretAccessKey', 'r2Bucket', 'publicBaseUrl'])('rejects nonstring %s without echoing values', async (field) => {
         await expect(loadConfig({ configPath: await configFile({ ...valid, [field]: { private: 'synthetic-secret' } }) })).rejects.toThrow('Configuration values must be strings.');
+    });
+
+    it.each([
+        ['embedDefaults', null, /embedDefaults must be a JSON object/],
+        ['embedDefaults', [], /embedDefaults must be a JSON object/],
+        ['videoLimits', null, /videoLimits must be a JSON object/],
+        ['videoLimits', [], /videoLimits must be a JSON object/],
+    ] as const)('rejects %s when provided as non-object %j', async (field, value, message) => {
+        const payload: Record<string, unknown> = { ...valid, [field]: value };
+        await expect(loadConfig({ configPath: await configFile(payload) })).rejects.toThrow(message);
+    });
+
+    it.each([
+        ['maxBytes', 0],
+        ['maxDurationSeconds', -1],
+        ['timeoutSeconds', 1.5],
+        ['maxBytes', '100'],
+        ['timeoutSeconds', { private: 'synthetic-secret-should-not-leak' }],
+    ] as const)('rejects invalid videoLimits.%s values', async (field, value) => {
+        const marker = 'synthetic-secret-should-not-leak';
+        const error = await loadConfig({
+            configPath: await configFile({
+                ...valid,
+                videoLimits: { [field]: value },
+            }),
+        }).catch((cause: unknown) => cause);
+        expect(error).toBeInstanceOf(ConfigError);
+        expect((error as Error).message).toMatch(new RegExp(`videoLimits\\.${field} must be a positive integer\\.`));
+        expect((error as Error).message).not.toContain(marker);
+    });
+
+    it('does not mutate caller process.env values while loading configuration', async () => {
+        const configPath = await configFile(valid);
+        const tracked = {
+            R2_ACCOUNT_ID: accountId,
+            R2_ACCESS_KEY_ID: 'env-access',
+            R2_SECRET_ACCESS_KEY: 'env-secret',
+            R2_BUCKET: 'env-bucket',
+            PUBLIC_BASE_URL: 'https://env.example.test/',
+            EMBED_COLOR: 'coral',
+            EMBED_TITLE: '',
+            EMBED_DESCRIPTION: 'env-description',
+        } as const;
+
+        for (const [name, value] of Object.entries(tracked)) vi.stubEnv(name, value);
+
+        const before = Object.fromEntries(Object.keys(tracked).map((name) => [name, process.env[name]]));
+        await loadConfig({ configPath });
+        const after = Object.fromEntries(Object.keys(tracked).map((name) => [name, process.env[name]]));
+        expect(after).toEqual(before);
     });
 
     it.each(['ab', 'A-bucket', '-bucket', 'bucket-', 'bucket.name', 'bucket_name', 'a'.repeat(64)])('rejects invalid bucket %j', async (r2Bucket) => {
